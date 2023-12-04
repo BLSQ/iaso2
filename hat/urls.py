@@ -152,5 +152,10 @@ else:
 
     urlpatterns += static(settings.MEDIA_URL_PREFIX, document_root=settings.MEDIA_ROOT)
 
+    if "trypelim" in settings.PLUGINS:
+        urlpatterns += [
+            path("", include("plugins.trypelim.urls")),
+        ]
+
     if settings.DEBUG and "debug_toolbar" in settings.INSTALLED_APPS:
         urlpatterns = [path("__debug__/", include("debug_toolbar.urls"))] + urlpatterns
