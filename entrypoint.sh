@@ -86,6 +86,13 @@ case "$1" in
 
     npm run webpack-server
   ;;
+  "start_dev_couchdb_nginx" )
+    # ssl proxy to web
+    envsubst "\$COUCHDB_URL" < ./plugins/trypelim/build_scripts/local/nginx-ssl.conf.local > /etc/nginx/sites-available/default
+    cp ./plugins/trypelim/build_scripts/local/nginx.key.local /etc/nginx/cert.key
+    cp ./plugins/trypelim/build_scripts/local/nginx.crt.local /etc/nginx/cert.crt
+    nginx -g "daemon off;"
+  ;;
 
   "manage" )
     ./manage.py "${@:2}"

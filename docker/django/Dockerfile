@@ -7,7 +7,10 @@ RUN apt-get update && apt-get --yes install \
 		gettext-base \
 		postgresql-client \
 		libgdal-dev \
+		nginx \
     &&  apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+COPY plugins/trypelim/build_scripts/nginx.conf /etc/nginx/sites-available/default
 
 WORKDIR /opt/app
 
