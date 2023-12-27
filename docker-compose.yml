@@ -88,6 +88,13 @@ services:
             SUPERSET_URL:
             SUPERSET_ADMIN_USERNAME:
             SUPERSET_ADMIN_PASSWORD:
+            SUPERSET_DB_HOSTNAME:
+            SUPERSET_DB_NAME:
+            SUPERSET_DB_PASSWORD:
+            SUPERSET_DB_USERNAME:
+            SUPERSET_IASO_USER_TOKEN:
+            SUPERSET_PORT:
+            SUPERSET_SECRET_KEY:
         logging: &iaso_logging
             driver: 'json-file'
             options:

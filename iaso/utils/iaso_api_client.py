@@ -58,11 +58,12 @@ class IasoClient:
         self.log(resp)
         return resp
 
-    def get(self, url, params=None):
+    def get(self, url, params=None, parseResult=True):
         r = requests.get(self.server_url + url, params=params, headers=self.headers)
-        resp = None
+        resp = r
         try:
-            resp = r.json()
+            if parseResult:
+                resp = r.json()
             r.raise_for_status()
         except Exception as e:
             print(resp, r)
