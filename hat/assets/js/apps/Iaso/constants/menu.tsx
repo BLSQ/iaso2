@@ -316,20 +316,20 @@ const menuItems = (
                             permissions: paths.userRolesPath.permissions,
                             icon: props => <GroupsIcon {...props} />,
                         },
-                        {
-                            label: formatMessage(MESSAGES.teams),
-                            permissions: paths.teamsPath.permissions,
-                            key: 'teams',
-                            icon: props => <Diversity3Icon {...props} />,
-                        },
+                        // {
+                        //     label: formatMessage(MESSAGES.teams),
+                        //     permissions: paths.teamsPath.permissions,
+                        //     key: 'teams',
+                        //     icon: props => <Diversity3Icon {...props} />,
+                        // },
                     ],
                 },
-                {
-                    label: formatMessage(MESSAGES.monitoring),
-                    key: 'devices',
-                    permissions: paths.devicesPath.permissions,
-                    icon: props => <ImportantDevicesRoundedIcon {...props} />,
-                },
+                // {
+                //     label: formatMessage(MESSAGES.monitoring),
+                //     key: 'devices',
+                //     permissions: paths.devicesPath.permissions,
+                //     icon: props => <ImportantDevicesRoundedIcon {...props} />,
+                // },
             ],
         },
         {
