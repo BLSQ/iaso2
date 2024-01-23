@@ -233,6 +233,12 @@ class ProfilesViewSet(viewsets.ViewSet):
                 queryset = self.get_queryset()
                 profile = queryset.get(user=request.user)
                 profile_dict = profile.as_dict()
+
+                for plugin in settings.PLUGINS:
+                    if hasattr(request.user, f"{plugin}_profile"):
+                        plugin_profile = getattr(request.user, f"{plugin}_profile")
+                        profile_dict = {**profile_dict, **plugin_profile.as_iaso_enhancement_dict()}
+
                 return Response(profile_dict)
             except Profile.DoesNotExist:
                 return Response(
