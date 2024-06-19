@@ -247,6 +247,16 @@ module.exports = {
                 test: /\.(png|jpg|jpeg|gif|svg)$/,
                 type: 'asset/resource',
             },
+            // Extract Sass files
+            {
+                test: /\.scss$/,
+                use: [
+                    { loader: 'style-loader' },
+                    { loader: 'css-loader' },
+                    { loader: 'sass-loader' },
+                ],
+            },
+            // font files
             {
                 test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
                 type: 'asset/resource',
