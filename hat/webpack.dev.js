@@ -312,6 +312,19 @@ module.exports = {
                     '../../bluesquare-components/src/',
                 ),
             }),
+            react: path.resolve(__dirname, '../node_modules/react'),
+            'react-dom': path.resolve(__dirname, '../node_modules/react-dom'),
+            'react-intl': path.resolve(__dirname, '../node_modules/react-intl'),
+            '@mui': path.resolve(__dirname, '../node_modules/@mui'),
+            'bluesquare-components': path.resolve(
+                __dirname,
+                '../node_modules/bluesquare-components',
+            ),
+            leaflet: path.resolve(__dirname, '../node_modules/leaflet'),
+            'react-leaflet': path.resolve(
+                __dirname,
+                '../node_modules/react-leaflet',
+            ),
         },
         fallback: {
             fs: false,
