@@ -1,6 +1,9 @@
 import csv
 import io
 
+from django.conf import settings
+from django.contrib.auth.models import User, Permission, Group
+from django.core.files.uploadedfile import SimpleUploadedFile
 import jsonschema
 
 from rest_framework import serializers
@@ -96,7 +99,10 @@ class BulkCreateCsvTestCase(APITestCase):
     def test_upload_valid_csv(self):
         self.client.force_authenticate(self.yoda)
         self.source.projects.set([self.project])
-        with self.assertNumQueries(82):
+        correct_query_num = 82
+        if "trypelim" in settings.PLUGINS:  # extra queries because of trypelim_profile
+            correct_query_num += 9
+        with self.assertNumQueries(correct_query_num):
             with open("iaso/tests/fixtures/test_user_bulk_create_valid.csv") as csv_users:
                 response = self.client.post(f"{BASE_URL}", {"file": csv_users})
 
@@ -115,28 +121,30 @@ class BulkCreateCsvTestCase(APITestCase):
         self.assertEqual(org_unit_ids, [9999])
 
     def test_upload_valid_csv_with_perms(self):
-        with self.assertNumQueries(91):
-            self.client.force_authenticate(self.yoda)
-            self.source.projects.set([self.project])
+        self.client.force_authenticate(self.yoda)
+        self.source.projects.set([self.project])
 
-            iaso_forms = Permission.objects.get(codename="iaso_forms")
-            iaso_submissions = Permission.objects.get(codename="iaso_submissions")
+        iaso_forms = Permission.objects.get(codename="iaso_forms")
+        iaso_submissions = Permission.objects.get(codename="iaso_submissions")
 
-            self.account1.modules = self.MODULES
-            self.account1.save()
+        self.account1.modules = self.MODULES
+        self.account1.save()
 
-            self.account1.refresh_from_db()
+        correct_query_num = 83
+        if "trypelim" in settings.PLUGINS:  # extra queries because of trypelim_profile
+            correct_query_num += 12
+        with self.assertNumQueries(correct_query_num):
             with open("iaso/tests/fixtures/test_user_bulk_create_valid_with_perm.csv") as csv_users:
                 response = self.client.post(f"{BASE_URL}", {"file": csv_users})
 
-            pollux = User.objects.get(username="pollux")
-            pollux_perms = pollux.user_permissions.all()
-            has_perms = False
-            if iaso_forms and iaso_submissions in pollux_perms:
-                has_perms = True
+        pollux = User.objects.get(username="pollux")
+        pollux_perms = pollux.user_permissions.all()
+        has_perms = False
+        if iaso_forms and iaso_submissions in pollux_perms:
+            has_perms = True
 
-            self.assertEqual(response.status_code, 200)
-            self.assertEqual(has_perms, True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(has_perms, True)
 
     def test_upload_invalid_mail_csv(self):
         self.client.force_authenticate(self.yoda)
