@@ -230,6 +230,7 @@ class InstancesViewSet(viewsets.ViewSet):
             {"title": "Date de création", "width": 20},
             {"title": "Date de modification", "width": 20},
             {"title": "Créé par", "width": 20},
+            {"title": "Créé par id", "width": 20},
             {"title": "Status", "width": 20},
             {"title": "Entité", "width": 20},
             {"title": "Org unit", "width": 20},
@@ -291,6 +292,7 @@ class InstancesViewSet(viewsets.ViewSet):
                 timestamp_to_datetime(created_at_timestamp),
                 timestamp_to_datetime(updated_at_timestamp),
                 get_creator_name(instance.created_by) if instance.created_by else None,
+                instance.created_by_id,
                 instance.status,
                 # Special format for UUID to stay consistent with other UUIDs coming from file_content_template
                 f"uuid:{instance.entity.uuid}" if instance.entity else None,
