@@ -233,6 +233,7 @@ class InstancesViewSet(viewsets.ViewSet):
             {"title": "Créé par id", "width": 20},
             {"title": "Status", "width": 20},
             {"title": "Entité", "width": 20},
+            {"title": "Entité id", "width": 20},
             {"title": "Org unit", "width": 20},
             {"title": "Org unit id", "width": 20},
             {"title": "Référence externe", "width": 20},
@@ -296,6 +297,7 @@ class InstancesViewSet(viewsets.ViewSet):
                 instance.status,
                 # Special format for UUID to stay consistent with other UUIDs coming from file_content_template
                 f"uuid:{instance.entity.uuid}" if instance.entity else None,
+                instance.entity_id,
                 instance.org_unit.name,
                 instance.org_unit.id,
                 instance.org_unit.source_ref,
