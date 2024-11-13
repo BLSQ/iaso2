@@ -988,8 +988,10 @@ class InstancesAPITestCase(APITestCase):
             self.instance_1.source_created_at.strftime("%Y-%m-%d %H:%M:%S"),
             self.instance_1.source_updated_at.strftime("%Y-%m-%d %H:%M:%S"),
             "yoda (Yo Da)",
+            str(self.yoda.id),
             "READY",
             "",  # entity UUID
+            "",  # entity ID
             "Coruscant Jedi Council",
             f"{self.jedi_council_corruscant.id}",
             "jedi_council_corruscant_ref",
@@ -1006,6 +1008,11 @@ class InstancesAPITestCase(APITestCase):
         export_id = "TESTING"
         period = "200605"
         with patch("django.utils.timezone.now", lambda: new_date):
+            entity = m.Entity.objects.create(
+                uuid=uuid4(),
+                entity_type=m.EntityType.objects.create(account=self.star_wars),
+                account=self.star_wars,
+            )
             # Explicitly set source fields to None because the test helpers will set default values otherwise
             sourceless_instance = self.create_form_instance(
                 form=self.form_4,
@@ -1017,6 +1024,7 @@ class InstancesAPITestCase(APITestCase):
                 source_created_at=None,
                 source_updated_at=None,
                 json={"test": "test"},
+                entity=entity,
             )
 
         self.client.force_authenticate(self.yoda)
@@ -1044,8 +1052,10 @@ class InstancesAPITestCase(APITestCase):
             sourceless_instance.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             sourceless_instance.updated_at.strftime("%Y-%m-%d %H:%M:%S"),
             "yoda (Yo Da)",
+            str(self.yoda.id),
             "READY",
-            "",  # entity UUID
+            f"uuid:{entity.uuid}",
+            str(entity.id),
             "Coruscant Jedi Council",
             f"{self.jedi_council_corruscant.id}",
             "jedi_council_corruscant_ref",
