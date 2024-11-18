@@ -15,6 +15,7 @@ import logging
 import ntpath
 import os
 import time
+import uuid
 import zipfile
 
 
@@ -31,8 +32,10 @@ from hat.sync.views import create_instance_file, process_instance_file
 from iaso.api.instances import import_data as import_instances
 from iaso.api.mobile.org_units import import_data as import_org_units
 from iaso.api.storage import import_storage_logs
-from iaso.models import Project, Instance
+from iaso.models import OrgUnit, Project, Instance
 from iaso.utils.s3_client import download_file
+
+from plugins.trypelim.common.form_utils import get_population_form, get_population_instances
 
 INSTANCES_JSON = "instances.json"
 ORG_UNITS_JSON = "orgUnits.json"
@@ -68,6 +71,10 @@ def process_mobile_bulk_upload(api_import_id, project_id, task=None):
                 if ORG_UNITS_JSON in zip_ref.namelist():
                     org_units_data = read_json_file_from_zip(zip_ref, ORG_UNITS_JSON)
                     new_org_units = import_org_units(org_units_data, user, project.app_id)
+                    # Trypelim-specific
+                    for ou in new_org_units:
+                        ou.validation_status = OrgUnit.VALIDATION_VALID
+                        ou.save()
                     stats["new_org_units"] = len(new_org_units)
                 else:
                     logger.info(f"The file {ORG_UNITS_JSON} does not exist in the zip file.")
@@ -87,8 +94,10 @@ def process_mobile_bulk_upload(api_import_id, project_id, task=None):
                     stats["new_instances"] += 1
                     new_instance_files += process_instance_attachments(dirs[uuid], instance)
 
+                # Trypelim-specifics
                 duplicated_count = duplicate_instance_files(new_instance_files)
                 stats["new_instance_files"] = len(new_instance_files) + duplicated_count
+                process_population_instances(instances_data)
 
                 if STORAGE_LOGS_JSON in zip_ref.namelist():
                     logger.info("Processing storage logs")
@@ -225,6 +234,35 @@ def duplicate_instance_files(new_instance_files):
                 count += 1
 
     return count
+
+
+# Trypelim-specific
+# For all the new "Population" form instances: update the extra_fields on the
+# org unit for the **newest** population form instance.
+def process_population_instances(instances_data):
+    pop_form = get_population_form()
+    for instance_metadata in instances_data:
+        if instance_metadata["formId"] == str(pop_form.id):
+            org_unit_id = instance_metadata["orgUnitId"]
+            if is_uuid(org_unit_id):
+                org_unit = OrgUnit.objects.get(uuid=org_unit_id)
+            else:
+                org_unit = OrgUnit.objects.get(pk=org_unit_id)
+
+            newest_population_instance = (
+                get_population_instances().filter(org_unit=org_unit).order_by("-source_created_at").first()
+            )
+            new_pop = int(newest_population_instance.json["population"])
+            org_unit.set_extra_fields({"population": new_pop})
+            logger.info(f"\tSet population on {org_unit.name} ({org_unit.id}) to {new_pop}")
+
+
+def is_uuid(string):
+    try:
+        uuid.UUID(string)
+    except ValueError:
+        return False
+    return True
 
 
 def result_message(user, project, start_date, start_time, stats):

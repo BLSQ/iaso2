@@ -4,6 +4,7 @@ import pytz
 import uuid
 import zipfile
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.files import File
@@ -93,7 +94,7 @@ def create_entity_with_registration(
 
 @mock.patch("iaso.tasks.process_mobile_bulk_upload.download_file")
 class ProcessMobileBulkUploadTest(TestCase):
-    fixtures = ["user.yaml", "orgunit.yaml"]
+    fixtures = ["user.yaml", "orgunit.yaml", "forms"]
 
     def setUp(self):
         self.user = User.objects.first()
@@ -111,8 +112,8 @@ class ProcessMobileBulkUploadTest(TestCase):
         )
 
         # Create 2 forms: Registration + CATT
-        self.form_registration = m.Form.objects.create(id=1, name="Enregistrement", single_per_period=False)
-        self.form_catt = m.Form.objects.create(id=2, name="CATT", single_per_period=False)
+        self.form_registration = m.Form.objects.get(form_id="trypelim_registration")
+        self.form_catt = m.Form.objects.get(form_id="trypelim_CATT")
 
         self.default_entity_type = m.EntityType.objects.create(
             id=1, name="Participant", reference_form=self.form_registration
@@ -151,7 +152,10 @@ class ProcessMobileBulkUploadTest(TestCase):
         # Org unit was created
         ou = m.OrgUnit.objects.get(name="New Org Unit")
         self.assertIsNotNone(ou)
-        self.assertEqual(ou.validation_status, m.OrgUnit.VALIDATION_NEW)
+        if "trypelim" in settings.PLUGINS:
+            self.assertEqual(ou.validation_status, m.OrgUnit.VALIDATION_VALID)
+        else:
+            self.assertEqual(ou.validation_status, m.OrgUnit.VALIDATION_NEW)
 
         # Instances (Submissions) + Entity were created
         self.assertEqual(m.Entity.objects.count(), 2)
