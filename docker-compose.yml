@@ -33,6 +33,8 @@ services:
             - ../bluesquare-components:/opt/bluesquare-components
         links: &hat_links
             - db
+            - couchdb
+            - redis
         environment: &hat_environment
             PREPAREDNESS_TEMPLATE_ID:
             PREPAREDNESS_TEMPLATE_FR_ID:
@@ -95,6 +97,9 @@ services:
             SUPERSET_IASO_USER_TOKEN:
             SUPERSET_PORT:
             SUPERSET_SECRET_KEY:
+            COUCHDB_PASSWORD: secret
+            COUCHDB_URL: 'http://couchdb:5984'
+            COUCHDB_USER: admin
         logging: &iaso_logging
             driver: 'json-file'
             options:
@@ -115,17 +120,33 @@ services:
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: postgres
     # the webpack dev server
-    webpack:
-        image: iaso-webpack
-        platform: linux/amd64
-        build:
-            context: .
-            dockerfile: docker/webpack/Dockerfile
-        depends_on:
-            - iaso
+    # webpack:
+    #     image: iaso-webpack
+    #     platform: linux/amd64
+    #     build:
+    #         context: .
+    #         dockerfile: docker/webpack/Dockerfile
+    #     depends_on:
+    #         - iaso
+    #     ports:
+    #         - '3000:3000'
+    #     volumes: *hat_volumes
+    #     environment: *hat_environment
+    #     logging: *iaso_logging
+    #     command: start_webpack
+    couchdb:
+        image: couchdb:1.7
         ports:
-            - '3000:3000'
-        volumes: *hat_volumes
-        environment: *hat_environment
+            - '5984:5984'
+        volumes:
+            # enable cors for mobile app in-browser development:
+            - ./plugins/trypelim/couchdb/config-dev.ini:/usr/local/etc/couchdb/local.ini
+        environment:
+            COUCHDB_USER: admin
+            COUCHDB_PASSWORD: secret
         logging: *iaso_logging
-        command: start_webpack
+    redis:
+        image: redis:3.2
+        ports:
+            - '6379:6379'
+        logging: *iaso_logging
