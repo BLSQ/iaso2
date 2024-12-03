@@ -213,6 +213,9 @@ export const useGetSubmissions = (
     params: Partial<UrlParams> & ParamsWithAccountId,
     entityId: number,
 ): UseQueryResult<PaginatedInstances, Error> => {
+    if (!params.order) {
+        params.order = 'source_created_at';
+    }
     return useSnackQuery({
         queryKey: ['submissionsForEntity', entityId, params],
         queryFn: () => getSubmissions(params, entityId),

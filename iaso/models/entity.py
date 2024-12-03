@@ -248,7 +248,7 @@ class Entity(SoftDeletableModel):
         self.delete()  # soft delete
         log_modification(original, self, audit_source, user=user)
 
-        for instance in set([self.attributes] + list(self.instances.all())):
+        for instance in set(filter(None, [self.attributes] + list(self.instances.all()))):
             original = copy(instance)
             instance.soft_delete()
             log_modification(original, instance, audit_source, user=user)

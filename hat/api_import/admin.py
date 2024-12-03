@@ -9,6 +9,7 @@ class APIImportAdmin(admin.GeoModelAdmin):
     search_fields = ("json_body", "headers", "exception")
     list_display = (
         "id",
+        "created_at",
         "import_type",
         "has_problem",
         "user",
