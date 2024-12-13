@@ -38,6 +38,14 @@ case "$1" in
     ./manage.py migrate --noinput
     gunicorn hat.wsgi --workers 5 --threads=10 --bind=0.0.0.0:8081 --timeout 600
   ;;
+  "start_prod")
+    ./scripts/wait_for_dbs.sh
+    ./manage.py compilemessages
+    ./manage.py collectstatic --noinput
+    ./manage.py migrate --noinput
+    ./manage.py createcachetable
+    gunicorn hat.wsgi --workers 5 --threads=10 --bind=0.0.0.0:8081 --timeout 600
+  ;;
   "test" )
     export TESTING=true
     # Linting tasks first
@@ -64,6 +72,9 @@ case "$1" in
     ./scripts/gen_docs.sh
   ;;
   "start_dev" )
+    cat /etc/*release
+    apt-cache policy libgdal-dev
+    python3 --version
     export DEV_SERVER=true
     ./scripts/wait_for_dbs.sh
     ./manage.py migrate --noinput

@@ -20,7 +20,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       # Merge the workflow_dispatch config with some default for deployment via the on:push
       - name: Set configs
@@ -62,10 +62,10 @@ jobs:
       - name: upgrade npm
         run: |
           npm install --global npm@10.5.2
-      - name: Set up Python 3.9
+      - name: Set up Python 3.12
         uses: actions/setup-python@v1
         with:
-          python-version: 3.9
+          python-version: 3.12
 
       - name: Setup beanstalk
         # the specification of botocore is due to a deployment problem with 1.21 to remove later

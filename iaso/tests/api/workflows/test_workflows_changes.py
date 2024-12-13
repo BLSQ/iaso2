@@ -1,3 +1,5 @@
+from rest_framework import status
+
 from iaso.models import WorkflowChange
 from iaso.tests.api.workflows.base import BaseWorkflowsAPITestCase
 
@@ -107,9 +109,9 @@ class WorkflowsChangesAPITestCase(BaseWorkflowsAPITestCase):
     def test_delete_non_existing_should_fail(self):
         self.client.force_authenticate(self.blue_adult_1)
         response_delete = self.client.delete("/api/workflowchanges/1000/")
-
-        self.assertJSONResponse(response_delete, 404)
-        assert "Not found." in response_delete.data["detail"]
+        self.assertContains(
+            response_delete, "No WorkflowChange matches the given query", status_code=status.HTTP_404_NOT_FOUND
+        )
 
     def test_create_change_with_non_existing_form_should_fail(self):
         self.client.force_authenticate(self.blue_adult_1)

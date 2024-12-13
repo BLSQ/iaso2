@@ -112,7 +112,7 @@ class Differ:
 
         if show_deleted_org_units:
             target_set = set(orgunits_dhis2_by_ref.keys())
-            source_set = set([org_unit.source_ref for org_unit in orgunit_refs])
+            source_set = {org_unit.source_ref for org_unit in orgunit_refs}
             deleted_org_units_ids = target_set - source_set
             for deleted_id in deleted_org_units_ids:
                 orgunit_dhis2 = orgunits_dhis2_by_ref.get(deleted_id)[0]

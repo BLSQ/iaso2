@@ -229,7 +229,9 @@ class OrgUnitViewSet(viewsets.ViewSet):
             user_account_name = profile.account.name if profile else ""
             environment = settings.ENVIRONMENT
             filename = "org_units"
-            filename = "%s-%s-%s-%s" % (environment, user_account_name, filename, strftime("%Y-%m-%d-%H-%M", gmtime()))
+            filename = "{}-{}-{}-{}".format(
+                environment, user_account_name, filename, strftime("%Y-%m-%d-%H-%M", gmtime())
+            )
             return self.list_to_gpkg(queryset, filename)
         else:
             # When filtering the org units by group, the values_list will return the groups also filtered.
@@ -301,7 +303,9 @@ class OrgUnitViewSet(viewsets.ViewSet):
             user_account_name = profile.account.name if profile else ""
             environment = settings.ENVIRONMENT
             filename = "org_units"
-            filename = "%s-%s-%s-%s" % (environment, user_account_name, filename, strftime("%Y-%m-%d-%H-%M", gmtime()))
+            filename = "{}-{}-{}-{}".format(
+                environment, user_account_name, filename, strftime("%Y-%m-%d-%H-%M", gmtime())
+            )
 
             def get_row(org_unit, **kwargs):
                 location = org_unit.get("location", None)

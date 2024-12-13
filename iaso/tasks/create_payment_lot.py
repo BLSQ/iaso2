@@ -106,7 +106,7 @@ def create_payment_lot(
 
     else:
         with transaction.atomic():
-            for index, potential_payment in enumerate(potential_payments_for_lot.iterator()):
+            for index, potential_payment in enumerate(potential_payments_for_lot.iterator(chunk_size=2000)):
                 potential_payment.payment_lot = payment_lot
                 potential_payment.save()
                 res_string = "%.2f sec, processed %i payments" % (time() - start, index)

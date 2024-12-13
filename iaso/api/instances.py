@@ -176,7 +176,7 @@ class InstancesViewSet(viewsets.ViewSet):
         filters = parse_instance_filters(request.GET)
         instances = instances.for_filters(**filters)
         queryset = InstanceFile.objects.filter(instance__in=instances).annotate(
-            file_extension=Func(F("file"), function="LOWER", template="SUBSTRING(%(expressions)s, '\.([^\.]+)$')")
+            file_extension=Func(F("file"), function="LOWER", template=r"SUBSTRING(%(expressions)s, '\.([^\.]+)$')")
         )
 
         image_only = request.GET.get("image_only", "false").lower() == "true"
@@ -224,7 +224,7 @@ class InstancesViewSet(viewsets.ViewSet):
         form = get_form_from_instance_filters(filters)
 
         if form:
-            filename = "%s-%s" % (filename, form.id)
+            filename = "{}-{}".format(filename, form.id)
             if form.correlatable:
                 columns.append({"title": "correlation id", "width": 20})
         else:
@@ -249,7 +249,7 @@ class InstancesViewSet(viewsets.ViewSet):
                 columns.append({"title": title, "width": 50})
                 sub_columns.append(questions_by_name.get(title, {}).get("label", ""))
 
-        filename = "%s-%s" % (filename, strftime("%Y-%m-%d-%H-%M", gmtime()))
+        filename = "{}-{}".format(filename, strftime("%Y-%m-%d-%H-%M", gmtime()))
 
         def get_row(instance, **kwargs):
             created_at_timestamp = instance.source_created_at_with_fallback.timestamp()
@@ -577,7 +577,7 @@ class InstancesViewSet(viewsets.ViewSet):
 
         try:
             with transaction.atomic():
-                for instance in instances_query.iterator():
+                for instance in instances_query.iterator(chunk_size=2000):
                     original = copy(instance)
                     if is_deletion == True:
                         instance.soft_delete()

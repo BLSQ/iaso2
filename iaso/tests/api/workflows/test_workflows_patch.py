@@ -1,4 +1,5 @@
 import jsonschema
+from rest_framework import status
 
 from iaso.tests.api.workflows.base import BaseWorkflowsAPITestCase
 from iaso.tests.api.workflows.test_workflows import post_answer_schema
@@ -35,10 +36,9 @@ class WorkflowsPatchAPITestCase(BaseWorkflowsAPITestCase):
         self.client.force_authenticate(self.blue_adult_1)
 
         response = self.client.patch(f"{BASE_API}1000/", data={"status": "PUBLISHED"})
-
-        self.assertJSONResponse(response, 404)
-        assert "detail" in response.data
-        assert response.data["detail"] == "Not found."
+        self.assertContains(
+            response, "No WorkflowVersion matches the given query", status_code=status.HTTP_404_NOT_FOUND
+        )
 
     def test_patch_transition_ok(self):
         self.client.force_authenticate(self.blue_adult_1)

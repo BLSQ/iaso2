@@ -9,7 +9,7 @@ from iaso.api.tasks import TaskSerializer
 from iaso.test import APITestCase, TestCase
 
 
-DT = datetime.datetime(2023, 12, 20, 15, 0, 0, 0, tzinfo=timezone.utc)
+DT = datetime.datetime(2023, 12, 20, 15, 0, 0, 0, tzinfo=datetime.timezone.utc)
 
 
 @time_machine.travel(DT, tick=False)

@@ -77,9 +77,9 @@ rows = csv_to_dict(CSV_NAME)
 groups = {}
 print("Fetching group ids, create groups if needed")
 
-groups_in_csv = set([row["partner"] for row in rows])
+groups_in_csv = {row["partner"] for row in rows}
 existing_groups = requests.get(groups_url, headers=headers).json()["groups"]
-existing_group_names = set([g["name"] for g in existing_groups])
+existing_group_names = {g["name"] for g in existing_groups}
 
 for group_name in groups_in_csv:
     if group_name in existing_group_names:

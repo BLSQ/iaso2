@@ -110,7 +110,7 @@ def create_account(
 
     print("-----------------------------------------------")
     print("Account created:", account_name)
-    print("Login at %s with\n\tlogin: %s \n\tpassword: %s" % (server_url, account_name, account_name))
+    print("Login at {} with\n\tlogin: {} \n\tpassword: {}".format(server_url, account_name, account_name))
     print("-----------------------------------------------")
     return account_name
 

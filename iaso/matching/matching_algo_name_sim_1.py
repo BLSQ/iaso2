@@ -91,7 +91,7 @@ class Algorithm:
 
         index = 1
         children_1 = list(
-            OrgUnit.objects.filter(parent__in=parent_1).prefetch_related(("source_set__source__source_set__source"))
+            OrgUnit.objects.filter(parent__in=parent_1).prefetch_related("source_set__source__source_set__source")
         )
         children_2 = list(OrgUnit.objects.filter(parent__in=parent_2))
         while children_1 and children_2:
@@ -101,9 +101,7 @@ class Algorithm:
             children_2 = list(OrgUnit.objects.filter(parent__in=children_2))
 
             children_1 = list(
-                OrgUnit.objects.filter(parent__in=children_1).prefetch_related(
-                    ("source_set__source__source_set__source")
-                )
+                OrgUnit.objects.filter(parent__in=children_1).prefetch_related("source_set__source__source_set__source")
             )
 
             index = index + 1

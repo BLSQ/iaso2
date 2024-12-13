@@ -265,7 +265,7 @@ def profiles_bulk_update(
             managed_org_units = OrgUnit.objects.hierarchy(user.iaso_profile.org_units.all()).values_list(
                 "id", flat=True
             )
-        for index, profile in enumerate(queryset.iterator()):
+        for index, profile in enumerate(queryset.iterator(chunk_size=2000)):
             res_string = "%.2f sec, processed %i profiles" % (time() - start, index)
             task.report_progress_and_stop_if_killed(progress_message=res_string, end_value=total, progress_value=index)
             update_single_profile_from_bulk(

@@ -133,7 +133,7 @@ class TokenAPITestCase(APITestCase):
                 "longitude": 4.4,
                 "accuracy": 10,
                 "altitude": 100,
-                "file": "\/storage\/emulated\/0\/odk\/instances\/RDC Collecte Data DPS_2_2019-08-08_11-54-46\/RDC Collecte Data DPS_2_2019-08-08_11-54-46.xml",
+                "file": r"\/storage\/emulated\/0\/odk\/instances\/RDC Collecte Data DPS_2_2019-08-08_11-54-46\/RDC Collecte Data DPS_2_2019-08-08_11-54-46.xml",
                 "name": "the name",
             }
         ]
@@ -161,7 +161,7 @@ class TokenAPITestCase(APITestCase):
                 "longitude": 4.4,
                 "accuracy": 10,
                 "altitude": 100,
-                "file": "\/storage\/emulated\/0\/odk\/instances\/RDC Collecte Data DPS_2_2019-08-08_11-54-46\/RDC Collecte Data DPS_2_2019-08-08_11-54-46.xml",
+                "file": r"\/storage\/emulated\/0\/odk\/instances\/RDC Collecte Data DPS_2_2019-08-08_11-54-46\/RDC Collecte Data DPS_2_2019-08-08_11-54-46.xml",
                 "name": "the name",
             }
         ]

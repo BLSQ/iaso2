@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 
+from rest_framework import status
+
 from iaso import models as m
 from iaso.test import APITestCase
 from plugins.polio.models import Campaign, ReasonForDelay, Round, RoundDateHistoryEntry
@@ -162,5 +164,6 @@ class PolioReasonSForDelayTestCase(APITestCase):
                 "name_en": new_name_en,
             },
         )
-        jr = self.assertJSONResponse(response, 404)
-        self.assertEqual({"detail": "Not found."}, jr)
+        self.assertContains(
+            response, "No ReasonForDelay matches the given query", status_code=status.HTTP_404_NOT_FOUND
+        )

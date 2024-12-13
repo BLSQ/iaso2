@@ -28,7 +28,7 @@ def get_or_create(
     source_ref,
     save=True,
 ):
-    id_string = "%s%s" % (name, parent_id)
+    id_string = "{}{}".format(name, parent_id)
     org_unit = unit_dict.get(id_string, None)
     if save and org_unit is None:
         org_units = OrgUnit.objects.filter(
@@ -106,7 +106,7 @@ class Command(BaseCommand):
             project = Project.objects.get(id=project_id)
             main_out = get_or_create_org_unit_type(name=main_org_unit_name, project=project)
             print("Creating Org Unit Types")
-            data_dict = json.loads(open(data_dict_name, "r").read())
+            data_dict = json.loads(open(data_dict_name).read())
             for parent in data_dict["parents"]:
                 out = get_or_create_org_unit_type(name=parent, project=project)
 
@@ -125,7 +125,7 @@ class Command(BaseCommand):
             main_out.projects.add(project)
             leaf_units = []
             parent_units = []
-            top_org_units = set([])
+            top_org_units = set()
             print("Inserting all units")
             with open(file_name, encoding="utf-8-sig") as csvfile:
                 csv_reader = csv.reader(csvfile, delimiter=";")

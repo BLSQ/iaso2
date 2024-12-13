@@ -28,7 +28,7 @@ jobs:
       packages: write
       pull-requests: write
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository (dispatch)
         uses: actions/checkout@v3
@@ -96,7 +96,7 @@ jobs:
   test_cypress:
     if: ((github.event_name == 'workflow_dispatch') || (contains(github.event.comment.body, '@cypress')))
     timeout-minutes: 60
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs: build-image
     permissions:
       contents: read
@@ -105,7 +105,7 @@ jobs:
       issues: write
     services:
       postgres:
-        image: postgis/postgis:12-3.3
+        image: postgis/postgis:16-3.5
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres

@@ -179,7 +179,7 @@ class BulkCreateUserFromCsvViewSet(ModelViewSet):
                         except ValidationError:
                             raise serializers.ValidationError(
                                 {
-                                    "error": "Operation aborted. Invalid Email at row : {0}. Fix the error and try "
+                                    "error": "Operation aborted. Invalid Email at row : {}. Fix the error and try "
                                     "again.".format(i)
                                 }
                             )
@@ -201,7 +201,7 @@ class BulkCreateUserFromCsvViewSet(ModelViewSet):
                     except IntegrityError:
                         raise serializers.ValidationError(
                             {
-                                "error": "Operation aborted. Error at row {0} Account already exists : {1}. Fix the "
+                                "error": "Operation aborted. Error at row {} Account already exists : {}. Fix the "
                                 "error and try "
                                 "again.".format(i, row[csv_indexes.index("username")])
                             }
@@ -233,7 +233,7 @@ class BulkCreateUserFromCsvViewSet(ModelViewSet):
                                 if ou not in importer_access_ou:
                                     raise serializers.ValidationError(
                                         {
-                                            "error": "Operation aborted. Invalid OrgUnit {0} at row : {1}. "
+                                            "error": "Operation aborted. Invalid OrgUnit {} at row : {}. "
                                             "You don't have access to this orgunit".format(ou, i + 1)
                                         }
                                     )
@@ -241,7 +241,7 @@ class BulkCreateUserFromCsvViewSet(ModelViewSet):
                             except ObjectDoesNotExist:
                                 raise serializers.ValidationError(
                                     {
-                                        "error": "Operation aborted. Invalid OrgUnit {0} at row : {1}. "
+                                        "error": "Operation aborted. Invalid OrgUnit {} at row : {}. "
                                         "Fix the error "
                                         "and try "
                                         "again.".format(ou, i + 1)
@@ -263,14 +263,14 @@ class BulkCreateUserFromCsvViewSet(ModelViewSet):
                             if org_unit.count() > 1:
                                 raise serializers.ValidationError(
                                     {
-                                        "error": "Operation aborted. Multiple OrgUnits with `name` or `source_ref`: {0} at row : {1}."
+                                        "error": "Operation aborted. Multiple OrgUnits with `name` or `source_ref`: {} at row : {}."
                                         "Use Orgunit ID instead of name.".format(ou, i + 1)
                                     }
                                 )
                             if not org_unit.count():
                                 raise serializers.ValidationError(
                                     {
-                                        "error": "Operation aborted. Invalid OrgUnit {0} at row : {1}. Fix "
+                                        "error": "Operation aborted. Invalid OrgUnit {} at row : {}. Fix "
                                         "the error "
                                         "and try "
                                         "again. Use Orgunit ID instead of name.".format(ou, i + 1)
@@ -279,7 +279,7 @@ class BulkCreateUserFromCsvViewSet(ModelViewSet):
                             if org_unit[0] not in importer_access_ou:
                                 raise serializers.ValidationError(
                                     {
-                                        "error": "Operation aborted. Invalid OrgUnit {0} at row : {1}. "
+                                        "error": "Operation aborted. Invalid OrgUnit {} at row : {}. "
                                         "You don't have access to this orgunit".format(ou, i + 1)
                                     }
                                 )
@@ -397,7 +397,7 @@ class BulkCreateUserFromCsvViewSet(ModelViewSet):
                                 except ObjectDoesNotExist:
                                     raise serializers.ValidationError(
                                         {
-                                            "error": "Operation aborted. Invalid permission {0} at row : {1}. Fix "
+                                            "error": "Operation aborted. Invalid permission {} at row : {}. Fix "
                                             "the error "
                                             "and try "
                                             "again".format(perm, i + 1)

@@ -130,6 +130,6 @@ def geojson_queryset(queryset, geometry_field, pk_field="id", fields=[]):
 # Check if the request comes from mobile. Useful when logging modifications (audit)
 def is_mobile_request(request):
     # Get the User-Agent string from the request headers
-    user_agent = request.META.get("HTTP_USER_AGENT", "")
+    user_agent = request.headers.get("user-agent", "")
     # Check if the User-Agent string contains keywords typical of mobile devices
     return any(mobile in user_agent.lower() for mobile in ["mobile", "android", "iphone", "ipad", "windows phone"])

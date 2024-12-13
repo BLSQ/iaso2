@@ -21,7 +21,7 @@ def dhis2_callback(request, dhis2_slug):
         payload = {
             "code": code,
             "grant_type": "authorization_code",
-            "redirect_uri": REDIRECT_URI + "api/dhis2/{0}/login/".format(dhis2_slug),
+            "redirect_uri": REDIRECT_URI + "api/dhis2/{}/login/".format(dhis2_slug),
             "client_id": dhis2_slug,
         }
 
@@ -38,7 +38,7 @@ def dhis2_callback(request, dhis2_slug):
             access_token = response.json()["access_token"]
 
             user_info = requests.get(
-                DHIS2_SERVER_URL + "api/me", headers={"Authorization": "Bearer {0}".format(access_token)}
+                DHIS2_SERVER_URL + "api/me", headers={"Authorization": "Bearer {}".format(access_token)}
             )
 
             user_dhis2_id = user_info.json()["id"]
@@ -50,11 +50,11 @@ def dhis2_callback(request, dhis2_slug):
                 return HttpResponseRedirect(redirect_to="/")
             except ObjectDoesNotExist:
                 return HttpResponse(
-                    "Iaso User with DHIS2 credentials < {0} > does not exists.".format(
+                    "Iaso User with DHIS2 credentials < {} > does not exists.".format(
                         user_info.json()["userCredentials"]["name"]
                     )
                 )
         else:
-            return HttpResponse("Error: {0}".format(response.json()))
+            return HttpResponse("Error: {}".format(response.json()))
 
     return HttpResponse("ok")

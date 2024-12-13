@@ -159,8 +159,8 @@ class OrgUnitChangeRequestViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"])
     def export_to_csv(self, request):
-        filename = "%s--%s" % ("review-change-proposals", datetime.now().strftime("%Y-%m-%d"))
-        org_unit_changes_requests = self.get_queryset().order_by("org_unit__name")
+        filename = "{}--{}".format("review-change-proposals", datetime.now().strftime("%Y-%m-%d"))
+        org_unit_changes_requests = self.get_queryset().order_by("org_unit__name", "id")
         filtered_org_unit_changes_requests = OrgUnitChangeRequestListFilter(
             request.GET, queryset=org_unit_changes_requests
         ).qs

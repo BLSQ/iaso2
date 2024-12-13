@@ -319,6 +319,10 @@ const MESSAGES = defineMessages({
         defaultMessage: 'Org unit(s) without geolocation found',
         id: 'iaso.completenessStats.completenessMapWarning',
     },
+    logoutError: {
+        id: 'iaso.snackBar.logoutError',
+        defaultMessage: 'An error occurred while logging out',
+    },
 });
 
 export default MESSAGES;

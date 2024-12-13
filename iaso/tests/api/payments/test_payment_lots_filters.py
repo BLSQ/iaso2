@@ -6,7 +6,7 @@ from iaso.models import PaymentLot, Payment, OrgUnit, OrgUnitType, SourceVersion
 class TestPaymentLotsFilters(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        super(TestPaymentLotsFilters, cls).setUpTestData()
+        super().setUpTestData()
         data_source = DataSource.objects.create(name="Data source")
         version = SourceVersion.objects.create(number=1, data_source=data_source)
         account = Account.objects.create(name="Account", default_version=version)

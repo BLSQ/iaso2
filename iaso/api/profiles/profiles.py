@@ -712,7 +712,7 @@ class ProfilesViewSet(viewsets.ViewSet):
 
     def validate_projects(self, request, profile) -> QuerySet[Project]:
         result = []
-        project_ids = set([pk for pk in request.data.get("projects", []) if str(pk).isdigit()])
+        project_ids = {pk for pk in request.data.get("projects", []) if str(pk).isdigit()}
         if project_ids:
             profile_project_ids = set(profile.projects.values_list("id", flat=True))
             if not request.user.has_perm(permission.USERS_ADMIN) and profile_project_ids != project_ids:

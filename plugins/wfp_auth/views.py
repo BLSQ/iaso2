@@ -64,9 +64,9 @@ class WFP2Adapter(Auth0OAuth2Adapter):
     settings = app_settings.PROVIDERS.get(provider_id, {})
     provider_base_url = settings.get("AUTH0_URL")
 
-    access_token_url = "{0}/token".format(provider_base_url)
-    authorize_url = "{0}/authorize".format(provider_base_url)
-    profile_url = "{0}/userinfo".format(provider_base_url)
+    access_token_url = "{}/token".format(provider_base_url)
+    authorize_url = "{}/authorize".format(provider_base_url)
+    profile_url = "{}/userinfo".format(provider_base_url)
 
     def send_new_account_email(self, request: HttpRequest, user):
         to_email = self.settings.get("EMAIL_RECIPIENTS_NEW_ACCOUNT")

@@ -6,6 +6,7 @@ The general logic is that we copy a template Spreadsheet file stored in Google S
 and we adapt the value for the particular campaign we are generating to.
 We copy the Regional worksheet for each region in the Campaign scope, then add a column for each district.
 """
+
 import copy
 from logging import getLogger
 from typing import Optional

@@ -17,6 +17,7 @@ import { FormattedMessage } from 'react-intl';
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PropTypes from 'prop-types';
+import Cookies from 'js-cookie';
 import { Link } from 'react-router-dom';
 
 import { commonStyles, useSafeIntl } from 'bluesquare-components';
@@ -34,6 +35,7 @@ import { baseUrls } from '../../../constants/urls.ts';
 import { useCurrentUser } from '../../../utils/usersUtils.ts';
 import { getDefaultSourceVersion } from '../../dataSources/utils';
 import { useSidebar } from '../contexts/SideBarContext.tsx';
+import { iasoFetch } from '../../../libs/Api';
 
 const styles = theme => ({
     ...commonStyles(theme),
@@ -100,6 +102,18 @@ const SidebarMenu = ({ classes, location }) => {
     const theme = useTheme();
     const isMobileLayout = useMediaQuery(theme.breakpoints.down('md'));
     const userGuideUrl = currentUser.account?.user_manual_path || DOC_URL;
+
+    const handleLogout = () => {
+        iasoFetch('/logout-iaso', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': Cookies.get("csrftoken"),
+            },
+        }).then(() => {
+            window.location.href = '/login';
+        });
+    };
 
     return (
         <Drawer anchor="left" open={isOpen} onClose={toggleSidebar}>
@@ -194,8 +208,8 @@ const SidebarMenu = ({ classes, location }) => {
                 <Button
                     size="small"
                     color="inherit"
-                    href="/logout-iaso"
                     aria-label={<FormattedMessage {...MESSAGES.logout} />}
+                    onClick={handleLogout}
                 >
                     <ExitIcon className={classes.smallButtonIcon} />
                     <FormattedMessage {...MESSAGES.logout} />

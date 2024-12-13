@@ -41,9 +41,7 @@ def iaso(request: HttpRequest) -> HttpResponse:
 @require_http_methods(["GET"])
 def embeddable_iaso(request: HttpRequest) -> HttpResponse:
     """Embeddable iaso page without login requirement and with correct header"""
-    all_analytics_scripts = set(
-        [account.analytics_script for account in Account.objects.all() if account.analytics_script]
-    )
+    all_analytics_scripts = {account.analytics_script for account in Account.objects.all() if account.analytics_script}
     response = _base_iaso(request, all_analytics_scripts)
     response["X-Frame-Options"] = "ALLOW"
     return response

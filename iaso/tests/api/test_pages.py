@@ -79,7 +79,7 @@ class PagesAPITestCase(APITestCase):
         page = Page.objects.last().pk
 
         response = self.client.delete(
-            "/api/pages/{0}/".format(page),
+            "/api/pages/{}/".format(page),
             data={
                 "type": "RAW",
                 "needs_authentication": "false",
@@ -180,7 +180,7 @@ class PagesAPITestCase(APITestCase):
         page = Page.objects.last().pk
 
         response = self.client.put(
-            "/api/pages/{0}/".format(page),
+            "/api/pages/{}/".format(page),
             data={
                 "type": "RAW",
                 "needs_authentication": "true",
@@ -213,7 +213,7 @@ class PagesAPITestCase(APITestCase):
         page = Page.objects.last().pk
 
         response = self.client.delete(
-            "/api/pages/{0}/".format(page),
+            "/api/pages/{}/".format(page),
             data={
                 "type": "RAW",
                 "needs_authentication": "false",

@@ -196,7 +196,7 @@ class CampaignSerializer(serializers.ModelSerializer):
             source_version_id = None
             name = f"scope for campaign {campaign.obr_name}" + (f" - {vaccine}" if vaccine else "")
             if org_units:
-                source_version_ids = set([ou.version_id for ou in org_units])
+                source_version_ids = {ou.version_id for ou in org_units}
                 if len(source_version_ids) != 1:
                     raise serializers.ValidationError("All orgunit should be in the same source version")
                 source_version_id = list(source_version_ids)[0]
@@ -226,7 +226,7 @@ class CampaignSerializer(serializers.ModelSerializer):
                 org_units = scope.get("group", {}).get("org_units")
                 source_version_id = None
                 if org_units:
-                    source_version_ids = set([ou.version_id for ou in org_units])
+                    source_version_ids = {ou.version_id for ou in org_units}
                     if len(source_version_ids) != 1:
                         raise serializers.ValidationError("All orgunit should be in the same source version")
                     source_version_id = list(source_version_ids)[0]
@@ -295,7 +295,7 @@ class CampaignSerializer(serializers.ModelSerializer):
                 source_version_id = None
                 name = f"scope for campaign {instance.obr_name} - {vaccine or ''}"
                 if org_units:
-                    source_version_ids = set([ou.version_id for ou in org_units])
+                    source_version_ids = {ou.version_id for ou in org_units}
                     if len(source_version_ids) != 1:
                         raise serializers.ValidationError("All orgunit should be in the same source version")
                     source_version_id = list(source_version_ids)[0]
@@ -357,7 +357,7 @@ class CampaignSerializer(serializers.ModelSerializer):
                     org_units = scope.get("group", {}).get("org_units")
                     source_version_id = None
                     if org_units:
-                        source_version_ids = set([ou.version_id for ou in org_units])
+                        source_version_ids = {ou.version_id for ou in org_units}
                         if len(source_version_ids) != 1:
                             raise serializers.ValidationError("All orgunit should be in the same source version")
                         source_version_id = list(source_version_ids)[0]
@@ -909,7 +909,7 @@ class CampaignViewSet(ModelViewSet):
         )
         start_to_name = "--start-to-" + round_start_to.strftime("%d-%m-%Y") if round_start_to else ""
 
-        filename = "%s%s%s" % (
+        filename = "{}{}{}".format(
             "all-rounds-scopes",
             start_from_name,
             start_to_name,
@@ -944,7 +944,7 @@ class CampaignViewSet(ModelViewSet):
         campaign = round.campaign
         org_units_list = self.get_org_units_list(round, campaign)
 
-        filename = "%s-%s--%s--%s-%s" % (
+        filename = "{}-{}--{}--{}-{}".format(
             "campaign",
             campaign.obr_name,
             "R" + str(round.number),
@@ -1025,7 +1025,7 @@ class CampaignViewSet(ModelViewSet):
             item["cost"] = int(float(round.cost)) if (round.cost and (float(round.cost) > 0)) else ""
             data.append(item)
 
-        filename = "%s-%s--%s" % (
+        filename = "{}-{}--{}".format(
             "campaigns",
             "rounds",
             strftime("%Y-%m-%d-%H-%M", gmtime()),
@@ -1400,7 +1400,7 @@ Timeline tracker Automated message
         postgresql server which is faster.
         Campaign with and without scope per round are handled separately"""
         # FIXME: The cache ignore all the filter parameter which will return wrong result if used
-        key_name = "{0}-geo_shapes".format(request.user.id)
+        key_name = "{}-geo_shapes".format(request.user.id)
 
         # use the same filter logic and rule as for anonymous or not
         campaigns = self.filter_queryset(self.get_queryset())
@@ -1482,7 +1482,7 @@ where polio_campaignscope.campaign_id = polio_campaign.id""",
     def shapes_v2(self, request):
         "Deprecated, should return the same format as shapes v3, kept for comparison"
         # FIXME: The cache ignore all the filter parameter which will return wrong result if used
-        key_name = "{0}-geo_shapes_v2".format(request.user.id)
+        key_name = "{}-geo_shapes_v2".format(request.user.id)
 
         campaigns = self.filter_queryset(self.get_queryset())
         # Remove deleted campaigns

@@ -25,7 +25,7 @@ class InstanceExportError(BaseException):
         self.message = str(args[0]) + " : " + description
 
     def __str__(self):
-        return "InstanceExportError, {0} ".format(self.message)
+        return "InstanceExportError, {} ".format(self.message)
 
 
 def get_event_date(instance, form_mapping):

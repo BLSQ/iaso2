@@ -1280,6 +1280,7 @@
     "iaso.snackBar.importGpkgError": "An error occurred while importing gpkg file",
     "iaso.snackBar.importGpkgSuccess": "Import of gpkg file was planned with success",
     "iaso.snackBar.locationLimitWarning": "Display too much items on the map can reduce the performance",
+    "iaso.snackBar.logoutError": "An error occurred while logging out",
     "iaso.snackBar.newEmptyVersionError": "An error occurred while creating the new empty version",
     "iaso.snackBar.newEmptyVersionSavedSuccess": "New empty version saved successfully",
     "iaso.snackBar.patchTaskError": "An error occurred while updating the task.",

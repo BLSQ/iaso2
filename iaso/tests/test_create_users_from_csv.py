@@ -256,7 +256,7 @@ class BulkCreateCsvTestCase(APITestCase):
 
         csv_file = BulkCreateUserCsvFile.objects.last()
 
-        file = open(csv_file.file.path, "r")
+        file = open(csv_file.file.path)
         reader = csv.reader(file)
         i = 0
         csv_indexes = []

@@ -165,7 +165,7 @@ class LinkViewSet(viewsets.ViewSet):
             ]
 
             filename = "links"
-            filename = "%s-%s" % (filename, strftime("%Y-%m-%d-%H-%M", gmtime()))
+            filename = "{}-{}".format(filename, strftime("%Y-%m-%d-%H-%M", gmtime()))
 
             def get_row(link, **kwargs):
                 return [

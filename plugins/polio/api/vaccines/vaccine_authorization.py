@@ -230,9 +230,11 @@ class VaccineAuthorizationViewSet(ModelViewSet):
                     },
                     "start_date": last_validated_or_expired.start_date,
                     "current_expiration_date": last_validated_or_expired.expiration_date,
-                    "next_expiration_date": next_expiration_auth.expiration_date
-                    if next_expiration_auth.expiration_date > last_validated_or_expired.expiration_date
-                    else None,
+                    "next_expiration_date": (
+                        next_expiration_auth.expiration_date
+                        if next_expiration_auth.expiration_date > last_validated_or_expired.expiration_date
+                        else None
+                    ),
                     "quantity": last_validated_or_expired.quantity,
                     "status": last_entry.status,
                     "comment": last_entry.comment,

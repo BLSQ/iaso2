@@ -128,7 +128,7 @@ class TeamSerializer(serializers.ModelSerializer):
         return r
 
     def validate(self, attrs):
-        validated_data = super(TeamSerializer, self).validate(attrs)
+        validated_data = super().validate(attrs)
 
         user = self.context["request"].user
         validated_data["created_by"] = user
@@ -562,9 +562,9 @@ class MobilePlanningSerializer(serializers.ModelSerializer):
         for out in OrgUnitType.objects.filter(projects__account=user.iaso_profile.account):
             out_set = set(out.form_set.values_list("id", flat=True))
             intersection = out_set.intersection(planning_form_set)
-            forms_per_ou_type[
-                out.id
-            ] = intersection  # intersection of the two sets: the forms of the orgunit types and the forms of the planning
+            forms_per_ou_type[out.id] = (
+                intersection  # intersection of the two sets: the forms of the orgunit types and the forms of the planning
+            )
 
         for a in planning.assignment_set.filter(deleted_at__isnull=True).filter(user=user).prefetch_related("org_unit"):
             # TODO: investigate type error on next line

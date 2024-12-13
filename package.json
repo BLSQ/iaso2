@@ -75,6 +75,7 @@
         "color": "^3.1.2",
         "dom-to-pdf": "^0.3.1",
         "formik": "^2.2.9",
+        "js-cookie": "^3.0.5",
         "leaflet": "^1.9.3",
         "leaflet-draw": "^1.0.4",
         "leaflet.markercluster": "^1.4.1",

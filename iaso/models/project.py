@@ -59,7 +59,7 @@ class Project(models.Model):
     objects = ProjectManager()
 
     def __str__(self):
-        return "%s " % (self.name,)
+        return "{} ".format(self.name)
 
     def as_dict(self):
         return {"id": self.id, "name": self.name, "app_id": self.app_id}

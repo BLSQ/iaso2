@@ -21,7 +21,7 @@ def get_powerbi_service_principal_token(tenant_id, client_id, secret_value):
 
 def get_powerbi_report_token_with_sp(sp_access_token, group_id, report_id):
     body = {"accessLevel": "View"}
-    url = "https://api.powerbi.com/v1.0/myorg/groups/%s/reports/%s/GenerateToken" % (group_id, report_id)
+    url = "https://api.powerbi.com/v1.0/myorg/groups/{}/reports/{}/GenerateToken".format(group_id, report_id)
     headers = {"Content-Type": "application/json", "Authorization": "Bearer %s" % sp_access_token}
     r = requests.post(url=url, json=body, headers=headers)
     r.raise_for_status()
@@ -53,7 +53,7 @@ def launch_dataset_refresh(group_id, data_set_id):
         config["tenant_id"], config["client_id"], config["secret_value"]
     )
     body = {"accessLevel": "View"}
-    url = "https://api.powerbi.com/v1.0/myorg/groups/%s/datasets/%s/refreshes" % (group_id, data_set_id)
+    url = "https://api.powerbi.com/v1.0/myorg/groups/{}/datasets/{}/refreshes".format(group_id, data_set_id)
     headers = {"Content-Type": "application/json", "Authorization": "Bearer %s" % sp_access_token}
 
     r = requests.post(url=url, json=body, headers=headers)

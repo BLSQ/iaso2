@@ -31,7 +31,7 @@ class OrgUnitTypeViewSet(ModelViewSet):
         t = OrgUnitType.objects.get(pk=pk)
         if t.orgunit_set.count() > 0:
             return Response("You can't delete a type that still has org units", status=status.HTTP_401_UNAUTHORIZED)
-        return super(OrgUnitTypeViewSet, self).destroy(request, pk)
+        return super().destroy(request, pk)
 
     def get_queryset(self):
         queryset = OrgUnitType.objects.filter_for_user_and_app_id(
@@ -63,7 +63,7 @@ class OrgUnitTypeViewSetV2(ModelViewSet):
         t = OrgUnitType.objects.get(pk=pk)
         if t.orgunit_set.count() > 0:
             return Response("You can't delete a type that still has org units", status=status.HTTP_401_UNAUTHORIZED)
-        return super(OrgUnitTypeViewSetV2, self).destroy(request, pk)
+        return super().destroy(request, pk)
 
     def get_queryset(self):
         queryset = OrgUnitType.objects.filter_for_user_and_app_id(

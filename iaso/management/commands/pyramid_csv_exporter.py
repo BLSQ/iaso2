@@ -39,9 +39,11 @@ class Command(BaseCommand):
                     (
                         t.source_ref if t.source_ref else "iaso_%d" % t.id,
                         t.name,
-                        None
-                        if t.parent is None
-                        else (t.parent.source_ref if t.parent.source_ref else "iaso_%d" % t.parent.id),
+                        (
+                            None
+                            if t.parent is None
+                            else (t.parent.source_ref if t.parent.source_ref else "iaso_%d" % t.parent.id)
+                        ),
                         "",
                         t.org_unit_type.name,
                         t.geom if t.geom else t.simplified_geom,

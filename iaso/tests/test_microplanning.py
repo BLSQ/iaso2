@@ -1,4 +1,4 @@
-import mock
+from unittest import mock
 from django.contrib.auth.models import User
 from django.utils.timezone import now
 from django_ltree.fields import PathValue  # type: ignore

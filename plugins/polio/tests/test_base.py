@@ -438,7 +438,7 @@ class PolioAPITestCase(APITestCase):
         for n in range(count):
             payload = {
                 "account": self.account.pk,
-                "obr_name": "campaign_{0}".format(n),
+                "obr_name": "campaign_{}".format(n),
                 "detection_status": "PENDING",
             }
             self.client.post("/api/polio/campaigns/", payload, format="json")
@@ -449,7 +449,7 @@ class PolioAPITestCase(APITestCase):
         campaigns = Campaign.objects.all()
 
         for c in campaigns[:8]:
-            self.client.delete("/api/polio/campaigns/{0}/".format(c.id))
+            self.client.delete("/api/polio/campaigns/{}/".format(c.id))
 
         response = self.client.get("/api/polio/campaigns/?deletion_status=deleted", format="json")
 
@@ -480,7 +480,7 @@ class PolioAPITestCase(APITestCase):
         campaigns = Campaign.objects.all()
 
         for c in campaigns[:2]:
-            self.client.delete("/api/polio/campaigns/{0}/".format(c.id))
+            self.client.delete("/api/polio/campaigns/{}/".format(c.id))
 
         response = self.client.get("/api/polio/campaigns/?campaigns=active", format="json")
 
@@ -494,7 +494,7 @@ class PolioAPITestCase(APITestCase):
         payload = {"id": campaign.id}
 
         if campaign.deleted_at is None:
-            self.client.delete("/api/polio/campaigns/{0}/".format(campaign.id))
+            self.client.delete("/api/polio/campaigns/{}/".format(campaign.id))
             self.client.patch("/api/polio/campaigns/restore_deleted_campaigns/", payload, format="json")
 
         restored_campaign = Campaign.objects.get(id=campaign.id)
@@ -1019,7 +1019,7 @@ class PolioAPICampaignCsvTestCase(APITestCase):
 
 class CampaignCalculatorTestCase(TestCase):
     def setUp(self) -> None:
-        with open("./plugins/polio/preparedness/test_data/example1.json", "r") as json_data:
+        with open("./plugins/polio/preparedness/test_data/example1.json") as json_data:
             self.preparedness_preview = json.load(json_data)
 
     def test_national_score(self):
@@ -1150,7 +1150,7 @@ class LQASIMPolioTestCase(APITestCase):
 
         response = self.client.get("/api/polio/campaigns/merged_shapes.geojson/")
 
-        is_cached = True if cache.get("{0}-geo_shapes".format(self.yoda.id), version=CACHE_VERSION) else False
+        is_cached = True if cache.get("{}-geo_shapes".format(self.yoda.id), version=CACHE_VERSION) else False
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(is_cached, True)

@@ -101,7 +101,7 @@ class GroupSetSerializer(DynamicFieldsModelSerializer):
             if source_version is None:
                 raise serializers.ValidationError(detail={"source_version_id": "Not found or no access to it."})
             if group_ids is None and self.instance:
-                source_version_ids = list(set([g.source_version_id for g in self.instance.groups.all()]))
+                source_version_ids = list({g.source_version_id for g in self.instance.groups.all()})
                 if len(source_version_ids) > 0 and source_version not in source_version_ids:
                     raise serializers.ValidationError(
                         detail={"source_version_id": "Groups do not belong to the same SourceVersion."}
@@ -120,7 +120,7 @@ class GroupSetSerializer(DynamicFieldsModelSerializer):
             if self.instance and source_version_id is None:
                 source_version_id = self.instance.source_version.id
 
-            source_ids = list(set([group.source_version_id for group in groups]))
+            source_ids = list({group.source_version_id for group in groups})
             if len(source_ids) > 1:
                 raise serializers.ValidationError(
                     detail={"group_ids": f"Groups do not all belong to the same SourceVersion : {source_ids}."}

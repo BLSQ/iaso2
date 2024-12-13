@@ -152,7 +152,6 @@ class PotentialPaymentsViewSetAPITestCase(APITestCase):
         self.assertJSONResponse(response, 200)
         data = response.json()
         results = data["results"]
-        print("results", results)
         self.assertEqual(len(results), 2)
         for result in results:
             self.assertFalse(result["can_see_change_requests"])

@@ -174,7 +174,7 @@ class EntityTypeAPITestCase(APITestCase):
         }
 
         response = self.client.patch(
-            "/api/entitytypes/{0}/".format(EntityType.objects.last().pk), data=patch_payload, format="json"
+            "/api/entitytypes/{}/".format(EntityType.objects.last().pk), data=patch_payload, format="json"
         )
         self.assertEqual(response.status_code, 200)
 
@@ -197,7 +197,7 @@ class EntityTypeAPITestCase(APITestCase):
         }
 
         response = self.client.patch(
-            "/api/entitytypes/{0}/".format(EntityType.objects.last().pk), data=patch_payload, format="json"
+            "/api/entitytypes/{}/".format(EntityType.objects.last().pk), data=patch_payload, format="json"
         )
         self.assertEqual(response.status_code, 403)
 

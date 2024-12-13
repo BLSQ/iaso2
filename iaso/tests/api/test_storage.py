@@ -1,5 +1,6 @@
 # TODO: need better type annotations in this file
 import csv
+from datetime import timezone
 from datetime import datetime
 from io import StringIO
 from typing import List
@@ -9,7 +10,6 @@ import numpy as np
 import pandas as pd
 import pytz
 from django.http import StreamingHttpResponse
-from django.utils import timezone
 
 from hat.api_import.models import APIImport
 from iaso.models import (

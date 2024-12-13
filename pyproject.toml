@@ -23,9 +23,9 @@ exclude = '''
 [project]
 name = "Iaso"
 readme = "README.md"
-requires-python = "~=3.9"
+requires-python = "~=3.12"
 dependencies = [
-    "black==23.12.1"
+    "black==24.10.0"
 ]
 
 [project.urls]

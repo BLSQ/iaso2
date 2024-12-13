@@ -4,6 +4,7 @@ To control who receive the e-mail create edit a polio.Config object with slug em
 and containing a list of e-mail as json.
 e.g. ['test@bluesquarehub.com']
 """
+
 import logging
 
 from django.core.mail import send_mail

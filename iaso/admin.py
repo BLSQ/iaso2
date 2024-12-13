@@ -120,9 +120,7 @@ class IasoJSONEditorWidget(JSONEditorWidget):
         if options:
             default_options.update(options)
 
-        super(IasoJSONEditorWidget, self).__init__(
-            attrs=attrs, mode=mode, options=default_options, width=width, height=height
-        )
+        super().__init__(attrs=attrs, mode=mode, options=default_options, width=width, height=height)
 
 
 class ArrayFieldMultipleChoiceField(django_forms.MultipleChoiceField):
@@ -177,7 +175,7 @@ class OrgUnitReferenceInstanceInline(admin.TabularInline):
 
 @admin.register(OrgUnit)
 @admin_attr_decorator
-class OrgUnitAdmin(admin.GeoModelAdmin):
+class OrgUnitAdmin(admin.GISModelAdmin):
     raw_id_fields = ("parent", "reference_instances", "default_image")
     list_filter = ("org_unit_type", "custom", "validated", "sub_source", "version")
     search_fields = ("name", "source_ref", "uuid")
@@ -201,7 +199,7 @@ class OrgUnitAdmin(admin.GeoModelAdmin):
 
 @admin.register(OrgUnitType)
 @admin_attr_decorator
-class OrgUnitTypeAdmin(admin.GeoModelAdmin):
+class OrgUnitTypeAdmin(admin.GISModelAdmin):
     search_fields = ("name",)
     list_display = ("name", "projects_list", "short_name", "depth")
     list_filter = ("projects",)
@@ -215,7 +213,7 @@ class OrgUnitTypeAdmin(admin.GeoModelAdmin):
 
 @admin.register(Form)
 @admin_attr_decorator
-class FormAdmin(admin.GeoModelAdmin):
+class FormAdmin(admin.GISModelAdmin):
     search_fields = ("name", "form_id")
     list_display = (
         "name",
@@ -240,7 +238,7 @@ class FormAdmin(admin.GeoModelAdmin):
 
 @admin.register(FormVersion)
 @admin_attr_decorator
-class FormVersionAdmin(admin.GeoModelAdmin):
+class FormVersionAdmin(admin.GISModelAdmin):
     search_fields = ("form__name", "form__form_id")
     ordering = ("form__name",)
     list_display = ("form_name", "form_id", "version_id", "created_at", "updated_at")
@@ -289,7 +287,7 @@ class InstanceFileAdminInline(admin.TabularInline):
 
 @admin.register(Instance)
 @admin_attr_decorator
-class InstanceAdmin(admin.GeoModelAdmin):
+class InstanceAdmin(admin.GISModelAdmin):
     raw_id_fields = (
         "org_unit",
         "entity",
@@ -378,15 +376,15 @@ class InstanceAdmin(admin.GeoModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "entity":
-            kwargs[
-                "queryset"
-            ] = Entity.objects_include_deleted.all()  # use the manager that includes soft-deleted objects
+            kwargs["queryset"] = (
+                Entity.objects_include_deleted.all()
+            )  # use the manager that includes soft-deleted objects
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 @admin.register(InstanceFile)
 @admin_attr_decorator
-class InstanceFileAdmin(admin.GeoModelAdmin):
+class InstanceFileAdmin(admin.GISModelAdmin):
     raw_id_fields = ("instance",)
     search_fields = ("name", "file")
 
@@ -413,20 +411,20 @@ class FeatureFlagAdmin(admin.ModelAdmin):
 
 @admin.register(Link)
 @admin_attr_decorator
-class LinkAdmin(admin.GeoModelAdmin):
+class LinkAdmin(admin.GISModelAdmin):
     raw_id_fields = ("source", "destination")
 
 
 @admin.register(Mapping)
 @admin_attr_decorator
-class MappingAdmin(admin.GeoModelAdmin):
+class MappingAdmin(admin.GISModelAdmin):
     list_filter = ("form_id",)
     autocomplete_fields = ["data_source"]
 
 
 @admin.register(MappingVersion)
 @admin_attr_decorator
-class MappingVersionAdmin(admin.GeoModelAdmin):
+class MappingVersionAdmin(admin.GISModelAdmin):
     list_filter = ("form_version_id",)
     formfield_overrides = {models.JSONField: {"widget": IasoJSONEditorWidget}}
 
@@ -443,7 +441,7 @@ class GroupAdmin(admin.ModelAdmin):
 
 
 @admin_attr_decorator
-class UserAdmin(admin.GeoModelAdmin):
+class UserAdmin(admin.GISModelAdmin):
     search_fields = ("username", "email", "first_name", "last_name", "iaso_profile__account__name")
     list_filter = ("iaso_profile__account", "is_staff", "is_superuser", "is_active")
     list_display = ("id", "username", "email", "first_name", "last_name", "iaso_profile", "is_superuser")
@@ -451,7 +449,7 @@ class UserAdmin(admin.GeoModelAdmin):
 
 @admin.register(Profile)
 @admin_attr_decorator
-class ProfileAdmin(admin.GeoModelAdmin):
+class ProfileAdmin(admin.GISModelAdmin):
     raw_id_fields = ("org_units",)
     search_fields = ("user__username", "user__first_name", "user__last_name", "account__name")
     list_select_related = ("user", "account")
@@ -462,7 +460,7 @@ class ProfileAdmin(admin.GeoModelAdmin):
 
 @admin.register(ExportRequest)
 @admin_attr_decorator
-class ExportRequestAdmin(admin.GeoModelAdmin):
+class ExportRequestAdmin(admin.GISModelAdmin):
     list_filter = ("launcher", "status")
     list_display = ("status", "launcher", "params", "last_error_message")
     readonly_fields = list_display
@@ -470,14 +468,14 @@ class ExportRequestAdmin(admin.GeoModelAdmin):
 
 @admin.register(ExportLog)
 @admin_attr_decorator
-class ExportLogAdmin(admin.GeoModelAdmin):
+class ExportLogAdmin(admin.GISModelAdmin):
     list_display = ("id", "http_status", "url", "sent", "received")
     readonly_fields = list_display
 
 
 @admin.register(ExportStatus)
 @admin_attr_decorator
-class ExportStatusAdmin(admin.GeoModelAdmin):
+class ExportStatusAdmin(admin.GISModelAdmin):
     list_display = ("id", "status", "last_error_message")
     readonly_fields = (
         "id",
@@ -548,9 +546,9 @@ class EntityAdmin(admin.ModelAdmin):
     def get_form(self, request, obj=None, **kwargs):
         # In the <select> for the entity type, we also want to indicate the account name
         form = super().get_form(request, obj, **kwargs)
-        form.base_fields[
-            "entity_type"
-        ].label_from_instance = lambda entity: f"{entity.name} (Account: {entity.account.name})"
+        form.base_fields["entity_type"].label_from_instance = (
+            lambda entity: f"{entity.name} (Account: {entity.account.name})"
+        )
         return form
 
     readonly_fields = ("created_at",)
@@ -751,9 +749,9 @@ class WorkflowAdmin(admin.ModelAdmin):
     def get_form(self, request, obj=None, **kwargs):
         # In the <select> for the entity type, we also want to indicate the account name
         form = super().get_form(request, obj, **kwargs)
-        form.base_fields[
-            "entity_type"
-        ].label_from_instance = lambda entity: f"{entity.name} (Account: {entity.account.name})"
+        form.base_fields["entity_type"].label_from_instance = (
+            lambda entity: f"{entity.name} (Account: {entity.account.name})"
+        )
         return form
 
     def get_queryset(self, request):
@@ -932,6 +930,7 @@ class PotentialPaymentAdmin(admin.ModelAdmin):
     formfield_overrides = {models.JSONField: {"widget": IasoJSONEditorWidget}}
     list_display = ("id", "change_request_ids", "user")
 
+    @admin.display(description="Change Request IDs")
     def change_request_ids(self, obj):
         change_requests = obj.change_requests.all()
         if change_requests:
@@ -941,8 +940,6 @@ class PotentialPaymentAdmin(admin.ModelAdmin):
                 )
             )
         return "-"
-
-    change_request_ids.short_description = "Change Request IDs"
 
 
 @admin.register(Payment)
@@ -950,6 +947,7 @@ class PaymentAdmin(admin.ModelAdmin):
     formfield_overrides = {models.JSONField: {"widget": IasoJSONEditorWidget}}
     list_display = ("id", "status", "created_at", "updated_at", "change_request_ids")
 
+    @admin.display(description="Change Request IDs")
     def change_request_ids(self, obj):
         change_requests = obj.change_requests.all()
         if change_requests:
@@ -960,14 +958,13 @@ class PaymentAdmin(admin.ModelAdmin):
             )
         return "-"
 
-    change_request_ids.short_description = "Change Request IDs"
-
 
 @admin.register(PaymentLot)
 class PaymentLotAdmin(admin.ModelAdmin):
     formfield_overrides = {models.JSONField: {"widget": IasoJSONEditorWidget}}
     list_display = ("id", "status", "created_at", "updated_at", "payment_ids")
 
+    @admin.display(description="Payment IDs")
     def payment_ids(self, obj):
         payments = obj.payments.all()
         if payments:
@@ -977,8 +974,6 @@ class PaymentLotAdmin(admin.ModelAdmin):
                 )
             )
         return "-"
-
-    payment_ids.short_description = "Payment IDs"
 
 
 @admin.register(DataSource)
@@ -1037,34 +1032,33 @@ class TenantUserAdmin(admin.ModelAdmin):
         urls = super().get_urls()
         return urls
 
+    @admin.display(
+        description="Account",
+        ordering="account_user__iaso_profile__account",
+    )
     def account(self, obj):
         return obj.account
 
-    account.admin_order_field = "account_user__iaso_profile__account"
-    account.short_description = "Account"
-
+    @admin.display(description="Total Accounts")
     def all_accounts_count(self, obj):
         return obj.main_user.tenant_users.count()
 
-    all_accounts_count.short_description = "Total Accounts"
-
+    @admin.display(
+        description="Self Account",
+        boolean=True,
+    )
     def is_self_account(self, obj):
         return obj.main_user == obj.account_user
 
-    is_self_account.boolean = True
-    is_self_account.short_description = "Self Account"
-
+    @admin.display(description="All Account Users")
     def all_account_users(self, obj):
         users = obj.get_all_account_users()
         return format_html("<br>".join(user.username for user in users))
 
-    all_account_users.short_description = "All Account Users"
-
+    @admin.display(description="Other Accounts")
     def other_accounts(self, obj):
         accounts = obj.get_other_accounts()
         return format_html("<br>".join(str(account) for account in accounts))
-
-    other_accounts.short_description = "Other Accounts"
 
     def get_queryset(self, request):
         return super().get_queryset(request).select_related("main_user", "account_user__iaso_profile__account")

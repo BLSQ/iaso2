@@ -42,8 +42,8 @@ def handle_ona_request_with_key(request, key, country_id=None):
     form_count = 0
     find_campaign_on_day_cached = functools.lru_cache(None)(find_campaign_on_day)
     stats = {
-        "7days": {"ok": defaultdict(lambda: 0), "failure": defaultdict(lambda: 0)},
-        "alltime": {"ok": defaultdict(lambda: 0), "failure": defaultdict(lambda: 0)},
+        "7days": {"ok": defaultdict(int), "failure": defaultdict(int)},
+        "alltime": {"ok": defaultdict(int), "failure": defaultdict(int)},
     }
     for config in config.content:
         cid = int(country_id) if (country_id and country_id.isdigit()) else None
@@ -148,7 +148,7 @@ def handle_ona_request_with_key(request, key, country_id=None):
             new_line = "\n%d\t%s" % (stats["7days"]["ok"][country], country)
             email_text += new_line
         send_mail(
-            "Recent errors for %s" % (key.upper(),),
+            "Recent errors for {}".format(key.upper()),
             email_text,
             settings.DEFAULT_FROM_EMAIL,
             mails,

@@ -464,7 +464,7 @@ class EntityAPITestCase(APITestCase):
 
         self.client.post("/api/entities/", data=payload, format="json")
 
-        response = self.client.get("/api/entities/{0}/".format(Entity.objects.last().pk), format="json")
+        response = self.client.get("/api/entities/{}/".format(Entity.objects.last().pk), format="json")
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["id"], Entity.objects.last().pk)
@@ -501,7 +501,7 @@ class EntityAPITestCase(APITestCase):
 
         payload = {"name": "New Client-2", "entity_type": self.entity_type.pk, "attributes": instance.pk}
 
-        response = self.client.patch("/api/entities/{0}/".format(Entity.objects.last().pk), data=payload, format="json")
+        response = self.client.patch("/api/entities/{}/".format(Entity.objects.last().pk), data=payload, format="json")
 
         self.assertEqual(response.status_code, 200)
 
@@ -529,7 +529,7 @@ class EntityAPITestCase(APITestCase):
         }
 
         self.client.post("/api/entities/bulk_create/", data=payload, format="json")
-        self.client.delete("/api/entities/{0}/".format(Entity.objects.last().pk), format="json")
+        self.client.delete("/api/entities/{}/".format(Entity.objects.last().pk), format="json")
 
         response = self.client.get("/api/entities/", format="json")
         self.assertEqual(response.status_code, 200)

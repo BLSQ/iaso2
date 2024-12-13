@@ -212,6 +212,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 ]
 if ENABLE_CORS:
     MIDDLEWARE += [
@@ -442,10 +443,20 @@ if USE_S3:
     if CDN_URL:
         # Only static files, not media files
         STATIC_URL = "//%s/static/" % (CDN_URL)
+        # Nothing was defined, I used the default value
+        STATIC_STORAGE = {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        }
     else:
         STATIC_LOCATION = "iasostatics"
-        STATICFILES_STORAGE = "iaso.storage.StaticStorage"
-        STATIC_URL = "https://%s.s3.amazonaws.com/%s/" % (AWS_STORAGE_BUCKET_NAME, STATIC_LOCATION)
+        STATIC_STORAGE = {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+            "OPTIONS": {
+                "location": "iasostatics",
+                "default_acl": "public-read",
+            },
+        }
+        STATIC_URL = "https://{}.s3.amazonaws.com/{}/".format(AWS_STORAGE_BUCKET_NAME, STATIC_LOCATION)
 
     MEDIA_URL = "https://%s.s3.amazonaws.com/" % AWS_STORAGE_BUCKET_NAME  # subdirectories will depend on field
 
@@ -459,18 +470,42 @@ if USE_S3:
         print(" STATIC_URL", STATIC_URL)
         print(" MEDIA_URL", MEDIA_URL)
 
-    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    DEFAULT_STORAGE = {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    }
+
 else:
     SERVER_URL = os.environ.get("SERVER_URL", "")
     MEDIA_URL = SERVER_URL + MEDIA_URL_PREFIX
     STATIC_URL = "/static/"
     STATIC_ROOT = os.path.join(BASE_DIR, "static")
     MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+    STATIC_STORAGE = {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    }
+    DEFAULT_STORAGE = {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    }
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "iaso/static"),
     os.path.join(BASE_DIR, "hat/assets/webpack"),
 ]
+
+# Storage changes enforced in Django 5.1 - variables are defined above
+STORAGES = {
+    "default": DEFAULT_STORAGE,
+    "staticfiles": STATIC_STORAGE,
+    "polio_documents": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {
+            "default_acl": "public-read",
+            "file_overwrite": False,
+            "querystring_auth": False,
+            "bucket_name": os.environ.get("AWS_PUBLIC_STORAGE_BUCKET_NAME", ""),
+        },
+    },
+}
 
 # Javascript/CSS Files:
 WEBPACK_LOADER = {

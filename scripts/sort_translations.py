@@ -3,7 +3,7 @@ import json
 
 def sort_translation_file(path):
     data = None
-    with open(path, "r") as file:
+    with open(path) as file:
         data = json.load(file)
 
     with open(path, "w") as file:

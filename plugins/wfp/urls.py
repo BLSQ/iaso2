@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from django.urls import path
 from .views import debug, delete_beneficiaries_analytics, delete_all_instances_and_entities
 

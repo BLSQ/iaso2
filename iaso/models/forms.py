@@ -33,7 +33,7 @@ class FormQuerySet(models.QuerySet):
         - linked to a project from the same accounts as the provided form
         """
 
-        all_accounts = set(project.account for project in form.projects.all())  # TODO: discuss - smells weird
+        all_accounts = {project.account for project in form.projects.all()}  # TODO: discuss - smells weird
         for account in all_accounts:
             if self.filter(projects__account=account, form_id=form_id).exclude(pk=form.id).exists():
                 return True
@@ -123,7 +123,7 @@ class Form(SoftDeletableModel):
         return self.form_versions.order_by("-created_at").first()
 
     def __str__(self):
-        return "%s %s " % (self.name, self.form_id)
+        return "{} {} ".format(self.name, self.form_id)
 
     def as_dict(self, additional_fields=None, show_version=True):
         res = {
@@ -295,7 +295,7 @@ class FormVersion(models.Model):
         }
 
     def __str__(self):
-        return "%s - %s - %s" % (self.form.name, self.version_id, self.created_at)
+        return "{} - {} - {}".format(self.form.name, self.version_id, self.created_at)
 
 
 def update_possible_fields(sender, instance, **kwargs):

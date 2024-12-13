@@ -51,4 +51,4 @@ class Page(models.Model):
     )
 
     def __str__(self):
-        return "%s " % (self.name,)
+        return "{} ".format(self.name)

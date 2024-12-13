@@ -14,7 +14,7 @@ class Device(models.Model):
     projects = models.ManyToManyField("Project", related_name="devices", blank=True)
 
     def __str__(self):
-        return "%s " % (self.imei,)
+        return "{} ".format(self.imei)
 
     def as_dict(self):
         return {
@@ -36,7 +36,7 @@ class DeviceOwnership(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "%s - %s" % (self.device, self.user)
+        return "{} - {}".format(self.device, self.user)
 
     def as_dict(self):
         return {

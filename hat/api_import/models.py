@@ -33,7 +33,7 @@ class APIImport(models.Model):
     exception = models.TextField(blank=True, default="")
 
     def __str__(self):
-        return "%s - %s - %s - %s" % (
+        return "{} - {} - {} - {}".format(
             self.id,
             self.user,
             self.import_type,

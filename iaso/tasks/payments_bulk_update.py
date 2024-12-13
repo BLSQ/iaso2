@@ -101,7 +101,7 @@ def payments_bulk_update(
 
         # FIXME Task don't handle rollback properly if task is killed by user or other error
         with transaction.atomic():
-            for index, payment in enumerate(queryset.iterator()):
+            for index, payment in enumerate(queryset.iterator(chunk_size=2000)):
                 res_string = "%.2f sec, processed %i payments" % (time() - start, index)
                 report_progress_and_stop_if_killed_and_update_payment_lot(
                     payment_lot=payment_lot,
@@ -166,7 +166,7 @@ def mark_payments_as_read(
 
     # FIXME Task don't handle rollback properly if task is killed by user or other error
     with transaction.atomic():
-        for index, payment in enumerate(payments.iterator()):
+        for index, payment in enumerate(payments.iterator(chunk_size=2000)):
             res_string = "%.2f sec, processed %i payments" % (time() - start, index)
             report_progress_and_stop_if_killed_and_update_payment_lot(
                 payment_lot=payment_lot,

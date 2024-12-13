@@ -168,7 +168,7 @@ class Account(models.Model):
         }
 
     def __str__(self):
-        return "%s " % (self.name,)
+        return "{} ".format(self.name)
 
 
 class RecordType(models.Model):
@@ -193,7 +193,7 @@ class MatchingAlgorithm(models.Model):
     projects = models.ManyToManyField("Project", related_name="match_algos", blank=True)
 
     def __str__(self):
-        return "%s - %s %s" % (
+        return "{} - {} {}".format(
             self.name,
             self.description,
             self.created_at.timestamp() if self.created_at else None,
@@ -226,7 +226,7 @@ class AlgorithmRun(models.Model):
     )
 
     def __str__(self):
-        return "%s - %s - %s" % (self.algorithm, self.created_at, self.launcher)
+        return "{} - {} - {}".format(self.algorithm, self.created_at, self.launcher)
 
     def as_dict(self):
         links_count = Link.objects.filter(algorithm_run=self.id).count()
@@ -276,7 +276,7 @@ class Task(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return "%s - %s - %s -%s" % (
+        return "{} - {} - {} -{}".format(
             self.name,
             self.launcher,
             self.status,
@@ -465,7 +465,7 @@ class Group(models.Model):
         base_manager_name = "all_objects"
 
     def __str__(self):
-        return "%s | %s " % (self.name, self.source_version)
+        return "{} | {} ".format(self.name, self.source_version)
 
     def as_small_dict(self):
         return {
@@ -536,8 +536,8 @@ GroupSetManager = models.Manager.from_queryset(GroupSetQuerySet)
 
 class GroupSet(models.Model):
     class GroupBelonging(models.TextChoices):
-        SINGLE = _("SINGLE")
-        MULTIPLE = _("MULTIPLE")
+        SINGLE = "SINGLE", _("SINGLE")
+        MULTIPLE = "MULTIPLE", _("MULTIPLE")
 
     name = models.TextField()
     source_ref = models.TextField(null=True, blank=True)
@@ -552,7 +552,7 @@ class GroupSet(models.Model):
     objects = GroupSetManager()
 
     def __str__(self):
-        return "%s | %s " % (self.name, self.source_version)
+        return "{} | {} ".format(self.name, self.source_version)
 
 
 class Mapping(models.Model):
@@ -564,7 +564,7 @@ class Mapping(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "%s %s" % (self.form, self.mapping_type)
+        return "{} {}".format(self.form, self.mapping_type)
 
     def is_aggregate(self):
         return self.mapping_type == AGGREGATE
@@ -611,7 +611,7 @@ class MappingVersion(models.Model):
         unique_together = [["form_version", "name"]]
 
     def __str__(self):
-        return "%s - %s" % (self.form_version, self.name)
+        return "{} - {}".format(self.form_version, self.name)
 
     def as_dict(self):
         return {
@@ -641,7 +641,7 @@ class ExternalCredentials(models.Model):
         return bool(self.url and self.password and self.login)
 
     def __str__(self):
-        return "%s - %s - %s (%s)" % (self.name, self.login, self.url, self.account)
+        return "{} - {} - {} ({})".format(self.name, self.login, self.url, self.account)
 
     def as_dict(self):
         return {
@@ -666,12 +666,14 @@ class InstanceQuerySet(django_cte.CTEQuerySet):
         Implementation: we decided to make the lock calculation via annotations, so it's a lot faster with large querysets.
         """
 
+        user_org_unit_ids = list(OrgUnit.objects.filter_for_user(user).values_list("id", flat=True))
+
         return (
             self.annotate(
                 lock_applying_to_user=FilteredRelation(
                     "instancelock",
                     condition=Q(
-                        ~Q(instancelock__top_org_unit__in=OrgUnit.objects.filter_for_user(user)),
+                        ~Q(instancelock__top_org_unit_id__in=user_org_unit_ids),
                         Q(instancelock__unlocked_by__isnull=True),
                     ),
                 )
@@ -954,7 +956,7 @@ class InstanceQuerySet(django_cte.CTEQuerySet):
             orgunits = OrgUnit.objects.hierarchy(profile.org_units.all())
 
             new_qs = new_qs.filter(org_unit__in=orgunits)
-        new_qs = new_qs.filter(project__account=profile.account_id)
+        new_qs = new_qs.filter(project__account_id=profile.account_id)
         return new_qs
 
 
@@ -978,9 +980,14 @@ class Instance(models.Model):
     STATUS_DUPLICATED = "DUPLICATED"
     STATUS_EXPORTED = "EXPORTED"
 
-    ALWAYS_ALLOWED_PATHS_XML = set(
-        ["formhub", "formhub/uuid", "meta", "meta/instanceID", "meta/editUserID", "meta/deprecatedID"]
-    )
+    ALWAYS_ALLOWED_PATHS_XML = {
+        "formhub",
+        "formhub/uuid",
+        "meta",
+        "meta/instanceID",
+        "meta/editUserID",
+        "meta/deprecatedID",
+    }
 
     REFERENCE_FLAG_CODE = "flag"
     REFERENCE_UNFLAG_CODE = "unflag"
@@ -1041,7 +1048,7 @@ class Instance(models.Model):
         ]
 
     def __str__(self):
-        return "%s %s %s" % (self.id, self.form, self.name)
+        return "{} {} {}".format(self.id, self.form, self.name)
 
     @property
     def is_instance_of_reference_form(self) -> bool:
@@ -1090,7 +1097,7 @@ class Instance(models.Model):
 
             location = self.json.get(f, None)
             if location:
-                latitude, longitude, altitude, accuracy = [float(x) for x in location.split(" ")]
+                latitude, longitude, altitude, accuracy = (float(x) for x in location.split(" "))
                 self.location = Point(x=longitude, y=latitude, z=altitude, srid=4326)
                 self.accuracy = accuracy
                 self.save()
@@ -1396,7 +1403,7 @@ class Instance(models.Model):
                 self.form_version = form_version
             except ObjectDoesNotExist:
                 pass
-        return super(Instance, self).save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
 
 class InstanceFile(models.Model):
@@ -1409,7 +1416,7 @@ class InstanceFile(models.Model):
     deleted = models.BooleanField(default=False)
 
     def __str__(self):
-        return "%s " % (self.name,)
+        return "{} ".format(self.name)
 
     def as_dict(self):
         return {
@@ -1461,7 +1468,7 @@ class Profile(models.Model):
         constraints = [models.UniqueConstraint(fields=["dhis2_id", "account"], name="dhis2_id_constraint")]
 
     def __str__(self):
-        return "%s -- %s" % (self.user, self.account)
+        return "{} -- {}".format(self.user, self.account)
 
     def get_hierarchy_for_user(self):
         return OrgUnit.objects.filter_for_user_and_app_id(self.user)

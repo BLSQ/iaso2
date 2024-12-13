@@ -79,7 +79,7 @@ class StorageStatusSerializer(serializers.Serializer):
     comment = serializers.CharField(source="status_comment", required=False, allow_blank=True)
 
     def to_representation(self, obj):
-        ret = super(StorageStatusSerializer, self).to_representation(obj)
+        ret = super().to_representation(obj)
 
         # If status is OK, we don't want to return the reason nor the comment
         if obj.status == StorageDevice.OK:

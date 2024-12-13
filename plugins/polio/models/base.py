@@ -9,10 +9,10 @@ from uuid import uuid4
 
 import django.db.models.manager
 import pandas as pd
-from django.conf import settings
 from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.postgres.fields import ArrayField
 from django.core.files.base import File
+from django.core.files.storage import storages
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.validators import RegexValidator
 from django.db import models
@@ -20,10 +20,8 @@ from django.db.models import Q, QuerySet, Sum
 from django.db.models.expressions import RawSQL
 from django.db.models.functions import Coalesce
 from django.utils import timezone
-from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 from gspread.utils import extract_id_from_url  # type: ignore
-from storages.backends.s3boto3 import S3Boto3Storage
 from translated_fields import TranslatedField
 
 from beanstalk_worker import task_decorator
@@ -403,7 +401,7 @@ class CampaignType(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify_underscore(self.name)
-        super(CampaignType, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 
 class CampaignQuerySet(models.QuerySet):
@@ -1013,14 +1011,12 @@ class NotificationManager(models.Manager):
         return OrgUnit.objects.filter(pk__in=countries_pk).defer("geom", "simplified_geom").order_by("name")
 
 
-class CustomPublicStorage(
-    S3Boto3Storage if os.environ.get("AWS_PUBLIC_STORAGE_BUCKET_NAME") else import_string(settings.DEFAULT_FILE_STORAGE)
-):
-    if os.environ.get("AWS_PUBLIC_STORAGE_BUCKET_NAME"):
-        default_acl = "public-read"
-        file_overwrite = False
-        querystring_auth = False
-        bucket_name = os.environ.get("AWS_PUBLIC_STORAGE_BUCKET_NAME", "")
+class CustomPublicStorage:
+    def __new__(cls, *args, **kwargs):
+        if os.environ.get("AWS_PUBLIC_STORAGE_BUCKET_NAME"):
+            return storages["polio_documents"]
+        else:
+            return storages["default"]
 
 
 ## Terminology

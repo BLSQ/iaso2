@@ -231,7 +231,7 @@ class EntityViewSet(ModelViewSet):
                 # Avoid duplicates
                 if Entity.objects.filter(attributes=instance):
                     raise serializers.ValidationError(
-                        {"attributes": "Entity with the attribute '{0}' already exists.".format(entity["attributes"])}
+                        {"attributes": "Entity with the attribute '{}' already exists.".format(entity["attributes"])}
                     )
                 entity_type = get_object_or_404(EntityType, pk=int(entity["entity_type"]))
                 account = request.user.iaso_profile.account
@@ -369,7 +369,7 @@ class EntityViewSet(ModelViewSet):
                 columns.append({"title": col["label"]})
 
             filename = "entities"
-            filename = "%s-%s" % (filename, strftime("%Y-%m-%d-%H-%M", gmtime()))
+            filename = "{}-{}".format(filename, strftime("%Y-%m-%d-%H-%M", gmtime()))
 
             def get_row(entity: dict, **kwargs):
                 created_at = entity["created_at"]

@@ -20,7 +20,7 @@ def color(status):
 
 class ShapelyJsonEncoder(json.JSONEncoder):
     def __init__(self, **kwargs):
-        super(ShapelyJsonEncoder, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
     def default(self, obj):
         if hasattr(obj, "as_dict"):

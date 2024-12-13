@@ -1,3 +1,5 @@
+from rest_framework import status
+
 from iaso.test import APITestCase
 from iaso import models as m
 from django.contrib.auth.models import Permission, Group
@@ -189,12 +191,7 @@ class UserRoleAPITestCase(APITestCase):
             "permissions": [self.permission_not_allowable.codename],
         }
         response = self.client.put(f"/api/userroles/{self.user_role.id}/", data=payload, format="json")
-
-        r = self.assertJSONResponse(response, 404)
-        self.assertEqual(
-            r["detail"],
-            "Not found.",
-        )
+        self.assertContains(response, "No Permission matches the given query", status_code=status.HTTP_404_NOT_FOUND)
 
     def test_delete_user_role(self):
         self.client.force_authenticate(self.user)

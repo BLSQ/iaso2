@@ -1,75 +1,76 @@
 # Django.
 # ------------------------------------------------------------------------------
-django~=4.2
+django~=5.1
 django-contrib-comments==2.2.0  # https://github.com/django/django-contrib-comments/tags
-django-cte==1.3.2  # https://github.com/dimagi/django-cte/tags
-django-filter==24.2  # https://github.com/carltongibson/django-filter/tags
-django-json-widget==1.1.1  # https://github.com/jmrivas86/django-json-widget/tags
+django-cte==1.3.3  # https://github.com/dimagi/django-cte/tags
+django-filter==24.3  # https://github.com/carltongibson/django-filter/tags
+django-json-widget==2.0.1  # https://github.com/jmrivas86/django-json-widget/tags
 django-lazy-services==0.0.3  # https://pypi.org/project/django-lazy-services/
 django-sql-dashboard==1.2  # https://github.com/simonw/django-sql-dashboard/tags
-django-storages==1.14.2  # https://github.com/jschneier/django-storages/tags
-django-translated-fields==0.12.0  # https://github.com/matthiask/django-translated-fields/tags
-django-phonenumber-field[phonenumberslite]==7.3.0 # https://django-phonenumber-field.readthedocs.io/en/latest/
-django-qr-code==4.0.1 # https://django-qr-code.readthedocs.io/en/latest/
+django-storages==1.14.4  # https://github.com/jschneier/django-storages/tags
+django-translated-fields==0.13.0  # https://github.com/matthiask/django-translated-fields/tags
+django-phonenumber-field[phonenumberslite]==8.0.0 # https://django-phonenumber-field.readthedocs.io/en/latest/
+django-qr-code==4.1.0 # https://django-qr-code.readthedocs.io/en/latest/
 
 # Django REST Framework.
 # ------------------------------------------------------------------------------
-django-cors-headers==4.3.1  # https://github.com/adamchainz/django-cors-headers/tags
+django-cors-headers==4.6.0  # https://github.com/adamchainz/django-cors-headers/tags
 djangorestframework-csv==3.0.2  # https://github.com/mjumbewu/django-rest-framework-csv/tags
-djangorestframework==3.14.0  # https://github.com/encode/django-rest-framework/tags
+djangorestframework==3.15.2  # https://github.com/encode/django-rest-framework/tags
 djangorestframework_simplejwt==5.3.1  # https://github.com/jazzband/djangorestframework-simplejwt/tags
-drf-yasg==1.21.7  # https://github.com/axnsan12/drf-yasg/tags
-pyjwt==1.7.1  # https://github.com/jpadilla/pyjwt/tags
+drf-yasg==1.21.8  # https://github.com/axnsan12/drf-yasg/tags
+pyjwt==2.10.0  # https://github.com/jpadilla/pyjwt/tags
 nested-multipart-parser==1.5.0 # https://github.com/remigermain/nested-multipart-parser
 
 # Redis.
 # ------------------------------------------------------------------------------
-redis==4.6.0  # https://github.com/redis/redis/tags
-django-redis==4.12.1  # https://github.com/jazzband/django-redis/tags
+redis==5.2.0  # https://github.com/redis/redis/tags
+django-redis==5.4.0  # https://github.com/jazzband/django-redis/tags
 
 # Pandas.
 # ------------------------------------------------------------------------------
-pandas==2.0.3  # https://github.com/pandas-dev/pandas/tags
-geopandas==0.14.2  # https://github.com/geopandas/geopandas/tags
-numpy==1.26.2  # https://github.com/numpy/numpy/tags
-Shapely==2.0.2  # https://github.com/shapely/shapely/tags
+pandas==2.2.3  # https://github.com/pandas-dev/pandas/tags
+geopandas==1.0.1  # https://github.com/geopandas/geopandas/tags
+numpy==2.1.3  # https://github.com/numpy/numpy/tags
+Shapely==2.0.6  # https://github.com/shapely/shapely/tags
 
 # Geo.
 # ------------------------------------------------------------------------------
-Fiona==1.9.5  # https://github.com/Toblerity/Fiona/tags
+Fiona==1.10.1  # https://github.com/Toblerity/Fiona/tags
 geopy==2.4.1  # https://github.com/geopy/geopy/tags
 
 # PostgreSQL and SQL.
 # ------------------------------------------------------------------------------
 django-ltree==0.5.3  # https://github.com/mariocesar/django-ltree/tags
-psycopg2-binary==2.9.9  # https://github.com/psycopg/psycopg2/tags
+psycopg2-binary==2.9.10  # https://github.com/psycopg/psycopg2/tags
 
 # Tools.
 # ------------------------------------------------------------------------------
-Pillow==10.1.0  # https://github.com/python-pillow/Pillow/tags
-boto3==1.34.7  # https://github.com/boto/boto3/tags
-pycryptodome==3.20.0  # https://github.com/Legrandin/pycryptodome/
+Pillow==11.0.0  # https://github.com/python-pillow/Pillow/tags
+boto3==1.35.66  # https://github.com/boto/boto3/tags
+pycryptodome==3.21.0  # https://github.com/Legrandin/pycryptodome/
 dateparser==1.2.0  # https://github.com/scrapinghub/dateparser/tags
-requests==2.31.0  # https://github.com/psf/requests/tags
-gql[requests]==3.4.1  # https://github.com/graphql-python/gql/tags
-gspread-formatting==1.1.2  # https://github.com/robin900/gspread-formatting/tags
-gspread==5.12.3  # https://github.com/burnash/gspread/tags
-unidecode==1.3.7  # https://github.com/avian2/unidecode/tags
-python-dateutil==2.9.0 # https://github.com/dateutil/dateutil
+requests==2.32.3  # https://github.com/psf/requests/tags
+gql[requests]==3.5.0  # https://github.com/graphql-python/gql/tags
+gspread-formatting==1.2.0  # https://github.com/robin900/gspread-formatting/tags
+gspread==6.1.4  # https://github.com/burnash/gspread/tags
+unidecode==1.3.8  # https://github.com/avian2/unidecode/tags
+python-dateutil==2.9.0.post0  # https://github.com/dateutil/dateutil
 
 # Exporting tools.
 # ------------------------------------------------------------------------------
-xlsxwriter==3.1.9  # https://github.com/jmcnamara/XlsxWriter/tags
-beautifulsoup4==4.12.2  # https://pypi.org/project/beautifulsoup4/
-lxml==4.9.4  # https://github.com/lxml/lxml/tags
+xlsxwriter==3.2.0  # https://github.com/jmcnamara/XlsxWriter/tags
+beautifulsoup4==4.12.3  # https://pypi.org/project/beautifulsoup4/
+lxml==5.3.0  # https://github.com/lxml/lxml/tags
 
 # Importing tools.
 # ------------------------------------------------------------------------------
-jsonschema==4.20.0  # https://github.com/python-jsonschema/jsonschema/tags
+jsonschema==4.23.0  # https://github.com/python-jsonschema/jsonschema/tags
 
 # Web server and auth.
 # ------------------------------------------------------------------------------
 oauth2client==4.1.3  # https://github.com/googleapis/oauth2client/tags
+gunicorn==23.0.0  # https://github.com/benoitc/gunicorn/tags
 
 # DHIS2 API wrapper.
 # ------------------------------------------------------------------------------
@@ -77,14 +78,14 @@ dhis2.py==2.3.0  # https://github.com/davidhuser/dhis2.py/tags
 
 # Monitoring.
 # ------------------------------------------------------------------------------
-sentry-sdk[django]==1.38.0  # https://github.com/getsentry/sentry-python/tags
+sentry-sdk[django]==2.18.0  # https://github.com/getsentry/sentry-python/tags
 
 # Only used for WFP plugin.
 # ------------------------------------------------------------------------------
-SQLAlchemy==2.0.23  # https://github.com/sqlalchemy/sqlalchemy/tags
-celery==5.3.6  # https://github.com/celery/celery/tags
-django-allauth==0.54.0  # https://github.com/pennersr/django-allauth/tags
-django-celery-beat==2.5.0  # https://github.com/celery/django-celery-beat/tags
+SQLAlchemy==2.0.36  # https://github.com/sqlalchemy/sqlalchemy/tags
+celery==5.4.0  # https://github.com/celery/celery/tags
+django-allauth==65.2.0  # https://github.com/pennersr/django-allauth/tags
+django-celery-beat==2.7.0  # https://github.com/celery/django-celery-beat/tags
 django-celery-results==2.5.1  # https://github.com/celery/django-celery-results/tags
 
 # Webpack loader.
@@ -111,8 +112,10 @@ https://github.com/BLSQ/django-webpack-loader/archive/5fa2b6897b27dc6ff5bb51162e
 #
 # Since pyxform is used 2 times in Iaso for `create_survey_from_xls`, we should
 # get rid of it to upgrade to newer versions of Python and Pandas.
+#
+# ^ this will need to be updated once we have a good solution for pyxform
 # ------------------------------------------------------------------------------
-pyxform==2.0.0  # https://github.com/XLSForm/pyxform/tags
+pyxform==2.2.0  # https://github.com/XLSForm/pyxform/tags
 
 # Bug fix for: "App Engine" was removed from `requests_toolbelt`.
 # ------------------------------------------------------------------------------
@@ -122,18 +125,19 @@ pyxform==2.0.0  # https://github.com/XLSForm/pyxform/tags
 # https://github.com/BLSQ/iaso/blob/a52af7/plugins/polio/tasks/api/refresh_lqas_data.py#L3
 #     gql > requests_toolbelt > appengine
 # ------------------------------------------------------------------------------
-urllib3<2
-requests-toolbelt==0.9.1
+# urllib3<2
+urllib3==2.2.3
+requests-toolbelt==1.0.0
 
 # Tools.
 # ------------------------------------------------------------------------------
-ipython==8.18.1  # https://github.com/ipython/ipython/tags
+ipython==8.29.0  # https://github.com/ipython/ipython/tags
 django-extensions==3.2.3  # https://github.com/django-extensions/django-extensions/tags
 
 # Trypelim plugin.
 # ------------------------------------------------------------------------------
 django-pg-utils==0.1.5
-django-ses==2.6.1
-gpxpy==1.4.0
+django-ses==4.2.0
+gpxpy==1.6.2
 snaql==0.4.2
 tsp-solver2==0.4.1

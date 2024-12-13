@@ -1,4 +1,5 @@
 """Add the polio permission for existing user in account polio"""
+
 from django.db import migrations
 
 

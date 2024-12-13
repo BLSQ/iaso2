@@ -3,7 +3,7 @@ import collections.abc
 import re
 
 start_ranges = "|".join(
-    "[{0}]".format(r)
+    "[{}]".format(r)
     for r in [
         "\xC0-\xD6",
         "\xD8-\xF6",
@@ -19,7 +19,7 @@ start_ranges = "|".join(
     ]
 )
 
-NameStartChar = re.compile(r"(:|[A-Z]|_|[a-z]|{0})".format(start_ranges))
+NameStartChar = re.compile(r"(:|[A-Z]|_|[a-z]|{})".format(start_ranges))
 NameChar = re.compile(r"(\-|\.|[0-9]|\xB7|[\u0300-\u036F]|[\u203F-\u2040])")
 
 ########################
@@ -27,7 +27,7 @@ NameChar = re.compile(r"(\-|\.|[0-9]|\xB7|[\u0300-\u036F]|[\u203F-\u2040])")
 ########################
 
 
-class Node(object):
+class Node:
     """
     Represents each tag in the tree
 
@@ -66,11 +66,11 @@ class Node(object):
         wrap = self.wrap
         end, start = "", ""
         if wrap:
-            end = "</{0}>".format(wrap)
-            start = "<{0}>".format(wrap)
+            end = "</{}>".format(wrap)
+            start = "<{}>".format(wrap)
 
         if self.closed_tags_for and self.data in self.closed_tags_for:
-            return "<{0}/>".format(self.wrap)
+            return "<{}/>".format(self.wrap)
 
         # Convert the data attached in this node into a value and children
         value, children = self.convert()
@@ -171,7 +171,7 @@ class Node(object):
         else:
             val = str(data)
             if self.tag:
-                val = "<{0}>{1}</{2}>".format(self.tag, val, self.tag)
+                val = "<{}>{}</{}>".format(self.tag, val, self.tag)
 
         return val, children
 
@@ -204,7 +204,7 @@ class Node(object):
 ########################
 
 
-class Converter(object):
+class Converter:
     """Logic for creating a Node tree and serialising that tree into a string"""
 
     def __init__(self, wrap=None, indent="  ", newlines=True):
@@ -234,8 +234,7 @@ class Converter(object):
             def eachline(nodes):
                 """Yield each line in each node"""
                 for node in nodes:
-                    for line in node.split("\n"):
-                        yield line
+                    yield from node.split("\n")
 
             def ret(nodes, wrapped):
                 """
@@ -246,7 +245,7 @@ class Converter(object):
                     and indent each line in the child by one indent unit
                 """
                 if wrapped:
-                    seperator = "\n{0}".format(indent)
+                    seperator = "\n{}".format(indent)
                     surrounding = "\n{0}{{0}}\n".format(indent)
                 else:
                     seperator = "\n"

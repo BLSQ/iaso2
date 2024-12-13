@@ -201,7 +201,7 @@ class BudgetProcessWriteSerializer(serializers.ModelSerializer):
 
         budget_process = super().update(budget_process, validated_data)
         existing_round_ids = set(budget_process.rounds.values_list("id", flat=True))
-        new_round_ids = set(round_data["id"] for round_data in rounds_data if "id" in round_data)
+        new_round_ids = {round_data["id"] for round_data in rounds_data if "id" in round_data}
 
         # should we also empty cost?
         rounds_to_unlink = existing_round_ids - new_round_ids

@@ -43,7 +43,7 @@ class CorrelationAPITestCase(APITestCase):
                 "longitude": 4.4,
                 "accuracy": 10,
                 "altitude": 100,
-                "file": "\/storage\/emulated\/0\/odk\/instances\/%s" % file_name,
+                "file": r"\/storage\/emulated\/0\/odk\/instances\/%s" % file_name,
                 "name": file_name,
             }
         ]
@@ -82,7 +82,7 @@ class CorrelationAPITestCase(APITestCase):
                 "longitude": 4.4,
                 "accuracy": 10,
                 "altitude": 100,
-                "file": "\/storage\/emulated\/0\/odk\/instances\/%s" % file_name,
+                "file": r"\/storage\/emulated\/0\/odk\/instances\/%s" % file_name,
                 "name": file_name,
             }
         ]
@@ -127,7 +127,7 @@ class CorrelationAPITestCase(APITestCase):
                 "longitude": 4.4,
                 "accuracy": 10,
                 "altitude": 100,
-                "file": "\/storage\/emulated\/0\/odk\/instances\/%s" % file_name,
+                "file": r"\/storage\/emulated\/0\/odk\/instances\/%s" % file_name,
                 "name": file_name,
             }
         ]
@@ -142,7 +142,7 @@ class CorrelationAPITestCase(APITestCase):
         self.assertEqual(anonymous_uploaded_instance.created_by, None)
         self.assertEqual(anonymous_uploaded_instance.last_modified_by, None)
 
-        self.client.credentials(HTTP_AUTHORIZATION="Token: {0}".format(jwt_token.json()["access"]))
+        self.client.credentials(HTTP_AUTHORIZATION="Token: {}".format(jwt_token.json()["access"]))
 
         with open("iaso/tests/fixtures/%s" % file_name) as fp:
             response_form = self.client.post("/sync/form_upload/", {"xml_submission_file": fp})

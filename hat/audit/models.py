@@ -65,7 +65,7 @@ class Modification(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return "%s - %s - %s - %s" % (
+        return "{} - {} - {} - {}".format(
             self.content_type,
             self.object_id,
             self.user,

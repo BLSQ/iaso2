@@ -1,5 +1,6 @@
 import pathlib
 import typing
+from io import BytesIO
 
 from django.utils import timezone, dateparse
 from pyxform import create_survey_from_xls, errors, Survey as BaseSurvey  # type: ignore
@@ -44,7 +45,12 @@ def to_json_dict(form_version):  # TODO: remove
     if not form_version.xls_file:
         return None
     try:
-        survey = create_survey_from_xls(form_version.xls_file.file)
+        # Since version 2.1.0, pyxform expects a path or a bytes | BytesIO | IOBase object
+        # see pyxform get_definition_data() function
+        file = form_version.xls_file
+        file_content = BytesIO(file.read())
+        file_content.name = file.name
+        survey = create_survey_from_xls(file_content)
         return survey.to_json_dict()
     except FileNotFoundError as e:
         print("Failed to form in xls", e)
@@ -110,7 +116,11 @@ def parse_xls_form(xls_file: typing.BinaryIO, *, previous_version: str = None) -
     """
 
     try:
-        survey = create_survey_from_xls(xls_file, default_name="data")
+        # Since version 2.1.0, pyxform expects a path or a bytes | BytesIO | IOBase object
+        # see pyxform get_definition_data() function
+        file_content = BytesIO(xls_file.read())
+        file_content.name = xls_file.name
+        survey = create_survey_from_xls(file_content, default_name="data")
     except errors.PyXFormError as e:
         raise ParsingError(f"Invalid XLS file: {e}")
 

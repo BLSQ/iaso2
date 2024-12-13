@@ -198,21 +198,21 @@ class FormSerializer(DynamicFieldsModelSerializer):
                 before = data.get("periods_before_allowed", 0)
                 after = data.get("periods_after_allowed", 0)
                 if before + after < 1:
-                    tracker_errors[
-                        "periods_allowed"
-                    ] = "periods_before_allowed + periods_after_allowed should be greater than or equal to 1"
+                    tracker_errors["periods_allowed"] = (
+                        "periods_before_allowed + periods_after_allowed should be greater than or equal to 1"
+                    )
             if tracker_errors:
                 raise serializers.ValidationError(tracker_errors)
         return data
 
     def update(self, form, validated_data):
         original = copy(form)
-        form = super(FormSerializer, self).update(form, validated_data)
+        form = super().update(form, validated_data)
         log_modification(original, form, FORM_API, user=self.context["request"].user)
         return form
 
     def create(self, validated_data):
-        form = super(FormSerializer, self).create(validated_data)
+        form = super().create(validated_data)
         log_modification(None, form, FORM_API, user=self.context["request"].user)
         return form
 
@@ -393,7 +393,7 @@ class FormsViewSet(ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         original = get_object_or_404(Form, pk=self.kwargs["pk"])
-        response = super(FormsViewSet, self).destroy(request, *args, **kwargs)
+        response = super().destroy(request, *args, **kwargs)
         destroyed_form = Form.objects_only_deleted.get(pk=original.id)
         log_modification(original, destroyed_form, FORM_API, user=request.user)
         return response
