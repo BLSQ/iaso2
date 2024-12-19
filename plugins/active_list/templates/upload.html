@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>Envoi des rapports de la file active</h2>
+
+<br/>
+<div>
+    <div>Période de rapportage</div>
+    <select id="monthSelect"></select><br/><br/>
+    <div>Choisissez votre établissement:</div>
+    <select id="countrySelect"></select><br/><br/>
+    <select id="regionSelect"></select><br/><br/>
+    <select id="districtSelect"></select><br/><br/>
+    <select id="facilitySelect"></select><br/><br/>
+    <span id="link">
+        Sélectionnez un fichier excel à envoyer:
+          <form action="/" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="file"/>
+                <input type="hidden" name="org_unit_id" id="org_unit_id"/>
+                <input type="hidden" name="bypass" id="bypass"/>
+                <input type="hidden" name="period" id="period"/>
+                <input type="submit" value="Envoyer"/>
+          </form>
+    </span>
+    <div id="loader-container"><div class="loader" id="loader"></div></div>
+</div>
+
+<script src="{% static 'upload.js' %}">
+</script>
+{% endblock %}

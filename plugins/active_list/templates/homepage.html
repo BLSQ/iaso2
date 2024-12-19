@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>BIENVENUE SUR SNGD-FILE ACTIVE</h2>
+
+<div id="homepage_menu">
+    <div class="homepage_button"><a href="{% url 'patient_list' %}">Voir le listing des patients</a></div>
+    <div class="homepage_button"><a href="{% url 'validation' %}">Validation</a></div>
+    <div class="homepage_button"><a href="{% url 'upload' %}">Charger les patients reçus</a></div>
+    <div class="homepage_button"><a href="https://dashboards-civ.bluesquare.org/">Tableau de bord</a></div>
+    <div class="homepage_button">Saisie des données</div>
+    <div class="homepage_button"><a href="https://dashboards-civ.bluesquare.org/">Générer des rapports à l'aide d'un TCD</a></div>
+</div>
+</script>
+{% endblock %}

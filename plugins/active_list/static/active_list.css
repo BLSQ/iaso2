@@ -1,0 +1,233 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    font-size: 15px;
+    font-family: sans-serif;
+    background-color: white;
+    color: #0E263B;
+    font-family: serif;
+}
+#header {
+    padding: 5px 10px;
+    border-bottom: 1px solid darkblue;
+}
+
+#footer {
+
+    padding: 0px 10px;
+    border-top: 1px solid darkblue;
+}
+
+a {
+    color: darkblue;
+}
+
+h1 {
+    padding-top: 20px;
+}
+
+#container {
+    background-color: white;
+    flex: 1; /* Allow the main content to grow and push the footer down */
+    margin-top: 10px;
+    padding: 10px;
+    background-color: light;
+
+}
+
+#logout {
+    float: right;
+}
+
+
+form {
+    display: flex;
+    flex-direction: column;
+
+    margin: 10px auto;
+    padding: 20px;
+    border-radius: 5px;
+
+}
+
+input[type="file"] {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+input[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+
+}
+
+input[type="submit"]:hover {
+    background-color: #0069d9;
+}
+
+.loader {
+    border: 4px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 4px solid #3498db;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    display: none; /* Hide the loader initially */
+}
+
+#loader-container {
+    margin: auto;
+    width: 30px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* table styles */
+
+#table-container {
+    overflow-x: auto; /* Enable horizontal scrolling if table is too wide */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-family: sans-serif; /* Use a clean font */
+    font-size: 12px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+   /* padding: 8px 12px; /* Adjust padding for better readability */
+    text-align: left;
+}
+
+th {
+    background-color: #f5f5f5; /* Light gray background for headers */
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9; /* Subtle alternating row color */
+}
+
+tr:hover {
+    background-color: #e9e9e9; /* Slightly darker hover effect */
+}
+
+/* Basic Styling for all select boxes */
+select {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px 24px 8px 10px;
+    font-family: sans-serif;
+    appearance: none; /* Remove default styling */
+    -webkit-appearance: none; /* For Safari */
+    -moz-appearance: none; /* For Firefox */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23333'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); /* Add a dropdown arrow */
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px 12px;
+}
+
+/* Hover effect */
+select:hover {
+    border-color: #bbb;
+}
+
+/* Focus effect */
+select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25); /* Add a blue outline */
+}
+
+/* titles styling */
+h1, h2, h3, h4 {
+    font-family: sans-serif; /* Use a clean, modern font */
+    margin-top: 0em;
+    margin-bottom: 0.5em; /* Add spacing below the headings */
+    font-weight: bold; /* Make the headings bold */
+    line-height: 1.2; /* Adjust line height for better readability */
+}
+
+h1 {
+    font-size: 2.5em; /* Large font size for main headings */
+}
+
+h2 {
+    font-size: 2em; /* Slightly smaller for subheadings */
+}
+
+h3 {
+    font-size: 1.5em; /* Even smaller for sub-subheadings */
+}
+
+h4 {
+    font-size: 1.2em; /* Smallest size for minor headings */
+}
+
+.selectBox {
+    padding: 5px;
+}
+
+#homepage_menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive columns */
+    grid-gap: 20px; /* Spacing between grid items */
+}
+
+.homepage_button {
+
+    padding: 30px;
+    color: white;
+    background-color: darkcyan;
+
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.homepage_button a {
+    color: white;
+}
+
+
+#validation_form {
+  display: none; /* Hidden by default */
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  z-index: 100; /* Ensure it's on top */
+}
+
+/* Optional: Overlay styles */
+.overlay {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 99; /* Behind the popup */
+}

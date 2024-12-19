@@ -1,0 +1,29 @@
+{% load static %}
+<html>
+<head>
+    <link rel="icon" href="{%  static 'FA-logo.png' %}" type="image/png"/>
+
+    <meta charset="UTF-8">
+    <script src="{% static 'jquery-3.6.4.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'theme.default.min.css' %}">
+
+    <script type="text/javascript" src="{% static 'jquery.tablesorter.min.js' %}"></script>
+    <script src="{% static 'utils.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'active_list.css' %}"/>
+</head>
+<body>
+<div id="header">
+        <div id="logout"><a href="/dashboard/">Admin</a> - Utilisateur: {{ request.user }} - <a href="{% url 'logout-iaso' %}">Déconnexion</a></div>
+    <div> <img src="{% static 'logos.png' %}" alt="Logo" height="70px" ></div>
+    <div><a href="{% url 'homepage' %}">Page d'accueil</a></div>
+</div>
+<div id="container">
+
+    {% block content %}
+
+    {% endblock %}
+</div>
+    <div id="footer"> <img src="{% static 'footer-logos.png' %}" alt="Logo" height="70px" ></div>
+
+</body>
+</html>

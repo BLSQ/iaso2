@@ -471,6 +471,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "iaso/static"),
     os.path.join(BASE_DIR, "hat/assets/webpack"),
 ]
+for plugin_name in PLUGINS:
+    STATICFILES_DIRS.append(os.path.join(BASE_DIR, "plugins/%s/static" % plugin_name))
 
 # Javascript/CSS Files:
 WEBPACK_LOADER = {

@@ -1,10 +1,10 @@
-{% load static %}
+{% load render_bundle from webpack_loader %}
 <!doctype html>
 <html>
     <head>
         <title>{{title}}</title>
         {{ analytics_script | safe }}
-        <script src="{% static 'superset.js' %}"></script>
+        {% render_bundle 'superset' %}
     </head>
 
     <body>

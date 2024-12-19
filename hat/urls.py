@@ -67,7 +67,7 @@ else:
         urlpatterns += [path("accounts/", include(provider_urlpatterns))]
 
     urlpatterns += [
-        path("", RedirectView.as_view(pattern_name="dashboard:home_iaso", permanent=False), name="index"),
+        path("", RedirectView.as_view(pattern_name="homepage", permanent=False), name="index"),
         path("_health/", health),
         path("_health", health),  # same without slash otherwise AWS complain about redirect
         path("health/", health),  # alias since current apache config hide _health/
