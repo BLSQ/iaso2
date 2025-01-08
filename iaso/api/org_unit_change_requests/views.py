@@ -76,6 +76,7 @@ class OrgUnitChangeRequestViewSet(viewsets.ModelViewSet):
                 "new_org_unit_type",
                 "old_org_unit_type",
                 "org_unit__version",
+                "data_source_synchronization",
             )
             .prefetch_related(
                 "org_unit__groups",

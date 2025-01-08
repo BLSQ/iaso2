@@ -25,6 +25,9 @@ class OrgUnitChangeRequestListFilter(django_filters.rest_framework.FilterSet):
     groups = django_filters.CharFilter(method="filter_groups", label=_("Groups IDs (comma-separated)"))
     project = django_filters.NumberFilter(field_name="org_unit__org_unit_type__projects", label=_("Project ID"))
     created_at = django_filters.DateFromToRangeFilter()
+    data_source_synchronization_id = django_filters.CharFilter(
+        field_name="data_source_synchronization_id", label=_("Data source synchronization ID")
+    )
 
     forms = django_filters.CharFilter(method="filter_forms", label=_("Forms IDs (comma-separated)"))
     users = django_filters.CharFilter(method="filter_users", label=_("Users IDs (comma-separated)"))
