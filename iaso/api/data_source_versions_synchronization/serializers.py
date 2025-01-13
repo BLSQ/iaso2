@@ -82,16 +82,6 @@ class DataSourceVersionsSynchronizationSerializer(serializers.ModelSerializer):
         return validated_data
 
 
-class OrgUnitForUser(serializers.PrimaryKeyRelatedField):
-    """
-    Limit related OrgUnit choices.
-    """
-
-    def get_queryset(self):
-        user = self.context["request"].user
-        return OrgUnit.objects.filter_for_user(user)
-
-
 class CreateJsonDiffParametersSerializer(serializers.Serializer):
     """
     Validate the parameters of DataSourceVersionsSynchronization.create_json_diff().
@@ -101,7 +91,9 @@ class CreateJsonDiffParametersSerializer(serializers.Serializer):
     source_version_to_update_validation_status = serializers.ChoiceField(
         choices=OrgUnit.VALIDATION_STATUS_CHOICES, required=False, default=None
     )
-    source_version_to_update_top_org_unit = OrgUnitForUser(required=False, default=None)
+    source_version_to_update_top_org_unit = serializers.PrimaryKeyRelatedField(
+        queryset=OrgUnit.objects.all(), required=False, default=None
+    )
     source_version_to_update_org_unit_types = serializers.PrimaryKeyRelatedField(
         queryset=OrgUnitType.objects.all(), many=True, required=False, default=None
     )
@@ -109,7 +101,9 @@ class CreateJsonDiffParametersSerializer(serializers.Serializer):
     source_version_to_compare_with_validation_status = serializers.ChoiceField(
         choices=OrgUnit.VALIDATION_STATUS_CHOICES, required=False, default=None
     )
-    source_version_to_compare_with_top_org_unit = OrgUnitForUser(required=False, default=None)
+    source_version_to_compare_with_top_org_unit = serializers.PrimaryKeyRelatedField(
+        queryset=OrgUnit.objects.all(), required=False, default=None
+    )
     source_version_to_compare_with_org_unit_types = serializers.PrimaryKeyRelatedField(
         queryset=OrgUnitType.objects.all(), many=True, required=False, default=None
     )

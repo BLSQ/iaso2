@@ -2,8 +2,6 @@ import datetime
 
 import time_machine
 
-from rest_framework.test import APIRequestFactory
-
 from iaso import models as m
 from iaso.api.data_source_versions_synchronization.serializers import (
     CreateJsonDiffParametersSerializer,
@@ -144,10 +142,8 @@ class CreateJsonDiffParametersSerializerTestCase(TestCase):
     def setUpTestData(cls):
         cls.account = m.Account.objects.create(name="Account")
         cls.user = cls.create_user_with_profile(username="user", first_name="Foo", last_name="Bar", account=cls.account)
-        cls.project = m.Project.objects.create(name="Project", account=cls.account, app_id="foo.bar.baz")
 
         cls.data_source = m.DataSource.objects.create(name="Data source")
-        cls.data_source.projects.set([cls.project])
 
         cls.source_version_to_update = m.SourceVersion.objects.create(
             data_source=cls.data_source, number=2, description="Source A"
@@ -195,9 +191,6 @@ class CreateJsonDiffParametersSerializerTestCase(TestCase):
         )
 
     def test_deserialize_with_params(self):
-        request = APIRequestFactory().get("/")
-        request.user = self.user
-
         json_diff_params = {
             # Version to update.
             "source_version_to_update_validation_status": OrgUnit.VALIDATION_NEW,
@@ -216,8 +209,7 @@ class CreateJsonDiffParametersSerializerTestCase(TestCase):
             "field_names": ["name", "parent", "opening_date", "closed_date"],
         }
         serializer = CreateJsonDiffParametersSerializer(
-            data=json_diff_params,
-            context={"data_source_versions_synchronization": self.data_source_sync, "request": request},
+            data=json_diff_params, context={"data_source_versions_synchronization": self.data_source_sync}
         )
 
         self.assertTrue(serializer.is_valid())
@@ -247,15 +239,11 @@ class CreateJsonDiffParametersSerializerTestCase(TestCase):
         self.assertIn("closed_date", data["field_names"])
 
     def test_validate_source_version_to_update_top_org_unit(self):
-        request = APIRequestFactory().get("/")
-        request.user = self.user
-
         json_diff_params = {
             "source_version_to_update_top_org_unit": self.source_version_to_compare_with_top_org_unit.pk,
         }
         serializer = CreateJsonDiffParametersSerializer(
-            data=json_diff_params,
-            context={"data_source_versions_synchronization": self.data_source_sync, "request": request},
+            data=json_diff_params, context={"data_source_versions_synchronization": self.data_source_sync}
         )
         self.assertFalse(serializer.is_valid())
         self.assertIn(
@@ -264,15 +252,11 @@ class CreateJsonDiffParametersSerializerTestCase(TestCase):
         )
 
     def test_validate_source_version_to_compare_with_top_org_unit(self):
-        request = APIRequestFactory().get("/")
-        request.user = self.user
-
         json_diff_params = {
             "source_version_to_compare_with_top_org_unit": self.source_version_to_update_top_org_unit.pk,
         }
         serializer = CreateJsonDiffParametersSerializer(
-            data=json_diff_params,
-            context={"data_source_versions_synchronization": self.data_source_sync, "request": request},
+            data=json_diff_params, context={"data_source_versions_synchronization": self.data_source_sync}
         )
         self.assertFalse(serializer.is_valid())
         self.assertIn(
