@@ -88,6 +88,8 @@ services:
             SUPERSET_URL:
             SUPERSET_ADMIN_USERNAME:
             SUPERSET_ADMIN_PASSWORD:
+            CLAMAV_ACTIVE:
+            CLAMAV_FQDN:
         logging: &iaso_logging
             driver: 'json-file'
             options:

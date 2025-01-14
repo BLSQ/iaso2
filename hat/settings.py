@@ -663,10 +663,10 @@ SUPERSET_ADMIN_PASSWORD = os.environ.get("SUPERSET_ADMIN_PASSWORD", None)
 
 # ClamAV - Antivirus configuration
 CLAMAV_ACTIVE = os.environ.get("CLAMAV_ACTIVE", "false").lower() == "true"
-CLAMAV_FDQN = os.environ.get("CLAMAV_FDQN", "www.some-url.com")  # FDQN, not full URL
+CLAMAV_FQDN = os.environ.get("CLAMAV_FQDN", "www.some-url.com")  # FQDN, not full URL
 CLAMAV_PORT = os.environ.get("CLAMAV_PORT", "3310")
 CLAMAV_CONFIGURATION = {
-    "address": f"{CLAMAV_FDQN}:{CLAMAV_PORT}",
+    "address": f"{CLAMAV_FQDN}:{CLAMAV_PORT}",
     "backend": "clamd",  # Using ClamAV daemon
     "stream": True,  # Streaming file content instead of sending files as is
 }
