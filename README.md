@@ -788,7 +788,7 @@ Recommended:
   * Docker
 
 External service dependencies:
-* PostgreSQL Server > 10.
+* PostgreSQL Server ≥ 16.
 * Enketo > 4.0
 * Access to an SMTP server to send e-mail.
 

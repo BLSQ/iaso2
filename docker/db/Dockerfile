@@ -1,9 +1,9 @@
-FROM postgres:12
+FROM postgres:16
 
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
- && apt-get install postgis postgresql-12-postgis-3 -y \
+ && apt-get install postgis postgresql-16-postgis-3 -y \
  && rm -rf /var/lib/apt/lists/*
 
 
