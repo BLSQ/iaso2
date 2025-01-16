@@ -1,4 +1,4 @@
-FROM postgres:16
+FROM postgres:16.6
 
 ARG DEBIAN_FRONTEND=noninteractive
 

@@ -94,8 +94,7 @@ services:
         command: start_dev
 
     db:
-        image: iaso/postgis
-        # Workaround until there is a stable Postgis image for Apple Silicon
+        image: postgis/postgis:16-3.4
         build: docker/db
         logging: *iaso_logging
         ports:
