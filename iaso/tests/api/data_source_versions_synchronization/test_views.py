@@ -76,11 +76,13 @@ class DataSourceVersionsSynchronizationViewSetTestCase(TaskAPITestCase):
             self.assertJSONResponse(response, 200)
             self.assertEqual(2, len(response.data["results"]))
 
-    def test_list_for_dropdown(self):
+    def test_list_ok_with_dynamic_fields(self):
+        """
+        Call the API with a restricted subset of the fields (`fields=id,name`).
+        This can be useful to e.g. build a frontend dropdown.
+        """
         self.client.force_authenticate(self.user)
-        search_param = "name__icontains=foo"
-        fields_param = "fields=id,name"
-        response = self.client.get(f"/api/datasources/sync/?{search_param}&{fields_param}")
+        response = self.client.get("/api/datasources/sync/?name__icontains=foo&fields=id,name")
         self.assertEqual(1, len(response.data["results"]))
         expected_result = {
             "id": self.data_source_sync_1.pk,
