@@ -30,6 +30,7 @@ import { useGetGroupDropdown } from '../../hooks/requests/useGetGroups';
 import { useGetDataSources } from '../../hooks/requests/useGetDataSources';
 import { useDefaultSourceVersion } from '../../../dataSources/utils';
 import { useGetVersionLabel } from '../../hooks/useGetVersionLabel';
+import { getDataSourceVersionsSynchronisationDropdown } from '../../../dataSources/hooks/useGetDataSourceVersionsSynchronisationDropdown';
 
 const baseUrl = baseUrls.orgUnitsChangeRequest;
 type Props = {
@@ -175,6 +176,14 @@ export const ReviewOrgUnitChangesFilter: FunctionComponent<Props> = ({
         (keyValue, newValue) => {
             const joined = newValue?.map(r => r.value)?.join(',');
             handleChange(keyValue, joined);
+        },
+        [handleChange],
+    );
+
+    const handleChangeDataSourceVersionsSynchronisation = useCallback(
+        (keyValue, dataSourceVersionsSynchronisation) => {
+            const id: number = dataSourceVersionsSynchronisation.value;
+            handleChange(keyValue, id);
         },
         [handleChange],
     );
@@ -364,6 +373,20 @@ export const ReviewOrgUnitChangesFilter: FunctionComponent<Props> = ({
                     loading={isLoadingForms}
                     labelString={formatMessage(MESSAGES.forms)}
                 />
+                <Box mt={2}>
+                    <AsyncSelect
+                        keyValue="data_source_synchronization_id"
+                        label={MESSAGES.dataSourceVersionsSynchronisation}
+                        value={
+                            filters.dataSourceVersionsSynchronisationId ?? ''
+                        }
+                        onChange={handleChangeDataSourceVersionsSynchronisation}
+                        debounceTime={500}
+                        fetchOptions={input =>
+                            getDataSourceVersionsSynchronisationDropdown(input)
+                        }
+                    />
+                </Box>
             </Grid>
             <Grid item xs={12} md={4} lg={3}>
                 <Box mt={2}>
