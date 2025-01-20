@@ -30,7 +30,10 @@ import { useGetGroupDropdown } from '../../hooks/requests/useGetGroups';
 import { useGetDataSources } from '../../hooks/requests/useGetDataSources';
 import { useDefaultSourceVersion } from '../../../dataSources/utils';
 import { useGetVersionLabel } from '../../hooks/useGetVersionLabel';
-import { getDataSourceVersionsSynchronisationDropdown } from '../../../dataSources/hooks/useGetDataSourceVersionsSynchronisationDropdown';
+import {
+    getDataSourceVersionsSynchronisationDropdown,
+    getSearchDataSourceVersionsSynchronisationDropdown,
+} from '../../../dataSources/hooks/useGetDataSourceVersionsSynchronisationDropdown';
 
 const baseUrl = baseUrls.orgUnitsChangeRequest;
 type Props = {
@@ -180,9 +183,16 @@ export const ReviewOrgUnitChangesFilter: FunctionComponent<Props> = ({
         [handleChange],
     );
 
+    const {
+        data: dataSourceVersionsSynchronisation,
+        isLoading: isLoadingDataSourceVersionsSynchronisation,
+    } = getDataSourceVersionsSynchronisationDropdown(
+        filters.data_source_synchronization_id,
+    );
+    // Set the value of `data_source_synchronization_id` URL param.
     const handleChangeDataSourceVersionsSynchronisation = useCallback(
         (keyValue, dataSourceVersionsSynchronisation) => {
-            const id: number = dataSourceVersionsSynchronisation.value;
+            const id: number = dataSourceVersionsSynchronisation?.value;
             handleChange(keyValue, id);
         },
         [handleChange],
@@ -376,14 +386,16 @@ export const ReviewOrgUnitChangesFilter: FunctionComponent<Props> = ({
                 <Box mt={2}>
                     <AsyncSelect
                         keyValue="data_source_synchronization_id"
+                        clearable
                         label={MESSAGES.dataSourceVersionsSynchronisation}
-                        value={
-                            filters.dataSourceVersionsSynchronisationId ?? ''
-                        }
+                        value={dataSourceVersionsSynchronisation ?? ''}
+                        loading={isLoadingDataSourceVersionsSynchronisation}
                         onChange={handleChangeDataSourceVersionsSynchronisation}
                         debounceTime={500}
                         fetchOptions={input =>
-                            getDataSourceVersionsSynchronisationDropdown(input)
+                            getSearchDataSourceVersionsSynchronisationDropdown(
+                                input,
+                            )
                         }
                     />
                 </Box>
