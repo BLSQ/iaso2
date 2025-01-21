@@ -36,6 +36,7 @@ export const useGetApprovalProposals = (
         payment_ids: params.paymentIds,
         source_version_id: params.source_version_id,
         potential_payment_ids: params.potentialPaymentIds,
+        data_source_synchronization_id: params.data_source_synchronization_id,
     };
 
     const url = makeUrlWithParams(apiUrl, apiParams);

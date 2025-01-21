@@ -12,4 +12,8 @@ class DataSourceVersionsSynchronizationFilter(django_filters.rest_framework.Filt
 
     class Meta:
         model = DataSourceVersionsSynchronization
-        fields = ["id", "name", "created_by"]
+        fields = {
+            "id": ["exact"],
+            "name": ["icontains"],
+            "created_by": ["exact"],
+        }

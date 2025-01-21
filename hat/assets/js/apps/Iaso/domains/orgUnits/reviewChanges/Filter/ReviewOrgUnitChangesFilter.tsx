@@ -7,31 +7,39 @@ import React, {
     useState,
 } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
-import { useRedirectToReplace, useSafeIntl } from 'bluesquare-components';
-import { FilterButton } from '../../../../components/FilterButton';
-import { useFilterState } from '../../../../hooks/useFilterState';
-import InputComponent from '../../../../components/forms/InputComponent';
-import { baseUrls } from '../../../../constants/urls';
-import MESSAGES from '../messages';
-import { OrgUnitTreeviewModal } from '../../components/TreeView/OrgUnitTreeviewModal';
-import { useGetOrgUnit } from '../../components/TreeView/requests';
-import { useGetOrgUnitTypesDropdownOptions } from '../../orgUnitTypes/hooks/useGetOrgUnitTypesDropdownOptions';
-import { DropdownOptions } from '../../../../types/utils';
+
+import * as Permission from '../../../../utils/permissions';
 import DatesRange from '../../../../components/filters/DatesRange';
-import { useGetForms } from '../../../workflows/hooks/requests/useGetForms';
+import InputComponent from '../../../../components/forms/InputComponent';
+import MESSAGES from '../messages';
 import { ApproveOrgUnitParams } from '../types';
 import { AsyncSelect } from '../../../../components/forms/AsyncSelect';
+import { DisplayIfUserHasPerm } from '../../../../components/DisplayIfUserHasPerm';
+import { DropdownOptions } from '../../../../types/utils';
+import { FilterButton } from '../../../../components/FilterButton';
+import { OrgUnitTreeviewModal } from '../../components/TreeView/OrgUnitTreeviewModal';
+import { baseUrls } from '../../../../constants/urls';
+import {
+    getDataSourceVersionsSynchronizationDropdown,
+    getSearchDataSourceVersionsSynchronizationDropdown,
+} from '../../../dataSources/hooks/useGetDataSourceVersionsSynchronizationDropdown';
 import { getUsersDropDown } from '../../../instances/hooks/requests/getUsersDropDown';
-import { useGetProfilesDropdown } from '../../../instances/hooks/useGetProfilesDropdown';
-import { useGetUserRolesDropDown } from '../../../userRoles/hooks/requests/useGetUserRoles';
-import { useGetProjectsDropdownOptions } from '../../../projects/hooks/requests';
-import { usePaymentStatusOptions } from '../hooks/api/useGetPaymentStatusOptions';
-import { useGetGroupDropdown } from '../../hooks/requests/useGetGroups';
-import { useGetDataSources } from '../../hooks/requests/useGetDataSources';
 import { useDefaultSourceVersion } from '../../../dataSources/utils';
+import { useFilterState } from '../../../../hooks/useFilterState';
+import { useGetDataSources } from '../../hooks/requests/useGetDataSources';
+import { useGetForms } from '../../../workflows/hooks/requests/useGetForms';
+import { useGetGroupDropdown } from '../../hooks/requests/useGetGroups';
+import { useGetOrgUnit } from '../../components/TreeView/requests';
+import { useGetOrgUnitTypesDropdownOptions } from '../../orgUnitTypes/hooks/useGetOrgUnitTypesDropdownOptions';
+import { useGetProfilesDropdown } from '../../../instances/hooks/useGetProfilesDropdown';
+import { useGetProjectsDropdownOptions } from '../../../projects/hooks/requests';
+import { useGetUserRolesDropDown } from '../../../userRoles/hooks/requests/useGetUserRoles';
 import { useGetVersionLabel } from '../../hooks/useGetVersionLabel';
+import { usePaymentStatusOptions } from '../hooks/api/useGetPaymentStatusOptions';
+import { useRedirectToReplace, useSafeIntl } from 'bluesquare-components';
 
 const baseUrl = baseUrls.orgUnitsChangeRequest;
+
 type Props = {
     params: ApproveOrgUnitParams;
 };
@@ -175,6 +183,23 @@ export const ReviewOrgUnitChangesFilter: FunctionComponent<Props> = ({
         (keyValue, newValue) => {
             const joined = newValue?.map(r => r.value)?.join(',');
             handleChange(keyValue, joined);
+        },
+        [handleChange],
+    );
+
+    // Handle Data Source Versions Synchronization.
+    // If the `data_source_synchronization_id` URL param exists, fetch the corresponding item.
+    const {
+        data: dataSourceVersionsSynchronization,
+        isLoading: isLoadingDataSourceVersionsSynchronization,
+    } = getDataSourceVersionsSynchronizationDropdown(
+        filters.data_source_synchronization_id,
+    );
+    const handleChangeDataSourceVersionsSynchronization = useCallback(
+        (keyValue, dataSourceVersionsSynchronization) => {
+            const id: number = dataSourceVersionsSynchronization?.value;
+            // Set the value of `data_source_synchronization_id` URL param.
+            handleChange(keyValue, id);
         },
         [handleChange],
     );
@@ -364,6 +389,33 @@ export const ReviewOrgUnitChangesFilter: FunctionComponent<Props> = ({
                     loading={isLoadingForms}
                     labelString={formatMessage(MESSAGES.forms)}
                 />
+                <DisplayIfUserHasPerm
+                    permissions={[
+                        Permission.SOURCE_WRITE,
+                        Permission.ORG_UNITS_CHANGE_REQUESTS_CONFIGURATION,
+                        Permission.ORG_UNITS,
+                    ]}
+                    strict={true}
+                >
+                    <Box mt={2}>
+                        <AsyncSelect
+                            keyValue="data_source_synchronization_id"
+                            clearable
+                            label={MESSAGES.dataSourceVersionsSynchronization}
+                            value={dataSourceVersionsSynchronization ?? ''}
+                            loading={isLoadingDataSourceVersionsSynchronization}
+                            onChange={
+                                handleChangeDataSourceVersionsSynchronization
+                            }
+                            debounceTime={500}
+                            fetchOptions={input =>
+                                getSearchDataSourceVersionsSynchronizationDropdown(
+                                    input,
+                                )
+                            }
+                        />
+                    </Box>
+                </DisplayIfUserHasPerm>
             </Grid>
             <Grid item xs={12} md={4} lg={3}>
                 <Box mt={2}>

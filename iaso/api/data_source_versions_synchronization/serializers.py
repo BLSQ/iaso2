@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 
 from rest_framework import serializers
 
+from iaso.api.common import DynamicFieldsModelSerializer
 from iaso.models import (
     DataSourceVersionsSynchronization,
     SourceVersion,
@@ -33,10 +34,27 @@ class DataSourceVersionNestedSerializer(serializers.ModelSerializer):
         fields = ["id", "number", "description", "data_source", "data_source_name"]
 
 
-class DataSourceVersionsSynchronizationSerializer(serializers.ModelSerializer):
+class DataSourceVersionsSynchronizationSerializer(DynamicFieldsModelSerializer):
+    """
+    Inheriting from DynamicFieldsModelSerializer allows to fetch the data with only a specific subset of fields.
+    This is useful e.g. to build a dropdown in the UI with only the name and ID of objects.
+    """
+
     class Meta:
         model = DataSourceVersionsSynchronization
         fields = [
+            "id",
+            "name",
+            "source_version_to_update",
+            "source_version_to_compare_with",
+            "count_create",
+            "count_update",
+            "account",
+            "created_by",
+            "created_at",
+            "updated_at",
+        ]
+        default_fields = [
             "id",
             "name",
             "source_version_to_update",
@@ -60,14 +78,18 @@ class DataSourceVersionsSynchronizationSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation["source_version_to_update"] = DataSourceVersionNestedSerializer(
-            instance.source_version_to_update, read_only=True
-        ).data
-        representation["source_version_to_compare_with"] = DataSourceVersionNestedSerializer(
-            instance.source_version_to_compare_with, read_only=True
-        ).data
-        representation["account"] = AccountNestedSerializer(instance.account, read_only=True).data
-        representation["created_by"] = UserNestedSerializer(instance.created_by, read_only=True).data
+        if "source_version_to_update" in self.fields:
+            representation["source_version_to_update"] = DataSourceVersionNestedSerializer(
+                instance.source_version_to_update, read_only=True
+            ).data
+        if "source_version_to_compare_with" in self.fields:
+            representation["source_version_to_compare_with"] = DataSourceVersionNestedSerializer(
+                instance.source_version_to_compare_with, read_only=True
+            ).data
+        if "account" in self.fields:
+            representation["account"] = AccountNestedSerializer(instance.account, read_only=True).data
+        if "created_by" in self.fields:
+            representation["created_by"] = UserNestedSerializer(instance.created_by, read_only=True).data
         return representation
 
     def validate(self, validated_data):
@@ -82,16 +104,6 @@ class DataSourceVersionsSynchronizationSerializer(serializers.ModelSerializer):
         return validated_data
 
 
-class OrgUnitForUser(serializers.PrimaryKeyRelatedField):
-    """
-    Limit related OrgUnit choices.
-    """
-
-    def get_queryset(self):
-        user = self.context["request"].user
-        return OrgUnit.objects.filter_for_user(user)
-
-
 class CreateJsonDiffParametersSerializer(serializers.Serializer):
     """
     Validate the parameters of DataSourceVersionsSynchronization.create_json_diff().
@@ -101,7 +113,9 @@ class CreateJsonDiffParametersSerializer(serializers.Serializer):
     source_version_to_update_validation_status = serializers.ChoiceField(
         choices=OrgUnit.VALIDATION_STATUS_CHOICES, required=False, default=None
     )
-    source_version_to_update_top_org_unit = OrgUnitForUser(required=False, default=None)
+    source_version_to_update_top_org_unit = serializers.PrimaryKeyRelatedField(
+        queryset=OrgUnit.objects.all(), required=False, default=None
+    )
     source_version_to_update_org_unit_types = serializers.PrimaryKeyRelatedField(
         queryset=OrgUnitType.objects.all(), many=True, required=False, default=None
     )
@@ -109,7 +123,9 @@ class CreateJsonDiffParametersSerializer(serializers.Serializer):
     source_version_to_compare_with_validation_status = serializers.ChoiceField(
         choices=OrgUnit.VALIDATION_STATUS_CHOICES, required=False, default=None
     )
-    source_version_to_compare_with_top_org_unit = OrgUnitForUser(required=False, default=None)
+    source_version_to_compare_with_top_org_unit = serializers.PrimaryKeyRelatedField(
+        queryset=OrgUnit.objects.all(), required=False, default=None
+    )
     source_version_to_compare_with_org_unit_types = serializers.PrimaryKeyRelatedField(
         queryset=OrgUnitType.objects.all(), many=True, required=False, default=None
     )

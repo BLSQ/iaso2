@@ -70,7 +70,7 @@ class DataSourceVersionsSynchronizationViewSet(viewsets.ModelViewSet):
 
         json_diff_params_serializer = CreateJsonDiffParametersSerializer(
             data=self.request.data,
-            context={"data_source_versions_synchronization": data_source_versions_synchronization, "request": request},
+            context={"data_source_versions_synchronization": data_source_versions_synchronization},
         )
         json_diff_params_serializer.is_valid(raise_exception=True)
         json_diff_params = json_diff_params_serializer.validated_data

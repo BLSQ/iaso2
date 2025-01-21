@@ -38,7 +38,7 @@ class DataSourceVersionsSynchronizationViewSetTestCase(TaskAPITestCase):
         cls.source_3 = m.SourceVersion.objects.create(data_source=cls.data_source, number=3)
 
         cls.data_source_sync_1 = m.DataSourceVersionsSynchronization.objects.create(
-            name="New synchronization",
+            name="Synchronization Foo",
             source_version_to_update=cls.source_1,
             source_version_to_compare_with=cls.source_2,
             account=cls.account,
@@ -46,7 +46,7 @@ class DataSourceVersionsSynchronizationViewSetTestCase(TaskAPITestCase):
         )
 
         cls.data_source_sync_2 = m.DataSourceVersionsSynchronization.objects.create(
-            name="New synchronization",
+            name="Synchronization Bar",
             source_version_to_update=cls.source_2,
             source_version_to_compare_with=cls.source_3,
             account=cls.account,
@@ -75,6 +75,20 @@ class DataSourceVersionsSynchronizationViewSetTestCase(TaskAPITestCase):
             response = self.client.get("/api/datasources/sync/")
             self.assertJSONResponse(response, 200)
             self.assertEqual(2, len(response.data["results"]))
+
+    def test_list_ok_with_dynamic_fields(self):
+        """
+        Call the API with a restricted subset of the fields (`fields=id,name`).
+        This can be useful to e.g. build a frontend dropdown.
+        """
+        self.client.force_authenticate(self.user)
+        response = self.client.get("/api/datasources/sync/?name__icontains=foo&fields=id,name")
+        self.assertEqual(1, len(response.data["results"]))
+        expected_result = {
+            "id": self.data_source_sync_1.pk,
+            "name": self.data_source_sync_1.name,
+        }
+        self.assertEqual(response.data["results"][0], expected_result)
 
     def test_retrieve_ok(self):
         self.client.force_authenticate(self.user)

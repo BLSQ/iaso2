@@ -188,6 +188,7 @@ export const baseRouteConfigs: Record<string, RouteConfig> = {
             ...paginationPathParams,
             'paymentIds',
             'potentialPaymentIds',
+            'data_source_synchronization_id',
         ],
     },
     orgUnitsChangeRequestDetail: {
