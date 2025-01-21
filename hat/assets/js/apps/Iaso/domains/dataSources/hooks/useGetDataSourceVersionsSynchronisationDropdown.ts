@@ -1,12 +1,13 @@
-import { getRequest } from '../../../libs/Api';
 import { UseQueryResult } from 'react-query';
+import { getRequest } from '../../../libs/Api';
 import { useSnackQuery } from '../../../libs/apiHooks';
 
 import MESSAGES from '../../instances/messages';
+import { DataSourceVersionsSynchronisationDropdown } from '../types/dataSourceVersionsSynchronisation';
 
 export const getSearchDataSourceVersionsSynchronisationDropdown = async (
     searchTerm: string | undefined,
-): Promise<any> => {
+): Promise<DataSourceVersionsSynchronisationDropdown> => {
     const url = `/api/datasources/sync/?fields=id,name&name__icontains=${searchTerm}`;
     return getRequest(url).then(data => {
         if (!data) return [];
@@ -21,7 +22,7 @@ export const getSearchDataSourceVersionsSynchronisationDropdown = async (
 
 export const getDataSourceVersionsSynchronisationDropdown = (
     id?: string,
-): UseQueryResult<any, Error> => {
+): UseQueryResult<DataSourceVersionsSynchronisationDropdown[], Error> => {
     return useSnackQuery({
         queryKey: ['dataSourceVersionsSynchronisationDropdown', id],
         queryFn: () => {
