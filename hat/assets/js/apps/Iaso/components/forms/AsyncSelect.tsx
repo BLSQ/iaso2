@@ -33,7 +33,7 @@ type Props = {
     multi?: boolean;
     helperText?: string;
     minCharBeforeQuery?: number;
-    fetchOptions: (input: string) => Promise<any[]>;
+    fetchOptions: (input: string) => Promise<any>;
     renderTags?: (
         tag: any[],
         getTagProps: AutocompleteGetTagProps,
@@ -171,6 +171,7 @@ export const AsyncSelect: FunctionComponent<Props> = ({
                     setInputValue(newInputValue);
                 }}
                 isOptionEqualToValue={getOptionSelected}
+                freeSolo={true}
             />
         </Box>
     );
