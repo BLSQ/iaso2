@@ -3,11 +3,11 @@ import { getRequest } from '../../../libs/Api';
 import { useSnackQuery } from '../../../libs/apiHooks';
 
 import MESSAGES from '../../instances/messages';
-import { DataSourceVersionsSynchronisationDropdown } from '../types/dataSourceVersionsSynchronisation';
+import { DataSourceVersionsSynchronizationDropdown } from '../types/dataSourceVersionsSynchronization';
 
-export const getSearchDataSourceVersionsSynchronisationDropdown = async (
+export const getSearchDataSourceVersionsSynchronizationDropdown = async (
     searchTerm: string | undefined,
-): Promise<DataSourceVersionsSynchronisationDropdown> => {
+): Promise<DataSourceVersionsSynchronizationDropdown> => {
     const url = `/api/datasources/sync/?fields=id,name&name__icontains=${searchTerm}`;
     return getRequest(url).then(data => {
         if (!data) return [];
@@ -20,11 +20,11 @@ export const getSearchDataSourceVersionsSynchronisationDropdown = async (
     });
 };
 
-export const getDataSourceVersionsSynchronisationDropdown = (
+export const getDataSourceVersionsSynchronizationDropdown = (
     id?: string,
-): UseQueryResult<DataSourceVersionsSynchronisationDropdown[], Error> => {
+): UseQueryResult<DataSourceVersionsSynchronizationDropdown[], Error> => {
     return useSnackQuery({
-        queryKey: ['dataSourceVersionsSynchronisationDropdown', id],
+        queryKey: ['dataSourceVersionsSynchronizationDropdown', id],
         queryFn: () => {
             if (!id) return [];
             return getRequest(`/api/datasources/sync/${id}/?fields=id,name`);

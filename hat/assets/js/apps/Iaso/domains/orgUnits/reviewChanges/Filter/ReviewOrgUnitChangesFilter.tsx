@@ -20,9 +20,9 @@ import { FilterButton } from '../../../../components/FilterButton';
 import { OrgUnitTreeviewModal } from '../../components/TreeView/OrgUnitTreeviewModal';
 import { baseUrls } from '../../../../constants/urls';
 import {
-    getDataSourceVersionsSynchronisationDropdown,
-    getSearchDataSourceVersionsSynchronisationDropdown,
-} from '../../../dataSources/hooks/useGetDataSourceVersionsSynchronisationDropdown';
+    getDataSourceVersionsSynchronizationDropdown,
+    getSearchDataSourceVersionsSynchronizationDropdown,
+} from '../../../dataSources/hooks/useGetDataSourceVersionsSynchronizationDropdown';
 import { getUsersDropDown } from '../../../instances/hooks/requests/getUsersDropDown';
 import { useDefaultSourceVersion } from '../../../dataSources/utils';
 import { useFilterState } from '../../../../hooks/useFilterState';
@@ -187,16 +187,18 @@ export const ReviewOrgUnitChangesFilter: FunctionComponent<Props> = ({
         [handleChange],
     );
 
+    // Handle Data Source Versions Synchronization.
+    // If the `data_source_synchronization_id` URL param exists, fetch the corresponding item.
     const {
-        data: dataSourceVersionsSynchronisation,
-        isLoading: isLoadingDataSourceVersionsSynchronisation,
-    } = getDataSourceVersionsSynchronisationDropdown(
+        data: dataSourceVersionsSynchronization,
+        isLoading: isLoadingDataSourceVersionsSynchronization,
+    } = getDataSourceVersionsSynchronizationDropdown(
         filters.data_source_synchronization_id,
     );
-    // Set the value of `data_source_synchronization_id` URL param.
-    const handleChangeDataSourceVersionsSynchronisation = useCallback(
-        (keyValue, dataSourceVersionsSynchronisation) => {
-            const id: number = dataSourceVersionsSynchronisation?.value;
+    const handleChangeDataSourceVersionsSynchronization = useCallback(
+        (keyValue, dataSourceVersionsSynchronization) => {
+            const id: number = dataSourceVersionsSynchronization?.value;
+            // Set the value of `data_source_synchronization_id` URL param.
             handleChange(keyValue, id);
         },
         [handleChange],
@@ -399,15 +401,15 @@ export const ReviewOrgUnitChangesFilter: FunctionComponent<Props> = ({
                         <AsyncSelect
                             keyValue="data_source_synchronization_id"
                             clearable
-                            label={MESSAGES.dataSourceVersionsSynchronisation}
-                            value={dataSourceVersionsSynchronisation ?? ''}
-                            loading={isLoadingDataSourceVersionsSynchronisation}
+                            label={MESSAGES.dataSourceVersionsSynchronization}
+                            value={dataSourceVersionsSynchronization ?? ''}
+                            loading={isLoadingDataSourceVersionsSynchronization}
                             onChange={
-                                handleChangeDataSourceVersionsSynchronisation
+                                handleChangeDataSourceVersionsSynchronization
                             }
                             debounceTime={500}
                             fetchOptions={input =>
-                                getSearchDataSourceVersionsSynchronisationDropdown(
+                                getSearchDataSourceVersionsSynchronizationDropdown(
                                     input,
                                 )
                             }

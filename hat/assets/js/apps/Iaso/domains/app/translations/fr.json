@@ -479,7 +479,7 @@
     "iaso.label.dashboard": "Tableau de bord",
     "iaso.label.dataSourceList": "Liste des sources de données",
     "iaso.label.dataSources": "Sources de données",
-    "iaso.label.dataSourceVersionsSynchronisation": "Synchronisation des versions de source de données",
+    "iaso.label.dataSourceVersionsSynchronization": "Synchronisation des versions de source de données",
     "iaso.label.date": "Date",
     "iaso.label.dateFrom": "Date de début",
     "iaso.label.dateTo": "Date de fin",

@@ -20,7 +20,7 @@ export type NestedSourceVersion = {
     data_source_name: string;
 };
 
-export type DataSourceVersionsSynchronisation = {
+export type DataSourceVersionsSynchronization = {
     id: number;
     name?: string;
     source_version_to_update?: NestedSourceVersion;
@@ -33,7 +33,7 @@ export type DataSourceVersionsSynchronisation = {
     updated_at?: string; // DateTime.
 };
 
-export type DataSourceVersionsSynchronisationDropdown = {
+export type DataSourceVersionsSynchronizationDropdown = {
     value: string;
     label: string;
 };

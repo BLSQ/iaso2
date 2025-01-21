@@ -181,9 +181,9 @@ const MESSAGES = defineMessages({
         id: 'iaso.label.user',
         defaultMessage: 'User',
     },
-    dataSourceVersionsSynchronisation: {
-        id: 'iaso.label.dataSourceVersionsSynchronisation',
-        defaultMessage: 'Data Source Versions Synchronisation',
+    dataSourceVersionsSynchronization: {
+        id: 'iaso.label.dataSourceVersionsSynchronization',
+        defaultMessage: 'Data Source Versions Synchronization',
     },
     userRoles: {
         defaultMessage: 'User roles',
