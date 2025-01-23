@@ -1,3 +1,5 @@
+import { Box, Grid, Typography } from '@mui/material';
+import { useRedirectToReplace, useSafeIntl } from 'bluesquare-components';
 import React, {
     FunctionComponent,
     useCallback,
@@ -6,37 +8,35 @@ import React, {
     useRef,
     useState,
 } from 'react';
-import { Box, Grid, Typography } from '@mui/material';
-import { useRedirectToReplace, useSafeIntl } from 'bluesquare-components';
 
-import * as Permission from '../../../../utils/permissions';
-import DatesRange from '../../../../components/filters/DatesRange';
-import InputComponent from '../../../../components/forms/InputComponent';
-import MESSAGES from '../messages';
-import { ApproveOrgUnitParams } from '../types';
-import { AsyncSelect } from '../../../../components/forms/AsyncSelect';
 import { DisplayIfUserHasPerm } from '../../../../components/DisplayIfUserHasPerm';
-import { DropdownOptions } from '../../../../types/utils';
 import { FilterButton } from '../../../../components/FilterButton';
-import { OrgUnitTreeviewModal } from '../../components/TreeView/OrgUnitTreeviewModal';
+import DatesRange from '../../../../components/filters/DatesRange';
+import { AsyncSelect } from '../../../../components/forms/AsyncSelect';
+import InputComponent from '../../../../components/forms/InputComponent';
 import { baseUrls } from '../../../../constants/urls';
-import {
-    getSearchDataSourceVersionsSynchronizationDropdown,
-    useGetDataSourceVersionsSynchronizationDropdown,
-} from '../../../dataSources/hooks/useGetDataSourceVersionsSynchronizationDropdown';
-import { getUsersDropDown } from '../../../instances/hooks/requests/getUsersDropDown';
-import { useDefaultSourceVersion } from '../../../dataSources/utils';
 import { useFilterState } from '../../../../hooks/useFilterState';
-import { useGetDataSources } from '../../hooks/requests/useGetDataSources';
-import { useGetForms } from '../../../workflows/hooks/requests/useGetForms';
-import { useGetGroupDropdown } from '../../hooks/requests/useGetGroups';
-import { useGetOrgUnit } from '../../components/TreeView/requests';
-import { useGetOrgUnitTypesDropdownOptions } from '../../orgUnitTypes/hooks/useGetOrgUnitTypesDropdownOptions';
+import { DropdownOptions } from '../../../../types/utils';
+import * as Permission from '../../../../utils/permissions';
+import {
+    useGetDataSourceVersionsSynchronizationDropdown,
+    useSearchDataSourceVersionsSynchronization,
+} from '../../../dataSources/hooks/useGetDataSourceVersionsSynchronizationDropdown';
+import { useDefaultSourceVersion } from '../../../dataSources/utils';
+import { getUsersDropDown } from '../../../instances/hooks/requests/getUsersDropDown';
 import { useGetProfilesDropdown } from '../../../instances/hooks/useGetProfilesDropdown';
 import { useGetProjectsDropdownOptions } from '../../../projects/hooks/requests';
 import { useGetUserRolesDropDown } from '../../../userRoles/hooks/requests/useGetUserRoles';
+import { useGetForms } from '../../../workflows/hooks/requests/useGetForms';
+import { OrgUnitTreeviewModal } from '../../components/TreeView/OrgUnitTreeviewModal';
+import { useGetOrgUnit } from '../../components/TreeView/requests';
+import { useGetDataSources } from '../../hooks/requests/useGetDataSources';
+import { useGetGroupDropdown } from '../../hooks/requests/useGetGroups';
 import { useGetVersionLabel } from '../../hooks/useGetVersionLabel';
+import { useGetOrgUnitTypesDropdownOptions } from '../../orgUnitTypes/hooks/useGetOrgUnitTypesDropdownOptions';
 import { usePaymentStatusOptions } from '../hooks/api/useGetPaymentStatusOptions';
+import MESSAGES from '../messages';
+import { ApproveOrgUnitParams } from '../types';
 
 const baseUrl = baseUrls.orgUnitsChangeRequest;
 
@@ -195,9 +195,17 @@ export const ReviewOrgUnitChangesFilter: FunctionComponent<Props> = ({
     } = useGetDataSourceVersionsSynchronizationDropdown(
         filters.data_source_synchronization_id,
     );
+
+    const { searchWithInput } = useSearchDataSourceVersionsSynchronization();
+
+    const fetchSynchronizationOptions = useCallback(
+        (input: string) => searchWithInput(input),
+        [searchWithInput],
+    );
+
     const handleChangeDataSourceVersionsSynchronization = useCallback(
-        (keyValue, dataSourceVersionsSynchronization) => {
-            const id: number = dataSourceVersionsSynchronization?.value;
+        (keyValue, newDataSourceVersionsSynchronization) => {
+            const id: number = newDataSourceVersionsSynchronization?.value;
             // Set the value of `data_source_synchronization_id` URL param.
             handleChange(keyValue, id);
         },
@@ -408,11 +416,7 @@ export const ReviewOrgUnitChangesFilter: FunctionComponent<Props> = ({
                                 handleChangeDataSourceVersionsSynchronization
                             }
                             debounceTime={500}
-                            fetchOptions={input =>
-                                getSearchDataSourceVersionsSynchronizationDropdown(
-                                    input,
-                                )
-                            }
+                            fetchOptions={fetchSynchronizationOptions}
                         />
                     </Box>
                 </DisplayIfUserHasPerm>

@@ -1,23 +1,51 @@
-import { UseQueryResult } from 'react-query';
+import { useCallback, useMemo } from 'react';
+import { useQueryClient, UseQueryResult } from 'react-query';
 import { getRequest } from '../../../libs/Api';
 import { useSnackQuery } from '../../../libs/apiHooks';
 
 import MESSAGES from '../../instances/messages';
 import { DataSourceVersionsSynchronizationDropdown } from '../types/dataSourceVersionsSynchronization';
 
-export const getSearchDataSourceVersionsSynchronizationDropdown = async (
-    searchTerm: string | undefined,
-): Promise<DataSourceVersionsSynchronizationDropdown> => {
-    const url = `/api/datasources/sync/?fields=id,name&name__icontains=${searchTerm}`;
-    return getRequest(url).then(data => {
-        if (!data) return [];
-        return data.results.map(item => {
-            return {
-                value: item.id,
-                label: item.name,
-            };
-        });
+export const useSearchDataSourceVersionsSynchronization = () => {
+    const queryClient = useQueryClient();
+    const options = useMemo(
+        () => ({
+            enabled: false,
+            select: data => {
+                if (!data) return [];
+                return data.results.map(item => ({
+                    value: item.id,
+                    label: item.name,
+                }));
+            },
+        }),
+        [],
+    );
+    const query = useSnackQuery({
+        queryKey: ['searchDataSourceVersionsSynchronization', ''],
+        queryFn: () => [],
+        snackErrorMsg: MESSAGES.error,
+        options,
     });
+
+    const searchWithInput = useCallback(
+        async (input: string) => {
+            const newQueryKey = [
+                'searchDataSourceVersionsSynchronization',
+                input,
+            ];
+            return queryClient
+                .fetchQuery(newQueryKey, async ({ queryKey }) => {
+                    const [, searchTerm] = queryKey;
+                    const url = `/api/datasources/sync/?fields=id,name&name__icontains=${searchTerm}`;
+                    return getRequest(url);
+                })
+                .then(data => options.select?.(data) ?? []);
+        },
+        [queryClient, options],
+    );
+
+    return { ...query, searchWithInput };
 };
 
 export const useGetDataSourceVersionsSynchronizationDropdown = (

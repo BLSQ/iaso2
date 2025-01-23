@@ -1,6 +1,6 @@
 import { Box, TextField } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
-import { AutocompleteGetTagProps } from '@mui/material/Autocomplete/Autocomplete';
+import { AutocompleteRenderGetTagProps } from '@mui/material/Autocomplete/Autocomplete';
 import { debounce } from '@mui/material/utils';
 import {
     IntlMessage,
@@ -36,7 +36,7 @@ type Props = {
     fetchOptions: (input: string) => Promise<any>;
     renderTags?: (
         tag: any[],
-        getTagProps: AutocompleteGetTagProps,
+        getTagProps: AutocompleteRenderGetTagProps,
     ) => React.ReactNode;
 };
 
