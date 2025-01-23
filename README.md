@@ -43,7 +43,7 @@ investigating malaria cases.
 The tool has been used in multiple data collection efforts, notably in the domain of Performance Based Financing
 of health services in D.R. Congo, Niger, Cameroon and Nigeria and is more and more used to compare multiple
 versions of official organisational hierarchies when a canonical one needs to be rebuilt (for example
- to rebuild a school map for DRC). To help for this type of project,
+ to rebuild a school map for DRC). To help someone making a project like this,
 we provide location selection interfaces, multiple levels of audits and an API open to data scientists for analysis
 and mass edits.
 
