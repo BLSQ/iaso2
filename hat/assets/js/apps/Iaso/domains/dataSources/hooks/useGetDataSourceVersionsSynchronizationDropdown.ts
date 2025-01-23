@@ -20,7 +20,7 @@ export const getSearchDataSourceVersionsSynchronizationDropdown = async (
     });
 };
 
-export const getDataSourceVersionsSynchronizationDropdown = (
+export const useGetDataSourceVersionsSynchronizationDropdown = (
     id?: string,
 ): UseQueryResult<DataSourceVersionsSynchronizationDropdown[], Error> => {
     return useSnackQuery({

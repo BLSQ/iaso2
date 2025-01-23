@@ -20,8 +20,8 @@ import { FilterButton } from '../../../../components/FilterButton';
 import { OrgUnitTreeviewModal } from '../../components/TreeView/OrgUnitTreeviewModal';
 import { baseUrls } from '../../../../constants/urls';
 import {
-    getDataSourceVersionsSynchronizationDropdown,
     getSearchDataSourceVersionsSynchronizationDropdown,
+    useGetDataSourceVersionsSynchronizationDropdown,
 } from '../../../dataSources/hooks/useGetDataSourceVersionsSynchronizationDropdown';
 import { getUsersDropDown } from '../../../instances/hooks/requests/getUsersDropDown';
 import { useDefaultSourceVersion } from '../../../dataSources/utils';
@@ -192,7 +192,7 @@ export const ReviewOrgUnitChangesFilter: FunctionComponent<Props> = ({
     const {
         data: dataSourceVersionsSynchronization,
         isLoading: isLoadingDataSourceVersionsSynchronization,
-    } = getDataSourceVersionsSynchronizationDropdown(
+    } = useGetDataSourceVersionsSynchronizationDropdown(
         filters.data_source_synchronization_id,
     );
     const handleChangeDataSourceVersionsSynchronization = useCallback(
