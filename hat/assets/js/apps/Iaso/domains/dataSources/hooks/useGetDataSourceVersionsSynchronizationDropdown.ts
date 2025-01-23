@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useQueryClient, UseQueryResult } from 'react-query';
 import { getRequest } from '../../../libs/Api';
 import { useSnackQuery } from '../../../libs/apiHooks';
@@ -6,26 +6,23 @@ import { useSnackQuery } from '../../../libs/apiHooks';
 import MESSAGES from '../../instances/messages';
 import { DataSourceVersionsSynchronizationDropdown } from '../types/dataSourceVersionsSynchronization';
 
+const searchOptions = {
+    enabled: false,
+    select: data => {
+        if (!data) return [];
+        return data.results.map(item => ({
+            value: item.id,
+            label: item.name,
+        }));
+    },
+};
 export const useSearchDataSourceVersionsSynchronization = () => {
     const queryClient = useQueryClient();
-    const options = useMemo(
-        () => ({
-            enabled: false,
-            select: data => {
-                if (!data) return [];
-                return data.results.map(item => ({
-                    value: item.id,
-                    label: item.name,
-                }));
-            },
-        }),
-        [],
-    );
     const query = useSnackQuery({
         queryKey: ['searchDataSourceVersionsSynchronization', ''],
         queryFn: () => [],
         snackErrorMsg: MESSAGES.error,
-        options,
+        options: searchOptions,
     });
 
     const searchWithInput = useCallback(
@@ -40,9 +37,9 @@ export const useSearchDataSourceVersionsSynchronization = () => {
                     const url = `/api/datasources/sync/?fields=id,name&name__icontains=${searchTerm}`;
                     return getRequest(url);
                 })
-                .then(data => options.select?.(data) ?? []);
+                .then(data => searchOptions.select?.(data) ?? []);
         },
-        [queryClient, options],
+        [queryClient],
     );
 
     return { ...query, searchWithInput };
