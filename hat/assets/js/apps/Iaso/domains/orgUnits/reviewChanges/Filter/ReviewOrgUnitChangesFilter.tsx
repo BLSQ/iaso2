@@ -7,6 +7,7 @@ import React, {
     useState,
 } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
+import { useRedirectToReplace, useSafeIntl } from 'bluesquare-components';
 
 import * as Permission from '../../../../utils/permissions';
 import DatesRange from '../../../../components/filters/DatesRange';
@@ -36,7 +37,6 @@ import { useGetProjectsDropdownOptions } from '../../../projects/hooks/requests'
 import { useGetUserRolesDropDown } from '../../../userRoles/hooks/requests/useGetUserRoles';
 import { useGetVersionLabel } from '../../hooks/useGetVersionLabel';
 import { usePaymentStatusOptions } from '../hooks/api/useGetPaymentStatusOptions';
-import { useRedirectToReplace, useSafeIntl } from 'bluesquare-components';
 
 const baseUrl = baseUrls.orgUnitsChangeRequest;
 
