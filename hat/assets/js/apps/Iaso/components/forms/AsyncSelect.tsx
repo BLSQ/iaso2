@@ -171,7 +171,7 @@ export const AsyncSelect: FunctionComponent<Props> = ({
                     setInputValue(newInputValue);
                 }}
                 isOptionEqualToValue={getOptionSelected}
-                freeSolo={true}
+                freeSolo
             />
         </Box>
     );
