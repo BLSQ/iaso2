@@ -395,7 +395,7 @@ export const ReviewOrgUnitChangesFilter: FunctionComponent<Props> = ({
                         Permission.ORG_UNITS_CHANGE_REQUESTS_CONFIGURATION,
                         Permission.ORG_UNITS,
                     ]}
-                    strict={true}
+                    strict
                 >
                     <Box mt={2}>
                         <AsyncSelect
