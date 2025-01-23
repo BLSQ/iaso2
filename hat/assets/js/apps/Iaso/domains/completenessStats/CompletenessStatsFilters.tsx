@@ -1,4 +1,14 @@
 import { Box, Grid } from '@mui/material';
+import {
+    InputWithInfos,
+    UrlParams,
+    useRedirectToReplace,
+    useSafeIntl,
+    useSkipEffectOnMount,
+} from 'bluesquare-components';
+import intersection from 'lodash/intersection';
+import isEqual from 'lodash/isEqual';
+import uniq from 'lodash/uniq';
 import React, {
     FunctionComponent,
     useCallback,
@@ -6,37 +16,27 @@ import React, {
     useMemo,
     useState,
 } from 'react';
-import {
-    useSafeIntl,
-    useSkipEffectOnMount,
-    UrlParams,
-    useRedirectToReplace,
-    InputWithInfos,
-} from 'bluesquare-components';
-import uniq from 'lodash/uniq';
-import intersection from 'lodash/intersection';
-import isEqual from 'lodash/isEqual';
+import { DisplayIfUserHasPerm } from '../../components/DisplayIfUserHasPerm';
 import { FilterButton } from '../../components/FilterButton';
+import { AsyncSelect } from '../../components/forms/AsyncSelect';
 import InputComponent from '../../components/forms/InputComponent';
 import { baseUrls } from '../../constants/urls';
 import { useFilterState } from '../../hooks/useFilterState';
-import { OrgUnitTreeviewModal } from '../orgUnits/components/TreeView/OrgUnitTreeviewModal';
-import { useGetOrgUnit } from '../orgUnits/components/TreeView/requests';
-import { useGetOrgUnitTypesOptions } from './hooks/api/useGetOrgUnitTypesOptions';
-import MESSAGES from './messages';
-import PeriodPicker from '../periods/components/PeriodPicker';
-import { useGetPlanningsOptions } from '../plannings/hooks/requests/useGetPlannings';
-import { DisplayIfUserHasPerm } from '../../components/DisplayIfUserHasPerm';
-import { useGetGroups } from '../orgUnits/hooks/requests/useGetGroups';
-import { NO_PERIOD, PERIOD_TYPE_PLACEHOLDER } from '../periods/constants';
-import { useGetValidationStatus } from '../forms/hooks/useGetValidationStatus';
 import { DropdownOptionsWithOriginal } from '../../types/utils';
-import { useGetTeamsDropdown } from '../teams/hooks/requests/useGetTeams';
-import { AsyncSelect } from '../../components/forms/AsyncSelect';
+import { PLANNING_READ, PLANNING_WRITE } from '../../utils/permissions';
+import { useGetValidationStatus } from '../forms/hooks/useGetValidationStatus';
 import { getUsersDropDown } from '../instances/hooks/requests/getUsersDropDown';
 import { useGetProfilesDropdown } from '../instances/hooks/useGetProfilesDropdown';
-import { PLANNING_READ, PLANNING_WRITE } from '../../utils/permissions';
+import { OrgUnitTreeviewModal } from '../orgUnits/components/TreeView/OrgUnitTreeviewModal';
+import { useGetOrgUnit } from '../orgUnits/components/TreeView/requests';
+import { useGetGroupDropdown } from '../orgUnits/hooks/requests/useGetGroups';
+import PeriodPicker from '../periods/components/PeriodPicker';
+import { NO_PERIOD, PERIOD_TYPE_PLACEHOLDER } from '../periods/constants';
+import { useGetPlanningsOptions } from '../plannings/hooks/requests/useGetPlannings';
 import { useGetProjectsDropdownOptions } from '../projects/hooks/requests';
+import { useGetTeamsDropdown } from '../teams/hooks/requests/useGetTeams';
+import { useGetOrgUnitTypesOptions } from './hooks/api/useGetOrgUnitTypesOptions';
+import MESSAGES from './messages';
 
 type Props = {
     params: UrlParams & any;
@@ -82,7 +82,9 @@ export const CompletenessStatsFilters: FunctionComponent<Props> = ({
     useSkipEffectOnMount(() => {
         setInitialParentId(params?.parentId);
     }, [params]);
-    const { data: groups, isFetching: isFetchingGroups } = useGetGroups({});
+    const { data: groups, isFetching: isFetchingGroups } = useGetGroupDropdown({
+        defaultVersion: 'true',
+    });
 
     const { data: selectedUsers } = useGetProfilesDropdown(filters.userIds);
     const { data: allProjects, isFetching: isFetchingProjects } =

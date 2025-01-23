@@ -26,15 +26,14 @@ import { useCurrentUser } from '../../../utils/usersUtils';
 import ConfirmDialog from '../../../components/dialogs/ConfirmDialogComponent';
 import InputComponent from '../../../components/forms/InputComponent';
 import { useGetValidationStatus } from '../../forms/hooks/useGetValidationStatus';
-import { useGetGroups } from '../hooks';
+import { useGetGroupDropdown } from '../hooks/requests/useGetGroups';
 import MESSAGES from '../messages';
 import { useGetOrgUnitTypesDropdownOptions } from '../orgUnitTypes/hooks/useGetOrgUnitTypesDropdownOptions';
-import { Group } from '../types/group';
 import { OrgUnit, OrgUnitParams } from '../types/orgUnit';
 import { OrgunitType } from '../types/orgunitTypes';
 import { SaveData } from '../types/saveMulti';
 import { Selection } from '../types/selection';
-import { compareGroupVersions, decodeSearch } from '../utils';
+import { decodeSearch } from '../utils';
 
 type Props = {
     open: boolean;
@@ -95,8 +94,8 @@ export const OrgUnitsMultiActionsDialog: FunctionComponent<Props> = ({
         true,
     );
     const [editGroups, setEditGroups] = useState<boolean>(false);
-    const [groupsAdded, setGroupsAdded] = useState<Group[]>([]);
-    const [groupsRemoved, setGroupsRemoved] = useState<Group[]>([]);
+    const [groupsAdded, setGroupsAdded] = useState<number[]>([]);
+    const [groupsRemoved, setGroupsRemoved] = useState<number[]>([]);
     const [editOrgUnitType, setEditOrgUnitType] = useState<boolean>(false);
     const [orgUnitType, setOrgUnitType] = useState<OrgunitType | undefined>(
         undefined,
@@ -108,10 +107,12 @@ export const OrgUnitsMultiActionsDialog: FunctionComponent<Props> = ({
     >(undefined);
 
     const currentUser = useCurrentUser();
-    const { groups = [], isFetchingGroups } = useGetGroups({
-        dataSourceId: currentUser?.account?.default_version?.data_source?.id,
-        sourceVersionId: currentUser?.account?.default_version?.id,
-    });
+    const { data: groups = [], isFetching: isFetchingGroups } =
+        useGetGroupDropdown({
+            dataSourceId:
+                currentUser?.account?.default_version?.data_source?.id,
+            sourceVersionId: currentUser?.account?.default_version?.id,
+        });
     const isSaveDisabled = () =>
         ((editGroups &&
             groupsAdded.length === 0 &&
@@ -122,7 +123,7 @@ export const OrgUnitsMultiActionsDialog: FunctionComponent<Props> = ({
         updateGPS === false;
 
     const groupsWithoutAdded = [...groups].filter(
-        g => groupsAdded.indexOf(g.id) === -1,
+        g => groupsAdded.indexOf(g.value) === -1,
     );
 
     const {
@@ -210,7 +211,7 @@ export const OrgUnitsMultiActionsDialog: FunctionComponent<Props> = ({
             classes={{
                 paper: classes.paper,
             }}
-            onClose={(event, reason) => {
+            onClose={(_event, reason) => {
                 if (reason === 'backdropClick') {
                     closeAndReset();
                 }
@@ -227,7 +228,7 @@ export const OrgUnitsMultiActionsDialog: FunctionComponent<Props> = ({
                 <div>
                     <InputComponent
                         keyValue="editGroups"
-                        onChange={(key, checked) =>
+                        onChange={(_key, checked) =>
                             handleSetEditGroups(checked)
                         }
                         value={editGroups}
@@ -240,7 +241,7 @@ export const OrgUnitsMultiActionsDialog: FunctionComponent<Props> = ({
                                 multi
                                 clearable
                                 keyValue="addGroups"
-                                onChange={(key, value) =>
+                                onChange={(_key, value) =>
                                     setGroupsAdded(
                                         stringOfIdsToArrayofIds(value),
                                     )
@@ -250,19 +251,14 @@ export const OrgUnitsMultiActionsDialog: FunctionComponent<Props> = ({
                                 }
                                 type="select"
                                 loading={isFetchingGroups}
-                                options={groups
-                                    .sort(compareGroupVersions)
-                                    .map(g => ({
-                                        label: `${g.name} - Version: ${g.source_version.number}`,
-                                        value: g.id,
-                                    }))}
+                                options={groups}
                                 label={MESSAGES.addToGroups}
                             />
                             <InputComponent
                                 multi
                                 clearable
                                 keyValue="removeGroups"
-                                onChange={(key, value) =>
+                                onChange={(_key, value) =>
                                     setGroupsRemoved(
                                         stringOfIdsToArrayofIds(value),
                                     )
@@ -273,10 +269,7 @@ export const OrgUnitsMultiActionsDialog: FunctionComponent<Props> = ({
                                         : null
                                 }
                                 type="select"
-                                options={groupsWithoutAdded.map(g => ({
-                                    label: `${g.name} - Version: ${g.source_version.number}`,
-                                    value: g.id,
-                                }))}
+                                options={groupsWithoutAdded}
                                 label={MESSAGES.removeFromGroups}
                             />
                         </>
@@ -285,7 +278,7 @@ export const OrgUnitsMultiActionsDialog: FunctionComponent<Props> = ({
                 <div>
                     <InputComponent
                         keyValue="editOrgUnitType"
-                        onChange={(key, checked) =>
+                        onChange={(_key, checked) =>
                             handleSetEditOuType(checked)
                         }
                         value={editOrgUnitType}
@@ -297,7 +290,7 @@ export const OrgUnitsMultiActionsDialog: FunctionComponent<Props> = ({
                             multi={false}
                             clearable
                             keyValue="changeOrgUnitType"
-                            onChange={(key, value) => setOrgUnitType(value)}
+                            onChange={(_key, value) => setOrgUnitType(value)}
                             value={orgUnitType}
                             type="select"
                             options={orgUnitTypes || []}
@@ -308,7 +301,7 @@ export const OrgUnitsMultiActionsDialog: FunctionComponent<Props> = ({
                 <div>
                     <InputComponent
                         keyValue="editValidation"
-                        onChange={(key, checked) =>
+                        onChange={(_key, checked) =>
                             handleSetEditValidation(checked)
                         }
                         value={editValidation}
@@ -319,7 +312,7 @@ export const OrgUnitsMultiActionsDialog: FunctionComponent<Props> = ({
                         <div className={classes.marginLeft}>
                             <InputComponent
                                 keyValue="isValid"
-                                onChange={(key, value) => {
+                                onChange={(_key, value) => {
                                     setValidationStatus(value);
                                 }}
                                 value={validationStatus}
@@ -334,7 +327,9 @@ export const OrgUnitsMultiActionsDialog: FunctionComponent<Props> = ({
                 <Box style={{ display: 'flex' }}>
                     <InputComponent
                         keyValue="updateGPS"
-                        onChange={(key, checked) => handleSetUpdateGPS(checked)}
+                        onChange={(_key, checked) =>
+                            handleSetUpdateGPS(checked)
+                        }
                         value={updateGPS}
                         type="checkbox"
                         label={MESSAGES.useGPSFromSubmission}

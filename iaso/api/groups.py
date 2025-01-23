@@ -117,7 +117,7 @@ class GroupsViewSet(ModelViewSet):
         ).prefetch_related("group_sets")
         return queryset
 
-    def filter_queryset(self, queryset):
+    def filter_queryset(self, queryset, allow_anon=False):
         light = self.request.GET.get("light", False)
         queryset = queryset.prefetch_related("source_version")
         queryset = queryset.prefetch_related("source_version__data_source")
@@ -130,7 +130,8 @@ class GroupsViewSet(ModelViewSet):
             queryset = queryset.filter(source_version=version)
         elif data_source_id:
             queryset = queryset.filter(source_version__data_source__id=data_source_id)
-        else:
+        # if allow_anon is True, versions and projects are handled manually outside of this method
+        elif not allow_anon:
             default_version = self.request.GET.get("defaultVersion", None)
             if default_version == "true":
                 queryset = queryset.filter(source_version=self.request.user.iaso_profile.account.default_version)
@@ -169,18 +170,22 @@ class GroupsViewSet(ModelViewSet):
         if user and user.is_authenticated:
             account = user.iaso_profile.account
             # Filter on version ids (linked to the account)""
-            default_version = self.request.query_params.get("defaultVersion", account.default_version.id)
-            versions = SourceVersion.objects.filter(data_source__projects__account=account, pk=default_version)
+            default_version_id = account.default_version.id
+            versions = SourceVersion.objects.filter(data_source__projects__account=account)
 
         else:
             # this check if project need auth
             project = Project.objects.get_for_user_and_app_id(user, app_id)
-            default_version = self.request.query_params.get("defaultVersion", project.account.default_version.id)
-            versions = SourceVersion.objects.filter(data_source__projects=project, pk=default_version)
+            default_version_id = project.account.default_version.id
+            versions = SourceVersion.objects.filter(data_source__projects=project)
+
+        # Apply defaultVersion filter that we skip in filter_queryset when allowing anon users
+        if self.request.GET.get("defaultVersion", None) == "true":
+            versions = versions.filter(pk=default_version_id)
 
         groups = Group.objects.filter(source_version__in=versions).distinct()
 
-        queryset = self.filter_queryset(groups)
+        queryset = self.filter_queryset(groups, allow_anon=True)
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)

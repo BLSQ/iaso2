@@ -26,7 +26,7 @@ import { getChipColors } from '../../../constants/chipColors';
 
 import { useCurrentUser } from '../../../utils/usersUtils';
 import { useGetDataSources } from '../hooks/requests/useGetDataSources';
-import { useGetGroups } from '../hooks/requests/useGetGroups';
+import { useGetGroupDropdown } from '../hooks/requests/useGetGroups';
 import { useGetOrgUnit } from './TreeView/requests';
 
 import { DropdownOptionsWithOriginal } from '../../../types/utils';
@@ -107,7 +107,7 @@ export const OrgUnitFilters: FunctionComponent<Props> = ({
         useGetDataSources(true);
     const { data: projects, isFetching: isFetchingProjects } =
         useGetProjectsDropDown();
-    const { data: groups, isFetching: isFetchingGroups } = useGetGroups({
+    const { data: groups, isFetching: isFetchingGroups } = useGetGroupDropdown({
         dataSourceId,
         sourceVersionId,
     });

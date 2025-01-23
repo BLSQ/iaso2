@@ -527,7 +527,7 @@ class PolioAPITestCase(APITestCase, PolioTestCaseMixin):
                 {
                     "vaccine": "bOPV",
                     "group": {
-                        "name": "scope for round 1 campaign obr_name - bOPV",
+                        "name": f"scope {first_round.scopes.get(vaccine='bOPV').id} for round 1 campaign obr_name - bOPV",
                         "id": first_round.scopes.get(vaccine="bOPV").group.id,
                         "org_units": [o.id for o in first_round.scopes.get(vaccine="bOPV").group.org_units.all()],
                     },
@@ -535,7 +535,7 @@ class PolioAPITestCase(APITestCase, PolioTestCaseMixin):
                 {
                     "vaccine": "mOPV2",
                     "group": {
-                        "name": "scope for round 1 campaign obr_name - mOPV2",
+                        "name": f"scope {first_round.scopes.get(vaccine='mOPV2').id} for round 1 campaign obr_name - mOPV2",
                         "id": first_round.scopes.get(vaccine="mOPV2").group.id,
                         "org_units": [o.id for o in first_round.scopes.get(vaccine="mOPV2").group.org_units.all()],
                     },

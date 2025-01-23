@@ -149,17 +149,6 @@ class RoundScope(models.Model):
         ordering = ["round", "vaccine"]
 
 
-# # Signal to delete the Group when the Round is deleted
-# @receiver(post_delete, sender=RoundScope)
-# def delete_group_on_round_delete(sender, instance, **kwargs):
-#     """
-#     Delete the associated Group when the RoundScope instance is deleted,
-#     which happens when a Round is deleted.
-#     """
-#     if instance.group:
-#         instance.group.delete()
-
-
 def make_group_campaign_scope():
     return Group.objects.create(name="hidden campaignScope")
 

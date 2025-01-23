@@ -1,21 +1,20 @@
-import React, { FunctionComponent, useCallback, useState } from 'react';
 import { Box, Grid } from '@mui/material';
-import { useFilterState } from '../../../../hooks/useFilterState';
-import { useGetOrgUnitTypesDropdownOptions } from '../../orgUnitTypes/hooks/useGetOrgUnitTypesDropdownOptions';
-import { useLocationOptions } from '../../hooks/utils/useLocationOptions';
-import { useInstancesOptions } from '../../hooks/utils/useInstancesOptions';
-import { useGetOrgUnitValidationStatus } from '../../hooks/utils/useGetOrgUnitValidationStatus';
-import { useGroupsOptions } from '../../hooks/utils/useGroupsOptions';
-import { GroupWithDataSource } from '../../types/orgUnit';
+import React, { FunctionComponent, useCallback, useState } from 'react';
 import InputComponent from '../../../../components/forms/InputComponent';
-import { OU_CHILDREN_PREFIX } from '../../../../constants/urls';
-import MESSAGES from '../../messages';
 import { SearchButton } from '../../../../components/SearchButton';
+import { OU_CHILDREN_PREFIX } from '../../../../constants/urls';
+import { useFilterState } from '../../../../hooks/useFilterState';
+import { DropdownOptions } from '../../../../types/utils';
+import { useGetOrgUnitValidationStatus } from '../../hooks/utils/useGetOrgUnitValidationStatus';
+import { useInstancesOptions } from '../../hooks/utils/useInstancesOptions';
+import { useLocationOptions } from '../../hooks/utils/useLocationOptions';
+import MESSAGES from '../../messages';
+import { useGetOrgUnitTypesDropdownOptions } from '../../orgUnitTypes/hooks/useGetOrgUnitTypesDropdownOptions';
 
 type Props = {
     params: any;
     baseUrl: string;
-    groups?: GroupWithDataSource[];
+    groups?: DropdownOptions<string>[];
 };
 
 export const OrgUnitChildrenFilters: FunctionComponent<Props> = ({
@@ -44,7 +43,6 @@ export const OrgUnitChildrenFilters: FunctionComponent<Props> = ({
     const instancesOptions = useInstancesOptions();
     const { data: validationStatusOptions, isFetching: isLoadingStatuses } =
         useGetOrgUnitValidationStatus(true);
-    const groupOptions = useGroupsOptions(groups);
 
     return (
         <Grid container spacing={2}>
@@ -100,7 +98,7 @@ export const OrgUnitChildrenFilters: FunctionComponent<Props> = ({
                     value={filters[`${OU_CHILDREN_PREFIX}Group`]}
                     onChange={handleChange}
                     multi
-                    options={groupOptions}
+                    options={groups}
                     label={MESSAGES.group}
                 />
 

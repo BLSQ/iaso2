@@ -14,7 +14,8 @@ import React, {
 import { commonStyles } from 'bluesquare-components';
 import { isEqual } from 'lodash';
 import { getValues, useFormState } from '../../../hooks/form';
-import { Group, OrgUnit, OrgunitInititialState } from '../types/orgUnit';
+import { DropdownOptions } from '../../../types/utils';
+import { OrgUnit, OrgunitInititialState } from '../types/orgUnit';
 import { OrgunitType } from '../types/orgunitTypes';
 import { OrgUnitInfos } from './OrgUnitInfos';
 
@@ -43,7 +44,7 @@ const useStyles = makeStyles(theme => ({
 type Props = {
     orgUnit: OrgUnit;
     orgUnitTypes: OrgunitType[];
-    groups: Group[];
+    groups: DropdownOptions<string>[];
     saveOrgUnit: (
         newOu: OrgUnit,
         onSuccess: (unit: OrgUnit) => void,

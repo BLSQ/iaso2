@@ -65,7 +65,9 @@ class SubActivityCreateUpdateSerializer(serializers.ModelSerializer):
             group_org_units = group_data.pop("org_units", [])
             group = Group.objects.create(**group_data)
             group.org_units.set(group_org_units)
-            SubActivityScope.objects.create(subactivity=sub_activity, group=group, **scope_data)
+            new_scope = SubActivityScope.objects.create(subactivity=sub_activity, group=group, **scope_data)
+            group.name = f"scope {new_scope.id} for sub-activity {sub_activity.id} for round {round_number} of campaign {campaign}"
+            group.save()
 
         return sub_activity
 

@@ -4,7 +4,7 @@ import {
     useSnackQueries,
     useSnackQuery,
 } from 'Iaso/libs/apiHooks.ts';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useQueryClient } from 'react-query';
 import { getChipColors, getOtChipColors } from '../../constants/chipColors';
 import { useCheckUserHasWriteTypePermission } from '../../utils/usersUtils.ts';
@@ -27,16 +27,14 @@ export const useOrgUnitDetailData = (
                 onSuccess: ou => setCurrentOrgUnit(ou),
             },
         );
-    const groupsUrl = useMemo(() => {
-        const baseUrl = '/api/groups/';
-        if (isNewOrgunit) {
-            return `${baseUrl}?&defaultVersion=true`;
-        }
-        if (originalOrgUnit?.source_id) {
-            return `${baseUrl}?&dataSource=${originalOrgUnit.source_id}`;
-        }
-        return baseUrl;
-    }, [isNewOrgunit, originalOrgUnit?.source_id]);
+    const groupsDataSourceQueryParams = originalOrgUnit?.source_id
+        ? `?dataSource=${originalOrgUnit.source_id}`
+        : undefined;
+    const groupsQueryParams = isNewOrgunit
+        ? '?defaultVersion=true'
+        : groupsDataSourceQueryParams;
+    const groupsApiUrl = '/api/groups/dropdown/';
+
     const cacheOptions = {
         staleTime: 1000 * 60 * 15, // in MS
         cacheTime: 1000 * 60 * 5,
@@ -72,11 +70,15 @@ export const useOrgUnitDetailData = (
         { data: parentOrgUnit },
     ] = useSnackQueries([
         {
-            queryKey: ['groups', groupsUrl],
-            queryFn: () => getRequest(groupsUrl),
+            queryKey: ['groups', groupsQueryParams],
+            queryFn: () => getRequest(`${groupsApiUrl}${groupsQueryParams}`),
             snackErrorMsg: MESSAGES.fetchGroupsError,
             options: {
-                select: data => data.groups,
+                select: data =>
+                    data.map(group => ({
+                        value: group.id,
+                        label: group.label,
+                    })),
                 enabled:
                     (tab === 'children' || tab === 'infos') &&
                     (Boolean(originalOrgUnit) || isNewOrgunit),
@@ -182,40 +184,6 @@ export const useSaveOrgUnit = (onSuccess, invalidateQueryKey) =>
         invalidateQueryKey,
         { onSuccess },
     );
-
-const makeGroupsQueryParams = ({ dataSourceId, sourceVersionId }) => {
-    if (sourceVersionId) return `?version=${sourceVersionId}`;
-    if (dataSourceId) return `?dataSource=${dataSourceId}`;
-    return '?defaultVersion=true';
-};
-
-export const useGetGroups = ({ dataSourceId, sourceVersionId }) => {
-    const [enabled, setEnabled] = useState(false);
-    const groupsQueryParams = makeGroupsQueryParams({
-        dataSourceId,
-        sourceVersionId,
-    });
-
-    useEffect(() => {
-        if (dataSourceId) setEnabled(true);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dataSourceId]);
-
-    const { data: groups, isFetching: isFetchingGroups } = useSnackQuery(
-        ['groups', dataSourceId, groupsQueryParams],
-        () => getRequest(`/api/groups/${groupsQueryParams}`),
-        MESSAGES.fetchGroupsError,
-        {
-            enabled,
-            select: data => data?.groups,
-        },
-    );
-
-    return {
-        groups,
-        isFetchingGroups,
-    };
-};
 
 export const useRefreshOrgUnit = () => {
     const queryClient = useQueryClient();

@@ -3,7 +3,6 @@ import { ReactNode } from 'react';
 import { GeoJson } from '../../../components/maps/types';
 import { Nullable } from '../../../types/utils';
 import { File, Instance } from '../../instances/types/instance';
-import { DataSource } from './dataSources';
 import { OrgunitType } from './orgunitTypes';
 import { Shape } from './shapes';
 
@@ -19,22 +18,6 @@ export type Group = {
     name: string;
     source_ref: Nullable<string>;
     source_version: number;
-};
-
-export type GroupWithDataSource = {
-    created_at: number;
-    updated_at: number;
-    id: number;
-    name: string;
-    source_ref: Nullable<string>;
-    source_version: {
-        id: number;
-        number: number;
-        data_source: Partial<DataSource>;
-    };
-
-    block_of_countries: boolean;
-    org_unit_count: number;
 };
 
 export type OrgunitInititialState = {
