@@ -122,7 +122,7 @@ export const AsyncSelect: FunctionComponent<Props> = ({
                     // Make the array unique by `value` key.
                     newOptions = [
                         ...new Map(
-                            newOptions.map(item => [item['value'], item]),
+                            newOptions.map(item => [item.value, item]),
                         ).values(),
                     ];
                 }
