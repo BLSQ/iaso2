@@ -15,7 +15,7 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
-from iaso.views import ModelDataView, health, page, robots_txt
+from iaso.views import ModelDataView, health, page, robots_txt, health_clamav
 
 admin.site.site_header = "Administration de Iaso"
 admin.site.site_title = "Iaso"
@@ -27,6 +27,7 @@ if settings.MAINTENANCE_MODE:
         path("_health/", health),
         path("_health", health),  # same without slash otherwise AWS complain about redirect
         path("health/", health),  # alias since current apache config hide _health/
+        path("health-clamav/", health_clamav),
     ]
 
     def custom_404_view(request, exception):
@@ -74,6 +75,7 @@ else:
         path("_health/", health),
         path("_health", health),  # same without slash otherwise AWS complain about redirect
         path("health/", health),  # alias since current apache config hide _health/
+        path("health-clamav/", health_clamav),
         path("admin/", admin.site.urls),
         path("api/", include("iaso.urls")),
         path("pages/<page_slug>/", page, name="pages"),
