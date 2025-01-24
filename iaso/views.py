@@ -147,8 +147,7 @@ def health(request):
 
 
 def health_clamav(request):
-    """This is used to check whether ClamAV is active on this Iaso instance and if the ClamAV server is reachable
-    """
+    """This is used to check whether ClamAV is active on this Iaso instance and if the ClamAV server is reachable"""
 
     is_clamav_active = settings.CLAMAV_ACTIVE
     if not is_clamav_active:

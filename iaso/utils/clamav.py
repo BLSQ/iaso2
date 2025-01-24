@@ -37,7 +37,6 @@ def _scan_with_clamav(file_path: str):
 
     try:
         scanner = clamav_client.get_scanner(config=settings.CLAMAV_CONFIGURATION)
-        # print(scanner.info())
         scan = scanner.scan(file_path)
         logger.info(f"Scan result: {scan}")
 
@@ -54,8 +53,10 @@ def _scan_with_clamav(file_path: str):
         return is_safe, details
 
     except CommunicationError as e:
-        logger.exception("Connection error to ClamAV")
-        return False, f"ERROR: Could not connect to ClamAV daemon - {e}"
+        error_message = f"Connection error to ClamAV - {e}"
+        logger.error(error_message)
+        return False, error_message
     except Exception as e:
-        logger.exception("Unknown error while scanning file")
-        return False, f"ERROR: unknown error - {str(e)}"
+        error_message = f"Unknown error while scanning file - {e}"
+        logger.error(error_message)
+        return False, error_message
