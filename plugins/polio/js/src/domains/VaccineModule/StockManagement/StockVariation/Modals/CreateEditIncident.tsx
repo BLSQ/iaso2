@@ -28,7 +28,7 @@ import { Vaccine } from '../../../../../constants/types';
 import { useSaveIncident } from '../../hooks/api';
 import { useGetMovementDescription } from '../../hooks/useGetMovementDescription';
 import MESSAGES from '../../messages';
-import { useIncidentOptions } from './useIncidentOptions';
+import { useIncidentOptions } from './dropdownOptions';
 import { useIncidentValidation } from './validation';
 
 type Props = {
@@ -249,8 +249,8 @@ export const CreateEditIncident: FunctionComponent<Props> = ({
                 allowConfirm={allowConfirm}
                 open={isOpen}
                 closeDialog={closeDialog}
-                id="formA-modal"
-                dataTestId="formA-modal"
+                id="incident-modal"
+                dataTestId="incident-modal"
                 onCancel={() => null}
                 onClose={() => {
                     closeDialog();
