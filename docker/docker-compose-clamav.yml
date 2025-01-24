@@ -1,0 +1,20 @@
+version: "3"
+services:
+  clamav:
+    image: clamav/clamav:latest_base
+    volumes:
+      - ../../clamav-volume:/var/lib/clamav/
+    ports:
+      - "3310:3310"
+    environment:
+      FRESHCLAM_CHECKS: 2
+#           [integer] freshclam daily update frequency. (default: once per day)
+#      CLAMAV_NO_CLAMD:
+#           [true|false] Do not start clamd. (default: clamd daemon is started)
+#      CLAMAV_NO_FRESHCLAMD:
+#           [true|false] Do not start the freshclam daemon. (default: freshclam daemon is started)
+#      CLAMAV_NO_MILTERD:
+#           [true|false] Do not start the clamav-milter daemon. (default: clamav-milter daemon is not started)
+#      CLAMD_STARTUP_TIMEOUT:
+#           [integer] Seconds to wait for clamd to start. (default: 1800)
+

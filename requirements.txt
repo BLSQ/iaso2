@@ -44,6 +44,10 @@ geopy==2.4.1  # https://github.com/geopy/geopy/tags
 django-ltree==0.5.3  # https://github.com/mariocesar/django-ltree/tags
 psycopg2-binary==2.9.9  # https://github.com/psycopg/psycopg2/tags
 
+# ClamAV.
+# ------------------------------------------------------------------------------
+clamav-client==0.6.3  # https://github.com/artefactual-labs/clamav-client/tags
+
 # Tools.
 # ------------------------------------------------------------------------------
 Pillow==10.1.0  # https://github.com/python-pillow/Pillow/tags

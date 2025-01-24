@@ -1,5 +1,6 @@
 import json
 
+import clamav_client
 from bs4 import BeautifulSoup as Soup  # type: ignore
 from django.apps import apps
 from django.conf import settings
@@ -141,6 +142,34 @@ def health(request):
         res["account_count"] = Account.objects.count()
     except:
         res["error"] = "db_fail"
+
+    return JsonResponse(res)
+
+
+def health_clamav(request):
+    """This is used to check whether ClamAV is active on this Iaso instance and if the ClamAV server is reachable"""
+
+    is_clamav_active = settings.CLAMAV_ACTIVE
+    if not is_clamav_active:
+        return JsonResponse({"active": False, "up": "?"})
+
+    ping_config = {
+        **settings.CLAMAV_CONFIGURATION,
+        "timeout": float(2),
+    }
+
+    scanner = clamav_client.get_scanner(config=ping_config)
+    res = {
+        "active": True,
+    }
+
+    try:
+        info = scanner.info()
+        res["up"] = True
+        res["version"] = info.version
+        res["virus_definitions"] = info.virus_definitions
+    except Exception:
+        res["up"] = False
 
     return JsonResponse(res)
 

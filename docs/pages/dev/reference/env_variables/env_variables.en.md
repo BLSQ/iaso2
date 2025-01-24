@@ -43,6 +43,18 @@ BEANSTALK_SQS_URL
 
 ```
 
+## ClamAV related
+
+If you don't set the required variables, ClamAV will not be configured and Iaso will not be able to scan uploaded files.
+
+| name          | optional | default value      | description                                                                                  |
+|---------------|----------|--------------------|----------------------------------------------------------------------------------------------|
+| CLAMAV_ACTIVE | false    | `False`            | whether uploaded files need to be scanned with ClamAV or not                                 |
+| CLAMAV_FQDN   | false    | `www.some-url.com` | address that Iaso can use to reach ClamAV - FQDN, not full URL (e.g. `clamav.mywebsite.com`) |
+| CLAMAV_PORT   | true     | `3310`             | port that Iaso can use to reach ClamAV                                                       |
+
+
+
 # Security Settings
 
 ## Django settings

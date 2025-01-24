@@ -3,6 +3,7 @@ import typing
 
 from django.core import exceptions
 from django.core.files import File
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework import serializers, parsers, status
 from rest_framework.exceptions import NotFound
 from rest_framework.fields import Field
@@ -13,6 +14,7 @@ from .common import ModelViewSet, TimestampField
 from .forms import HasFormPermission
 from .query_params import APP_ID
 from hat.menupermissions import models as permission
+from ..utils.clamav import scan_uploaded_file_for_virus
 
 
 class FormAttachmentSerializer(serializers.ModelSerializer):
@@ -41,16 +43,19 @@ class FormAttachmentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         form: Form = validated_data["form"]
-        file: File = validated_data["file"]
+        file: InMemoryUploadedFile = validated_data["file"]
+
+        is_safe, details = scan_uploaded_file_for_virus(file)
+        if not is_safe:
+            raise exceptions.ValidationError({"file": [details]})
         try:
-            try:
-                previous_attachment = FormAttachment.objects.get(name=file.name, form=form)
-                previous_attachment.file = file
-                previous_attachment.md5 = self.md5sum(file)
-                previous_attachment.save()
-                return previous_attachment
-            except FormAttachment.DoesNotExist:
-                return FormAttachment.objects.create(form=form, name=file.name, file=file, md5=self.md5sum(file))
+            previous_attachment = FormAttachment.objects.get(name=file.name, form=form)
+            previous_attachment.file = file
+            previous_attachment.md5 = self.md5sum(file)
+            previous_attachment.save()
+            return previous_attachment
+        except FormAttachment.DoesNotExist:
+            return FormAttachment.objects.create(form=form, name=file.name, file=file, md5=self.md5sum(file))
         except Exception as e:
             # putting the error in an array to prevent front-end crash
             raise exceptions.ValidationError({"file": [e]})
