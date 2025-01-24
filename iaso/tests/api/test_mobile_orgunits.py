@@ -350,3 +350,43 @@ class MobileOrgUnitAPITestCase(APITestCase):
         self.client.force_authenticate(self.user)
         response = self.client.get(BASE_URL, data={APP_ID: BASE_APP_ID, IDS: f"{self.goku.id},-1,{self.goten.id}"})
         self.assertEqual(response.status_code, 404)
+
+    def test_post_to_create_orgunit_uuid_not_so_unique(self):
+        """
+        make sure we don't cross walls between account when using uuid
+        """
+        OTHER_BASE_APP_ID = "the.gallagher.brothers"
+
+        other_account = Account.objects.create(name="Oasis")
+        other_project = Project.objects.create(name="Reformation", app_id=OTHER_BASE_APP_ID, account=other_account)
+        other_user = self.create_user_with_profile(
+            username="Liam", account=other_account, permissions=["iaso_org_units"]
+        )
+        other_sw_source = DataSource.objects.create(name="Morning Glory")
+        other_sw_source.projects.add(other_project)
+        other_sw_version_1 = SourceVersion.objects.create(data_source=other_sw_source, number=1)
+        other_account.default_version = other_sw_version_1
+        other_account.save()
+
+        NOT_SO_UNIQUE_ID = "notsounique"
+
+        self.client.force_authenticate(other_user)
+        response = self.client.post(
+            BASE_URL + "?app_id=" + OTHER_BASE_APP_ID,
+            data=[{"name": "Don't Look Back in Anger", "created_at": 1, "id": NOT_SO_UNIQUE_ID}],
+            format="json",
+        )
+
+        orgunit_other = response.json()
+
+        self.client.force_authenticate(self.user)
+        response = self.client.post(
+            BASE_URL + "?app_id=" + BASE_APP_ID,
+            data=[{"name": "Don't Look Back in Anger", "created_at": 1, "id": NOT_SO_UNIQUE_ID}],
+            format="json",
+        )
+
+        orgunit = response.json()
+
+        self.assertEqual(orgunit_other[0]["name"], orgunit[0]["name"])
+        self.assertNotEqual(orgunit_other[0]["id"], orgunit[0]["id"])

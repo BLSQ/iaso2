@@ -337,10 +337,18 @@ def bbox_merge(a: Optional[tuple], b: Optional[tuple]) -> Optional[tuple]:
     )
 
 
+def orgunits_for_default_version_qs(default_version):
+    "The uuid is supposed to be unique per source_version"
+    return OrgUnit.objects.filter(version=default_version)
+
+
 def import_data(org_units, user, app_id):
     new_org_units = []
     project = Project.objects.get_for_user_and_app_id(user, app_id)
     org_units = sorted(org_units, key=get_timestamp)
+
+    project = Project.objects.get_for_user_and_app_id(user, app_id)
+    default_version = project.account.default_version
 
     for org_unit in org_units:
         uuid = org_unit.get("id", None)
@@ -351,7 +359,29 @@ def import_data(org_units, user, app_id):
         if latitude and longitude:
             altitude = org_unit.get("altitude", 0)
             org_unit_location = Point(x=longitude, y=latitude, z=altitude, srid=4326)
-        org_unit_db, created = OrgUnit.objects.get_or_create(uuid=uuid)
+
+        org_unit_defaults = {
+            "custom": True,
+            "validated": False,
+            "name": org_unit.get("name", None),
+            "version": project.account.default_version,
+        }
+
+        if not user.is_anonymous:
+            org_unit_defaults["creator"] = user
+
+        created_at = None
+        if org_unit.get("created_at", None):
+            created_at = timestamp_to_utc_datetime(int(org_unit.get("created_at", None)))
+        else:
+            created_at = org_unit.get("created_at", None)
+        if created_at:
+            org_unit_defaults["created_at"] = created_at
+        if org_unit_location:
+            org_unit_defaults["location"] = org_unit_location
+        org_unit_db, created = orgunits_for_default_version_qs(default_version).get_or_create(
+            uuid=uuid, defaults=org_unit_defaults
+        )
 
         if created:
             org_unit_db.custom = True
@@ -368,14 +398,17 @@ def import_data(org_units, user, app_id):
                 if str.isdigit(parent_id):
                     org_unit_db.parent_id = parent_id
                 else:
-                    parent_org_unit = OrgUnit.objects.get(uuid=parent_id)
+                    parent_org_unit = orgunits_for_default_version_qs(default_version).get(uuid=parent_id)
                     org_unit_db.parent_id = parent_org_unit.id
+            # TODO should org_unit_db.parent_id is "ok" for the project/account ?
 
             org_unit_type_id = org_unit.get(
                 "orgUnitTypeId", None
             )  # there exist versions of the mobile app in the wild with both orgUnitTypeId and org_unit_type_id
             if not org_unit_type_id:
                 org_unit_type_id = org_unit.get("org_unit_type_id", None)
+
+            # TODO should we verify the org_unit_type is "ok" for the project/account ?
             org_unit_db.org_unit_type_id = org_unit_type_id
 
             t = org_unit.get("created_at", None)

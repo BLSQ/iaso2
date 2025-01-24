@@ -802,6 +802,7 @@ def import_data(org_units: List[Dict], user, app_id):
     project = Project.objects.get_for_user_and_app_id(user, app_id)
     if project.account.default_version.data_source.read_only:
         raise Exception("Creation of org unit not authorized on default data source")
+    default_version = project.account.default_version
     for org_unit in org_units:
         uuid = org_unit.get("id", None)
         latitude = org_unit.get("latitude", None)
@@ -811,7 +812,7 @@ def import_data(org_units: List[Dict], user, app_id):
         if latitude and longitude:
             altitude = org_unit.get("altitude", 0)
             org_unit_location = Point(x=longitude, y=latitude, z=altitude, srid=4326)
-        org_unit_db, created = OrgUnit.objects.get_or_create(uuid=uuid)
+        org_unit_db, created = OrgUnit.objects.filter(version=default_version).get_or_create(uuid=uuid)
 
         if created:
             org_unit_db.custom = True
@@ -826,7 +827,7 @@ def import_data(org_units: List[Dict], user, app_id):
                 if str.isdigit(parent_id):
                     org_unit_db.parent_id = parent_id
                 else:
-                    parent_org_unit = OrgUnit.objects.get(uuid=parent_id)
+                    parent_org_unit = OrgUnit.objects.filter(version=default_version).get(uuid=parent_id)
                     org_unit_db.parent_id = parent_org_unit.id
 
             # there exist versions of the mobile app in the wild with both orgUnitTypeId and org_unit_type_id
