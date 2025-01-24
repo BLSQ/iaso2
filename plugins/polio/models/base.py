@@ -1548,6 +1548,63 @@ class IncidentReport(models.Model):
         ]
 
 
+class EarmarkedStock(models.Model):
+    class EarmarkedStockChoices(models.TextChoices):
+        CREATED = "created", _("Created")  #     1. Usable -> Earmark
+        USED = "used", _("Used")  #     2. Earmarked -> Used
+        RETURNED = "returned", _("Returned")  #     3. Used -> Usable
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["vaccine_stock", "campaign"]),
+            models.Index(fields=["created_at"]),
+            models.Index(fields=["round"]),
+        ]
+
+    earmarked_stock_type = models.CharField(
+        max_length=20, choices=EarmarkedStockChoices.choices, default=EarmarkedStockChoices.CREATED
+    )
+    vaccine_stock = models.ForeignKey(VaccineStock, on_delete=models.CASCADE, related_name="earmarked_stocks")
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
+    round = models.ForeignKey(Round, on_delete=models.CASCADE)
+
+    vials_earmarked = models.PositiveIntegerField()
+    doses_earmarked = models.PositiveIntegerField()
+
+    comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Earmarked {self.vials_earmarked} vials for {self.campaign.obr_name} Round {self.round.number}"
+
+    @classmethod
+    def get_available_vials_count(cls, vaccine_stock: VaccineStock, _round: Round):
+        matching_earmarks_plus = EarmarkedStock.objects.filter(
+            vaccine_stock=vaccine_stock,
+            campaign=_round.campaign,
+            round=_round,
+            earmarked_stock_type=EarmarkedStock.EarmarkedStockChoices.CREATED,
+        )
+
+        matching_earmarks_minus = EarmarkedStock.objects.filter(
+            vaccine_stock=vaccine_stock,
+            campaign=_round.campaign,
+            round=_round,
+            earmarked_stock_type__in=[
+                EarmarkedStock.EarmarkedStockChoices.USED,
+                EarmarkedStock.EarmarkedStockChoices.RETURNED,
+            ],
+        )
+
+        total_vials_usable_plus = matching_earmarks_plus.aggregate(total=Sum("vials_earmarked"))["total"] or 0
+        total_vials_usable_minus = matching_earmarks_minus.aggregate(total=Sum("vials_earmarked"))["total"] or 0
+
+        total_vials_usable = total_vials_usable_plus - total_vials_usable_minus
+
+        return total_vials_usable
+
+
 class Notification(models.Model):
     """
     List of notifications of polio virus outbreaks.

@@ -35,7 +35,7 @@ class EntityNestedSerializer(EntitySerializer):
         fields = ["id", "name"]
 
 
-class OrgUnitNestedSerializer(OrgUnitSerializer):
+class StorageOrgUnitNestedSerializer(OrgUnitSerializer):
     class Meta:
         model = OrgUnit
         fields = [
@@ -48,7 +48,7 @@ class StorageLogSerializer(serializers.ModelSerializer):
     storage_id = serializers.CharField(source="device.customer_chosen_id")
     storage_type = serializers.CharField(source="device.type")
     entity = EntityNestedSerializer(read_only=True)
-    org_unit = OrgUnitNestedSerializer(read_only=True)
+    org_unit = StorageOrgUnitNestedSerializer(read_only=True)
     performed_at = TimestampField(read_only=True)
     performed_by = UserSerializer(read_only=True)
 
@@ -112,7 +112,7 @@ class StorageSerializer(serializers.ModelSerializer):
     storage_type = serializers.CharField(source="type")
     storage_status = StorageStatusSerializer(source="*")
     entity = EntityNestedSerializer(read_only=True)
-    org_unit = OrgUnitNestedSerializer(read_only=True)
+    org_unit = StorageOrgUnitNestedSerializer(read_only=True)
     created_at = TimestampField(read_only=True)
     updated_at = TimestampField(read_only=True)
 

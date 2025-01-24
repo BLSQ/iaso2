@@ -282,3 +282,11 @@ class APITestCase(BaseAPITestCase, IasoTestCaseMixin):
             self.assertEqual(task.name, name)
 
         return task
+
+    def assertValidSimpleSchema(self, data: typing.Mapping, schema: typing.Mapping):
+        for field, expected_type in schema.items():
+            self.assertIn(field, data)
+            if isinstance(expected_type, list):
+                self.assertTrue(any(isinstance(data[field], t) for t in expected_type))
+            else:
+                self.assertIsInstance(data[field], expected_type)

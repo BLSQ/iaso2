@@ -47,6 +47,7 @@ from plugins.polio.api.vaccines.stock_management import (
     OutgoingStockMovementViewSet,
     DestructionReportViewSet,
     IncidentReportViewSet,
+    EarmarkedStockViewSet,
 )
 
 from plugins.polio.tasks.api.launch_vaccine_stock_archive import ArchiveVaccineStockViewSet
@@ -103,6 +104,7 @@ router.register(
 )
 router.register(r"polio/vaccine/stock/destruction_report", DestructionReportViewSet, basename="destruction_report")
 router.register(r"polio/vaccine/stock/incident_report", IncidentReportViewSet, basename="incident_report")
+router.register(r"polio/vaccine/stock/earmarked_stock", EarmarkedStockViewSet, basename="earmarked_stock")
 
 router.register(r"polio/notifications", NotificationViewSet, basename="notifications")
 
