@@ -46,7 +46,7 @@ psycopg2-binary==2.9.9  # https://github.com/psycopg/psycopg2/tags
 
 # ClamAV.
 # ------------------------------------------------------------------------------
-clamav-client==0.6.2  # https://github.com/artefactual-labs/clamav-client/tags
+clamav-client==0.6.3  # https://github.com/artefactual-labs/clamav-client/tags
 
 # Tools.
 # ------------------------------------------------------------------------------
