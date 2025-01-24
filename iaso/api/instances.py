@@ -189,7 +189,7 @@ class InstancesViewSet(viewsets.ViewSet):
     def get_queryset(self):
         request = self.request
         queryset: InstanceQuerySet = Instance.objects.order_by("-id")
-        queryset = queryset.filter_for_user(request.user)
+        queryset = queryset.filter_for_user(request.user).filter_on_user_projects(user=request.user)
         return queryset
 
     @action(["GET"], detail=False)

@@ -255,7 +255,9 @@ class FormsViewSet(ModelViewSet):
         if show_deleted == "true":
             form_objects = Form.objects_only_deleted
 
-        queryset = form_objects.filter_for_user_and_app_id(self.request.user, self.request.query_params.get("app_id"))
+        queryset = form_objects.filter_for_user_and_app_id(
+            self.request.user, self.request.query_params.get("app_id")
+        ).filter_on_user_projects(self.request.user)
         org_unit_id = self.request.query_params.get("orgUnitId", None)
         if org_unit_id:
             queryset = queryset.filter(instances__org_unit__id=org_unit_id)
