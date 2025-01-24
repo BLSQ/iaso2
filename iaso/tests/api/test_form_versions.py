@@ -8,6 +8,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import override_settings
 
 from iaso import models as m
+from iaso.api.query_params import APP_ID
 from iaso.test import APITestCase
 
 
@@ -31,7 +32,10 @@ class FormsVersionAPITestCase(APITestCase):
         cls.sith_council = m.OrgUnitType.objects.create(name="Sith Council", short_name="Cnc")
 
         cls.project = m.Project.objects.create(
-            name="Hydroponic gardens", app_id="stars.empire.agriculture.hydroponics", account=star_wars
+            name="Hydroponic gardens",
+            app_id="stars.empire.agriculture.hydroponics",
+            account=star_wars,
+            needs_authentication=True,
         )
         cls.project.unit_types.add(cls.sith_council)
 
@@ -413,6 +417,26 @@ class FormsVersionAPITestCase(APITestCase):
             format="multipart",
         )
         self.assertJSONResponse(response, 400)
+
+    def test_formversions_list_without_auth_for_project_requiring_auth(self):
+        """GET /formversions/ without auth for project which requires it: 401"""
+
+        response = self.client.get("/api/formversions/", {APP_ID: self.project.app_id})
+        self.assertJSONResponse(response, 401)
+
+    def test_formversions_list_with_wrong_auth_for_project_requiring_auth(self):
+        """GET /formversions/ with wrong auth for project which requires it: 401"""
+
+        self.client.force_authenticate(user=self.batman)
+        response = self.client.get("/api/formversions/", {APP_ID: self.project.app_id})
+        self.assertJSONResponse(response, 401)
+
+    def test_formversions_list_with_auth_for_project_requiring_auth(self):
+        """GET /formversions/ with auth for project which requires it: 200"""
+
+        self.client.force_authenticate(user=self.yoda)
+        response = self.client.get("/api/formversions/", {APP_ID: self.project.app_id})
+        self.assertJSONResponse(response, 200)
 
     def assertValidFormVersionData(
         self, form_version_data: typing.Mapping, *, check_annotated_fields: bool = True

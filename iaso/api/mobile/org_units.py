@@ -23,6 +23,7 @@ from iaso.api.query_params import APP_ID, LIMIT, PAGE, IDS
 from iaso.api.serializers import AppIdSerializer
 from iaso.models import Instance, OrgUnit, Project, FeatureFlag
 from hat.menupermissions import models as permission
+from iaso.permissions import IsAuthenticatedOrReadOnlyWhenNoAuthenticationRequired
 
 
 class MobileOrgUnitsSetPagination(Paginator):
@@ -122,7 +123,7 @@ class MobileOrgUnitSerializer(serializers.ModelSerializer):
         return org_unit.location.z if org_unit.location else None
 
 
-class HasOrgUnitPermission(permissions.BasePermission):
+class HasOrgUnitPermission(IsAuthenticatedOrReadOnlyWhenNoAuthenticationRequired):
     def has_object_permission(self, request, view, obj):
         if not (
             request.user.is_authenticated
