@@ -3,7 +3,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework import serializers
 
-from iaso.api.common import ModelViewSet
+from iaso.api.common import EtlModelViewset, ModelViewSet
 from plugins.polio.api.vaccines.stock_management import VaccineStockCalculator
 from plugins.polio.api.vaccines.supply_chain import VaccineSupplyChainReadWritePerm
 from plugins.polio.models import (
@@ -130,7 +130,7 @@ class VaccineRequestFormDashboardSerializer(serializers.ModelSerializer):
         return latest_destruction_report.rrt_destruction_report_reception_date if latest_destruction_report else None
 
 
-class VaccineRequestFormDashboardViewSet(ModelViewSet):
+class VaccineRequestFormDashboardViewSet(EtlModelViewset):
     """
     GET /api/polio/dashboards/vaccine_request_forms/
     Returns all vaccine request forms for the user's account.
@@ -164,7 +164,7 @@ class VaccinePreAlertDashboardSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class PreAlertDashboardViewSet(ModelViewSet):
+class PreAlertDashboardViewSet(EtlModelViewset):
     """
     GET /api/polio/dashboards/pre_alerts/
     Returns all vaccine pre alerts for the user's account.
@@ -186,7 +186,7 @@ class VaccineArrivalReportDashboardSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class VaccineArrivalReportDashboardViewSet(ModelViewSet):
+class VaccineArrivalReportDashboardViewSet(EtlModelViewset):
     """
     GET /api/polio/dashboards/arrival_reports/
     Returns all vaccine arrival reports for the user's account.

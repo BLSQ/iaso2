@@ -1,6 +1,6 @@
 import django_filters
 from rest_framework import serializers
-from iaso.api.common import ModelViewSet
+from iaso.api.common import EtlModelViewset
 from plugins.polio.api.permission_classes import PolioReadPermission
 from plugins.polio.models.base import VaccineStockHistory
 from django.utils.translation import gettext_lazy as _
@@ -36,7 +36,7 @@ class VaccineStockHistoryFilter(django_filters.rest_framework.FilterSet):
         return queryset.filter(round__id=value)
 
 
-class VaccineStockHistoryDashboardViewSet(ModelViewSet):
+class VaccineStockHistoryDashboardViewSet(EtlModelViewset):
     """
     GET /api/polio/dashboards/vaccine_stock_history/
     Returns all Preparedness sheet snapshots

@@ -270,3 +270,36 @@ class SupplyChainDashboardsAPITestCase(APITestCase):
         # Check if the latest dates are returned
         self.assertEqual(vrf2["form_a_reception_date"], str(new_forma.form_a_reception_date))
         self.assertEqual(vrf2["destruction_report_reception_date"], str(last_dr.rrt_destruction_report_reception_date))
+
+    def test_default_pagination_is_added(self):
+        self.client.force_authenticate(self.user)
+        response = self.client.get(f"{self.vrf_url}/")
+        data = self.assertJSONResponse(response, 200)
+        self.assertEqual(data["page"], 1)
+        self.assertEqual(data["limit"], 20)
+        response = self.client.get(f"{self.pre_alerts_url}/")
+        data = self.assertJSONResponse(response, 200)
+        self.assertEqual(data["page"], 1)
+        self.assertEqual(data["limit"], 20)
+        response = self.client.get(f"{self.arrival_reports_url}/")
+        data = self.assertJSONResponse(response, 200)
+        self.assertEqual(data["page"], 1)
+        self.assertEqual(data["limit"], 20)
+
+    def test_max_page_size_is_enforced(self):
+        default_max_page_size = 1000  # default value from EtlPaginator
+        self.client.force_authenticate(self.user)
+        response = self.client.get(f"{self.vrf_url}?limit=2000&page=1")
+        data = self.assertJSONResponse(response, 200)
+        self.assertEqual(data["page"], 1)
+        self.assertEqual(data["limit"], default_max_page_size)
+        self.client.force_authenticate(self.user)
+        response = self.client.get(f"{self.pre_alerts_url}?limit=2000&page=1")
+        data = self.assertJSONResponse(response, 200)
+        self.assertEqual(data["page"], 1)
+        self.assertEqual(data["limit"], default_max_page_size)
+        self.client.force_authenticate(self.user)
+        response = self.client.get(f"{self.arrival_reports_url}?limit=2000&page=1")
+        data = self.assertJSONResponse(response, 200)
+        self.assertEqual(data["page"], 1)
+        self.assertEqual(data["limit"], default_max_page_size)

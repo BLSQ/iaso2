@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from iaso.api.common import ModelViewSet
+from iaso.api.common import EtlModelViewset
 from plugins.polio.api.permission_classes import PolioReadPermission
 from plugins.polio.models import SpreadSheetImport
 
@@ -10,7 +10,7 @@ class SpreadSheetImportDashboardSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class SpreadSheetImportViewSet(ModelViewSet):
+class SpreadSheetImportViewSet(EtlModelViewset):
     """
     GET /api/polio/dashboards/preparedness_sheets/
     Returns all Preparedness sheet snapshots
