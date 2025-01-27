@@ -106,7 +106,7 @@ from (select TO_CHAR(gen_date.generate_series, 'YYYY/MM') as line_label,
 # Searching in Org Units, Org Unit Types
 Here are some examples of queries to find Org Units, their types, reference forms and everything linked to the hierarchy of a specific Org Unit.
 
-As we are using Postgre's [ltree extension](https://www.postgresql.org/docs/9.6/ltree.html) and [django-ltree](https://github.com/mariocesar/django-ltree) to model this hierarchy, specific SQL operators are available to search in a performant way and queries can be cumbersome.
+As we are using Postgre's [ltree extension](https://www.postgresql.org/docs/16/ltree.html) and [django-ltree](https://github.com/mariocesar/django-ltree) to model this hierarchy, specific SQL operators are available to search in a performant way and queries can be cumbersome.
 
 Let's say you have a OrgUnit with ID : **XXXXXX**
 
