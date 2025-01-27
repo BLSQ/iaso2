@@ -95,7 +95,6 @@ services:
 
     db:
         image: postgis/postgis:16-3.4
-        build: docker/db
         logging: *iaso_logging
         ports:
             - '5433:5432'
