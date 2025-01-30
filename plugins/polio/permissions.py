@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-_PREFIX = "menupermissions."
+_PREFIX = "polio."
 
 _POLIO = "iaso_polio"
 _POLIO_BUDGET = "iaso_polio_budget"
