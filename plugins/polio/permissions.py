@@ -1,0 +1,73 @@
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+
+_PREFIX = "menupermissions."
+
+_POLIO = "iaso_polio"
+_POLIO_BUDGET = "iaso_polio_budget"
+_POLIO_BUDGET_ADMIN = "iaso_polio_budget_admin"
+_POLIO_CONFIG = "iaso_polio_config"
+_POLIO_CHRONOGRAM = "iaso_polio_chronogram"
+_POLIO_CHRONOGRAM_RESTRICTED_WRITE = "iaso_polio_chronogram_restricted_write"
+_POLIO_NOTIFICATIONS = "iaso_polio_notifications"
+_POLIO_VACCINE_AUTHORIZATIONS_ADMIN = "iaso_polio_vaccine_authorizations_admin"
+_POLIO_VACCINE_AUTHORIZATIONS_READ_ONLY = "iaso_polio_vaccine_authorizations_read_only"
+_POLIO_VACCINE_SUPPLY_CHAIN_READ = "iaso_polio_vaccine_supply_chain_read"
+_POLIO_VACCINE_SUPPLY_CHAIN_WRITE = "iaso_polio_vaccine_supply_chain_write"
+_POLIO_VACCINE_STOCK_MANAGEMENT_READ = "iaso_polio_vaccine_stock_management_read"
+_POLIO_VACCINE_STOCK_MANAGEMENT_WRITE = "iaso_polio_vaccine_stock_management_write"
+
+
+POLIO = _PREFIX + _POLIO
+POLIO_BUDGET = _PREFIX + _POLIO_BUDGET
+POLIO_BUDGET_ADMIN = _PREFIX + _POLIO_BUDGET_ADMIN
+POLIO_CHRONOGRAM = _PREFIX + _POLIO_CHRONOGRAM
+POLIO_CHRONOGRAM_RESTRICTED_WRITE = _PREFIX + _POLIO_CHRONOGRAM_RESTRICTED_WRITE
+POLIO_CONFIG = _PREFIX + _POLIO_CONFIG
+POLIO_NOTIFICATIONS = _PREFIX + _POLIO_NOTIFICATIONS
+POLIO_VACCINE_AUTHORIZATIONS_ADMIN = _PREFIX + _POLIO_VACCINE_AUTHORIZATIONS_ADMIN
+POLIO_VACCINE_AUTHORIZATIONS_READ_ONLY = _PREFIX + _POLIO_VACCINE_AUTHORIZATIONS_READ_ONLY
+POLIO_VACCINE_STOCK_MANAGEMENT_READ = _PREFIX + _POLIO_VACCINE_STOCK_MANAGEMENT_READ
+POLIO_VACCINE_STOCK_MANAGEMENT_WRITE = _PREFIX + _POLIO_VACCINE_STOCK_MANAGEMENT_WRITE
+POLIO_VACCINE_SUPPLY_CHAIN_READ = _PREFIX + _POLIO_VACCINE_SUPPLY_CHAIN_READ
+POLIO_VACCINE_SUPPLY_CHAIN_WRITE = _PREFIX + _POLIO_VACCINE_SUPPLY_CHAIN_WRITE
+
+exported_permissions = {
+    "POLIO": POLIO,
+    "POLIO_BUDGET": POLIO_BUDGET,
+    "POLIO_BUDGET_ADMIN": POLIO_BUDGET_ADMIN,
+    "POLIO_CONFIG": POLIO_CONFIG,
+    "POLIO_CHRONOGRAM": POLIO_CHRONOGRAM,
+    "POLIO_CHRONOGRAM_RESTRICTED_WRITE": POLIO_CHRONOGRAM_RESTRICTED_WRITE,
+    "POLIO_NOTIFICATIONS": POLIO_NOTIFICATIONS,
+    "POLIO_VACCINE_AUTHORIZATIONS_ADMIN": POLIO_VACCINE_AUTHORIZATIONS_ADMIN,
+    "POLIO_VACCINE_AUTHORIZATIONS_READ_ONLY": POLIO_VACCINE_AUTHORIZATIONS_READ_ONLY,
+    "POLIO_VACCINE_SUPPLY_CHAIN_READ": POLIO_VACCINE_SUPPLY_CHAIN_READ,
+    "POLIO_VACCINE_SUPPLY_CHAIN_WRITE": POLIO_VACCINE_SUPPLY_CHAIN_WRITE,
+    "POLIO_VACCINE_STOCK_MANAGEMENT_READ": POLIO_VACCINE_STOCK_MANAGEMENT_READ,
+    "POLIO_VACCINE_STOCK_MANAGEMENT_WRITE": POLIO_VACCINE_STOCK_MANAGEMENT_WRITE,
+}
+
+
+class PolioPermissionSupport(models.Model):
+    class Meta:
+        managed = False
+        default_permissions = []
+        permissions = (
+            (_POLIO, _("Polio")),
+            (_POLIO_BUDGET, _("Budget Polio")),
+            (_POLIO_BUDGET_ADMIN, _("Budget Polio Admin")),
+            (_POLIO_CONFIG, _("Polio config")),
+            (_POLIO_CHRONOGRAM, _("Polio chronogram")),
+            (_POLIO_CHRONOGRAM_RESTRICTED_WRITE, _("Polio chronogram user (restricted write)")),
+            (_POLIO_NOTIFICATIONS, _("Polio notifications")),
+            (_POLIO_VACCINE_AUTHORIZATIONS_ADMIN, _("Polio Vaccine Authorizations Admin")),
+            (_POLIO_VACCINE_AUTHORIZATIONS_READ_ONLY, _("Polio Vaccine Authorizations Read Only")),
+            (_POLIO_VACCINE_SUPPLY_CHAIN_READ, _("Polio Vaccine Supply Chain Read")),
+            (_POLIO_VACCINE_SUPPLY_CHAIN_WRITE, _("Polio Vaccine Supply Chain Write")),
+            (_POLIO_VACCINE_STOCK_MANAGEMENT_READ, _("Polio Vaccine Stock Management Read")),
+            (_POLIO_VACCINE_STOCK_MANAGEMENT_WRITE, _("Polio Vaccine Stock Management Write")),
+        )
+
+
+permission_model = PolioPermissionSupport

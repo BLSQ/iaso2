@@ -1848,3 +1848,6 @@ class NotificationXlsxImporter:
         if source.upper().startswith("CONT"):
             return Notification.Sources["CONTACT"]
         return Notification.Sources["OTHER"]
+
+
+from plugins.polio.permissions import PolioPermissionSupport
