@@ -1,6 +1,7 @@
 import typing
 
 from iaso import models as m
+from iaso.api.query_params import APP_ID
 from iaso.test import APITestCase
 
 
@@ -9,10 +10,16 @@ class OrgUnitTypesAPITestCase(APITestCase):
     def setUpTestData(cls):
         ghi = m.Account.objects.create(name="Global Health Initiative")
         wha = m.Account.objects.create(name="Worldwide Health Aid")
-        cls.ead = m.Project.objects.create(name="End All Diseases", account=ghi)
-        cls.esd = m.Project.objects.create(name="End Some Diseases", account=wha)
+        cls.ead = m.Project.objects.create(
+            name="End All Diseases",
+            app_id="ead",
+            account=ghi,
+            needs_authentication=True,
+        )
+        cls.esd = m.Project.objects.create(name="End Some Diseases", app_id="esd", account=wha)
 
         cls.jane = cls.create_user_with_profile(username="janedoe", account=ghi, permissions=["iaso_forms"])
+        cls.john = cls.create_user_with_profile(username="johndoe", account=wha, permissions=["iaso_forms"])
         cls.reference_form = m.Form.objects.create(
             name="Hydroponics study", period_type=m.MONTH, single_per_period=True
         )
@@ -33,6 +40,26 @@ class OrgUnitTypesAPITestCase(APITestCase):
 
         cls.esd.forms.add(cls.reference_form_wrong_project)
         cls.esd.save()
+
+    def test_orgunittypes_list_without_auth_for_project_requiring_auth(self):
+        """GET /orgunittypes/ without auth for project which requires it: 401"""
+
+        response = self.client.get("/api/orgunittypes/", {APP_ID: self.ead.app_id})
+        self.assertJSONResponse(response, 401)
+
+    def test_orgunittypes_list_with_wrong_auth_for_project_requiring_auth(self):
+        """GET /orgunittypes/ with wrong auth for project which requires it: 401"""
+
+        self.client.force_authenticate(user=self.john)
+        response = self.client.get("/api/orgunittypes/", {APP_ID: self.ead.app_id})
+        self.assertJSONResponse(response, 401)
+
+    def test_orgunittypes_list_with_auth_for_project_requiring_auth(self):
+        """GET /orgunittypes/ with auth for project which requires it: 200"""
+
+        self.client.force_authenticate(user=self.jane)
+        response = self.client.get("/api/orgunittypes/", {APP_ID: self.ead.app_id})
+        self.assertJSONResponse(response, 200)
 
     def test_org_unit_types_list_without_auth_or_app_id(self):
         """GET /orgunittypes/ without auth or app id should result in a 200 empty response"""

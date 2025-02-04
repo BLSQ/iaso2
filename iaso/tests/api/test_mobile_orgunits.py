@@ -29,8 +29,15 @@ class MobileOrgUnitAPITestCase(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.account = account = Account.objects.create(name="Dragon Ball")
-        cls.project = project = Project.objects.create(name="Saiyans", app_id=BASE_APP_ID, account=account)
+        cls.account2 = account2 = Account.objects.create(name="Saint Seiya")
+        cls.project = project = Project.objects.create(
+            name="Saiyans",
+            app_id=BASE_APP_ID,
+            account=account,
+            needs_authentication=True,
+        )
         cls.user = user = cls.create_user_with_profile(username="user", account=account, permissions=["iaso_org_units"])
+        cls.user2 = cls.create_user_with_profile(username="user2", account=account2, permissions=["iaso_org_units"])
         cls.sw_source = sw_source = DataSource.objects.create(name="Vegeta Planet")
         sw_source.projects.add(project)
         cls.sw_version_1 = sw_version_1 = SourceVersion.objects.create(data_source=sw_source, number=1)
@@ -105,6 +112,26 @@ class MobileOrgUnitAPITestCase(APITestCase):
 
         group_2.org_units.set([bardock, goku])
         user.iaso_profile.org_units.set([raditz, goku])
+
+    def test_orgunits_list_without_auth_for_project_requiring_auth(self):
+        """GET /mobile/orgunits/ without auth for project which requires it: 401"""
+
+        response = self.client.get(BASE_URL, {APP_ID: self.project.app_id})
+        self.assertJSONResponse(response, 401)
+
+    def test_orgunits_list_with_wrong_auth_for_project_requiring_auth(self):
+        """GET /mobile/orgunits/ with wrong auth for project which requires it: 401"""
+
+        self.client.force_authenticate(user=self.user2)
+        response = self.client.get(BASE_URL, {APP_ID: self.project.app_id})
+        self.assertJSONResponse(response, 401)
+
+    def test_orgunits_list_with_auth_for_project_requiring_auth(self):
+        """GET /mobile/orgunits/ with auth for project which requires it: 200"""
+
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(BASE_URL, {APP_ID: self.project.app_id})
+        self.assertJSONResponse(response, 200)
 
     def test_org_unit_have_correct_parent_id_without_limit(self):
         self.client.force_authenticate(self.user)

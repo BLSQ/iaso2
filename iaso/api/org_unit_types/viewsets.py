@@ -6,6 +6,7 @@ from rest_framework.decorators import action
 from iaso.models import OrgUnitType
 from .serializers import OrgUnitTypeSerializerV1, OrgUnitTypeSerializerV2, OrgUnitTypesDropdownSerializer
 from ..common import ModelViewSet
+from ...permissions import IsAuthenticatedOrReadOnlyWhenNoAuthenticationRequired
 
 DEFAULT_ORDER = "name"
 
@@ -22,7 +23,7 @@ class OrgUnitTypeViewSet(ModelViewSet):
     GET /api/orgunittypes/
     """
 
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnlyWhenNoAuthenticationRequired]
     serializer_class = OrgUnitTypeSerializerV1
     results_key = "orgUnitTypes"
     http_method_names = ["get", "post", "patch", "put", "delete", "head", "options", "trace"]
@@ -92,7 +93,7 @@ class OrgUnitTypeViewSetV2(ModelViewSet):
         return queryset.order_by("depth").distinct().order_by(*orders)
 
     @action(
-        permission_classes=[permissions.IsAuthenticatedOrReadOnly],
+        permission_classes=[IsAuthenticatedOrReadOnlyWhenNoAuthenticationRequired],
         detail=False,
         methods=["GET"],
         serializer_class=OrgUnitTypesDropdownSerializer,

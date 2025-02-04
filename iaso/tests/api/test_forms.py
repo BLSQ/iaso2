@@ -5,6 +5,7 @@ from django.utils.timezone import now
 
 from iaso import models as m
 from iaso.api.common import CONTENT_TYPE_XLSX
+from iaso.api.query_params import APP_ID
 from iaso.models import Form, OrgUnit, Instance
 from iaso.test import APITestCase
 
@@ -38,7 +39,10 @@ class FormsAPITestCase(APITestCase):
         cls.sith_guild = m.OrgUnitType.objects.create(name="Sith guild", short_name="Sith")
 
         cls.project_1 = m.Project.objects.create(
-            name="Hydroponic gardens", app_id="stars.empire.agriculture.hydroponics", account=star_wars
+            name="Hydroponic gardens",
+            app_id="stars.empire.agriculture.hydroponics",
+            account=star_wars,
+            needs_authentication=True,
         )
         cls.project_2 = m.Project.objects.create(
             name="New Land Speeder concept", app_id="stars.empire.agriculture.land_speeder", account=star_wars
@@ -87,6 +91,26 @@ class FormsAPITestCase(APITestCase):
         self.assertJSONResponse(response, 200)
 
         self.assertValidFormListData(response.json(), 0)
+
+    def test_forms_list_without_auth_for_project_requiring_auth(self):
+        """GET /forms/ without auth for project which requires it: 401"""
+
+        response = self.client.get("/api/forms/", {APP_ID: self.project_1.app_id})
+        self.assertJSONResponse(response, 401)
+
+    def test_forms_list_with_wrong_auth_for_project_requiring_auth(self):
+        """GET /forms/ with wrong auth for project which requires it: 401"""
+
+        self.client.force_authenticate(user=self.iron_man)
+        response = self.client.get("/api/forms/", {APP_ID: self.project_1.app_id})
+        self.assertJSONResponse(response, 401)
+
+    def test_forms_list_with_auth_for_project_requiring_auth(self):
+        """GET /forms/ with auth for project which requires it: 200"""
+
+        self.client.force_authenticate(user=self.yoda)
+        response = self.client.get("/api/forms/", {APP_ID: self.project_1.app_id})
+        self.assertJSONResponse(response, 200)
 
     def test_forms_list_empty_for_user(self):
         """GET /forms/ with a user that has no access to any form"""
@@ -194,7 +218,7 @@ class FormsAPITestCase(APITestCase):
 
     def test_forms_list_ok_hide_derived_forms(self):
         """GET /forms/ web app happy path: we expect 1 results if one of the form is marked as derived"""
-
+        self.client.force_authenticate(self.yoda)
         response = self.client.get(f"/api/forms/?app_id={self.project_1.app_id}")
         self.assertJSONResponse(response, 200)
         self.assertValidFormListData(response.json(), 2)
