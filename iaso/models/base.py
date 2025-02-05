@@ -692,27 +692,23 @@ class InstanceQuerySet(django_cte.CTEQuerySet):
         )
 
     def with_status(self):
-        duplicates_subquery = (
-            self.values("period", "form", "org_unit")
-            .annotate(ids=ArrayAgg("id"))
-            .annotate(
-                c=models.Func(
-                    "ids",
-                    models.Value(1, output_field=models.IntegerField()),
-                    function="array_length",
-                    output_field=models.IntegerField(),
+        self = self.annotate(
+            has_duplicate=Exists(
+                Instance.objects.filter(
+                    form_id=OuterRef("form_id"),
+                    period=OuterRef("period"),
+                    org_unit_id=OuterRef("org_unit_id"),
+                    deleted=False,
                 )
+                .exclude(file="")
+                .exclude(id=OuterRef("id"))  # Exclude the current instance to avoid self-matching
             )
-            .filter(form__in=Form.objects.filter(single_per_period=True))
-            .filter(c__gt=1)
-            .annotate(id=models.Func("ids", function="unnest"))
-            .values("id")
         )
 
         return self.annotate(
             status=models.Case(
                 models.When(
-                    id__in=duplicates_subquery,
+                    has_duplicate=True,
                     then=models.Value(Instance.STATUS_DUPLICATED),
                 ),
                 models.When(
