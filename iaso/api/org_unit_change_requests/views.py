@@ -29,6 +29,19 @@ from iaso.utils.models.common import get_creator_name
 
 
 class OrgUnitChangeRequestViewSet(viewsets.ModelViewSet):
+    CSV_COLUMNS = [
+        "Id",
+        "Name",
+        "Parent",
+        "Org unit type",
+        "Groups",
+        "Status",
+        "Created",
+        "Created by",
+        "Updated",
+        "Updated by",
+    ]
+
     filter_backends = [filters.OrderingFilter, django_filters.rest_framework.DjangoFilterBackend]
     filterset_class = OrgUnitChangeRequestListFilter
     ordering_fields = [
@@ -145,21 +158,6 @@ class OrgUnitChangeRequestViewSet(viewsets.ModelViewSet):
         response_serializer = OrgUnitChangeRequestRetrieveSerializer(change_request)
         return Response(response_serializer.data)
 
-    @staticmethod
-    def org_unit_change_request_csv_columns():
-        return [
-            "Id",
-            "Name",
-            "Parent",
-            "Org unit type",
-            "Groups",
-            "Status",
-            "Created",
-            "Created by",
-            "Updated",
-            "Updated by",
-        ]
-
     @action(detail=False, methods=["get"])
     def export_to_csv(self, request):
         filename = "%s--%s" % ("review-change-proposals", datetime.now().strftime("%Y-%m-%d"))
@@ -171,8 +169,7 @@ class OrgUnitChangeRequestViewSet(viewsets.ModelViewSet):
         response = HttpResponse(content_type=CONTENT_TYPE_CSV)
 
         writer = csv.writer(response)
-        headers = self.org_unit_change_request_csv_columns()
-        writer.writerow(headers)
+        writer.writerow(self.CSV_COLUMNS)
 
         for change_request in filtered_org_unit_changes_requests:
             row = [
