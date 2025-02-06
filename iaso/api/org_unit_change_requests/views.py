@@ -32,7 +32,7 @@ class OrgUnitChangeRequestViewSet(viewsets.ModelViewSet):
     CSV_HEADER_COLUMNS = [
         "Id",
         "Org unit ID",
-        "Org unit source ref",
+        "External reference",
         "Name",
         "Parent",
         "Org unit type",
