@@ -25,6 +25,7 @@ class OrgUnitChangeRequestAPITestCase(APITestCase):
         org_unit = m.OrgUnit.objects.create(
             org_unit_type=org_unit_type,
             version=version,
+            source_ref="112244",
             uuid="1539f174-4c53-499c-85de-7a58458c49ef",
             closed_date=cls.DT.date(),
         )
@@ -389,11 +390,13 @@ class OrgUnitChangeRequestAPITestCase(APITestCase):
         self.assertEqual(len(data), 3)
 
         data_headers = data[0]
-        self.assertEqual(data_headers, OrgUnitChangeRequestViewSet.CSV_COLUMNS)
+        self.assertEqual(data_headers, OrgUnitChangeRequestViewSet.CSV_HEADER_COLUMNS)
 
         first_data_row = data[1]
         expected_row_data = [
             str(change_request.id),
+            str(change_request.org_unit_id),
+            "112244",
             change_request.org_unit.name,
             change_request.org_unit.parent.name if change_request.org_unit.parent else "",
             change_request.org_unit.org_unit_type.name,

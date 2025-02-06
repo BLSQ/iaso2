@@ -29,8 +29,10 @@ from iaso.utils.models.common import get_creator_name
 
 
 class OrgUnitChangeRequestViewSet(viewsets.ModelViewSet):
-    CSV_COLUMNS = [
+    CSV_HEADER_COLUMNS = [
         "Id",
+        "Org unit ID",
+        "Org unit source ref",
         "Name",
         "Parent",
         "Org unit type",
@@ -169,11 +171,13 @@ class OrgUnitChangeRequestViewSet(viewsets.ModelViewSet):
         response = HttpResponse(content_type=CONTENT_TYPE_CSV)
 
         writer = csv.writer(response)
-        writer.writerow(self.CSV_COLUMNS)
+        writer.writerow(self.CSV_HEADER_COLUMNS)
 
         for change_request in filtered_org_unit_changes_requests:
             row = [
                 change_request.id,
+                change_request.org_unit_id,
+                change_request.org_unit.source_ref,
                 change_request.org_unit.name,
                 change_request.org_unit.parent.name if change_request.org_unit.parent else None,
                 change_request.org_unit.org_unit_type.name,
