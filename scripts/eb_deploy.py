@@ -17,6 +17,8 @@ if __name__ == "__main__":
     desc = client.describe_environments(ApplicationName="Iaso")
     eb_envs = {x["EnvironmentName"]: x for x in desc["Environments"]}
 
+    print("possible envs:", eb_envs)
+
     if "VERSION_NAME" not in os.environ:
         exit("Mission VERSION environment variable")
     version = os.environ["VERSION_NAME"]
