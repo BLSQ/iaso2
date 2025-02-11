@@ -29,6 +29,29 @@ from iaso.utils.models.common import get_creator_name
 
 
 class OrgUnitChangeRequestViewSet(viewsets.ModelViewSet):
+    CSV_HEADER_COLUMNS = [
+        "Id",
+        "Org unit ID",
+        "Org unit external reference",
+        "New name",
+        "New parent",
+        "New org unit type",
+        "New groups",
+        "New status",
+        "Current parent 1",
+        "Current parent 2",
+        "Current parent 3",
+        "Current parent 4",
+        "Ref ext current parent 1",
+        "Ref ext current parent 2",
+        "Ref ext current parent 3",
+        "Ref ext current parent 4",
+        "Created",
+        "Created by",
+        "Updated",
+        "Updated by",
+    ]
+
     filter_backends = [filters.OrderingFilter, django_filters.rest_framework.DjangoFilterBackend]
     filterset_class = OrgUnitChangeRequestListFilter
     ordering_fields = [
@@ -145,25 +168,12 @@ class OrgUnitChangeRequestViewSet(viewsets.ModelViewSet):
         response_serializer = OrgUnitChangeRequestRetrieveSerializer(change_request)
         return Response(response_serializer.data)
 
-    @staticmethod
-    def org_unit_change_request_csv_columns():
-        return [
-            "Id",
-            "Name",
-            "Parent",
-            "Org unit type",
-            "Groups",
-            "Status",
-            "Created",
-            "Created by",
-            "Updated",
-            "Updated by",
-        ]
-
     @action(detail=False, methods=["get"])
     def export_to_csv(self, request):
         filename = "%s--%s" % ("review-change-proposals", datetime.now().strftime("%Y-%m-%d"))
-        org_unit_changes_requests = self.get_queryset().order_by("org_unit__name")
+        org_unit_changes_requests = (
+            self.get_queryset().select_related("org_unit__parent__parent__parent__parent").order_by("org_unit__name")
+        )
         filtered_org_unit_changes_requests = OrgUnitChangeRequestListFilter(
             request.GET, queryset=org_unit_changes_requests
         ).qs
@@ -171,23 +181,42 @@ class OrgUnitChangeRequestViewSet(viewsets.ModelViewSet):
         response = HttpResponse(content_type=CONTENT_TYPE_CSV)
 
         writer = csv.writer(response)
-        headers = self.org_unit_change_request_csv_columns()
-        writer.writerow(headers)
+        writer.writerow(self.CSV_HEADER_COLUMNS)
 
         for change_request in filtered_org_unit_changes_requests:
+            ancestors = {}
+            ancestor = change_request.org_unit.parent
+            i = 1
+            while ancestor:
+                ancestors[f"Parent {i}"] = ancestor.name
+                ancestors[f"Ref ext parent {i}"] = ancestor.source_ref
+                i += 1
+                ancestor = ancestor.parent
+
             row = [
                 change_request.id,
+                change_request.org_unit_id,
+                change_request.org_unit.source_ref,
                 change_request.org_unit.name,
                 change_request.org_unit.parent.name if change_request.org_unit.parent else None,
                 change_request.org_unit.org_unit_type.name,
                 ",".join(group.name for group in change_request.org_unit.groups.all()),
                 change_request.get_status_display(),
+                ancestors.get("Parent 1"),
+                ancestors.get("Parent 2"),
+                ancestors.get("Parent 3"),
+                ancestors.get("Parent 4"),
+                ancestors.get("Ref ext parent 1"),
+                ancestors.get("Ref ext parent 2"),
+                ancestors.get("Ref ext parent 3"),
+                ancestors.get("Ref ext parent 4"),
                 datetime.strftime(change_request.created_at, "%Y-%m-%d"),
                 get_creator_name(change_request.created_by) if change_request.created_by else None,
                 datetime.strftime(change_request.updated_at, "%Y-%m-%d"),
                 get_creator_name(change_request.updated_by) if change_request.updated_by else None,
             ]
             writer.writerow(row)
+
         filename = filename + ".csv"
         response["Content-Disposition"] = "attachment; filename=" + filename
         return response

@@ -23,8 +23,10 @@ class OrgUnitChangeRequestAPITestCase(APITestCase):
         version = m.SourceVersion.objects.create(number=1, data_source=data_source)
         org_unit_type = m.OrgUnitType.objects.create(name="Org unit type")
         org_unit = m.OrgUnit.objects.create(
+            name="Org unit",
             org_unit_type=org_unit_type,
             version=version,
+            source_ref="112244",
             uuid="1539f174-4c53-499c-85de-7a58458c49ef",
             closed_date=cls.DT.date(),
         )
@@ -61,7 +63,6 @@ class OrgUnitChangeRequestAPITestCase(APITestCase):
         cls.instance_2 = instance_2
         cls.instance_3 = instance_3
         cls.org_unit = org_unit
-        cls.org_unit_change_request_csv_columns = OrgUnitChangeRequestViewSet.org_unit_change_request_csv_columns()
         cls.org_unit_type = org_unit_type
         cls.project = project
         cls.user = user
@@ -370,12 +371,48 @@ class OrgUnitChangeRequestAPITestCase(APITestCase):
         """
         It tests the CSV export for the org change requests list.
         """
-        change_request = m.OrgUnitChangeRequest.objects.create(org_unit=self.org_unit, new_name="Foo")
-        m.OrgUnitChangeRequest.objects.create(org_unit=self.org_unit, new_name="Bar")
-
         self.client.force_authenticate(self.user)
 
-        response = self.client.get("/api/orgunits/changes/export_to_csv/")
+        # Burkina pyramid.
+        burkina = m.OrgUnit.objects.create(
+            name="Burkina Faso",
+            source_ref="11111",
+            org_unit_type=m.OrgUnitType.objects.create(category="COUNTRY"),
+            validation_status=m.OrgUnit.VALIDATION_VALID,
+            path=["1"],
+            version=self.version,
+        )
+        burkina_region = m.OrgUnit.objects.create(
+            name="Boucle du Mouhon",
+            source_ref="22222",
+            parent=burkina,
+            org_unit_type=m.OrgUnitType.objects.create(category="REGION"),
+            validation_status=m.OrgUnit.VALIDATION_VALID,
+            path=["1", "2"],
+            version=self.version,
+        )
+        burkina_district = m.OrgUnit.objects.create(
+            name="Banwa",
+            source_ref="33333",
+            parent=burkina_region,
+            org_unit_type=m.OrgUnitType.objects.create(category="DISTRICT"),
+            validation_status=m.OrgUnit.VALIDATION_VALID,
+            path=["1", "2", "3"],
+            version=self.version,
+        )
+        burkina_district.calculate_paths()
+
+        self.user.iaso_profile.org_units.add(burkina, burkina_region, burkina_district)
+
+        # Create change requests.
+        change_request = m.OrgUnitChangeRequest.objects.create(org_unit=burkina_district, new_name="Foo")
+        m.OrgUnitChangeRequest.objects.create(org_unit=burkina_region, new_name="Bar")
+        m.OrgUnitChangeRequest.objects.create(org_unit=burkina, new_name="Baz")
+        m.OrgUnitChangeRequest.objects.create(org_unit=self.org_unit, new_name="Qux")
+
+        with self.assertNumQueries(9):
+            response = self.client.get("/api/orgunits/changes/export_to_csv/")
+
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.get("Content-Disposition"),
@@ -387,28 +424,32 @@ class OrgUnitChangeRequestAPITestCase(APITestCase):
         reader = csv.reader(io.StringIO(response_string), delimiter=",")
 
         data = list(reader)
-        self.assertEqual(len(data), 3)
+        self.assertEqual(len(data), 5)
 
         data_headers = data[0]
-        self.assertEqual(
-            data_headers,
-            self.org_unit_change_request_csv_columns,
-        )
+        self.assertEqual(data_headers, OrgUnitChangeRequestViewSet.CSV_HEADER_COLUMNS)
 
         first_data_row = data[1]
-        expected_row_data = [
-            str(change_request.id),
-            change_request.org_unit.name,
-            change_request.org_unit.parent.name if change_request.org_unit.parent else "",
-            change_request.org_unit.org_unit_type.name,
-            ",".join(group.name for group in change_request.org_unit.groups.all()),
-            str(change_request.get_status_display()),
-            datetime.datetime.strftime(change_request.created_at, "%Y-%m-%d"),
-            get_creator_name(change_request.created_by) if change_request.created_by else "",
-            datetime.datetime.strftime(change_request.updated_at, "%Y-%m-%d"),
-            get_creator_name(change_request.updated_by) if change_request.updated_by else "",
-        ]
-        self.assertEqual(
-            first_data_row,
-            expected_row_data,
-        )
+        expected_first_data_row = {
+            "Id": str(change_request.id),
+            "Org unit ID": str(change_request.org_unit_id),
+            "Org unit external reference": "33333",
+            "New name": change_request.org_unit.name,
+            "New parent": change_request.org_unit.parent.name if change_request.org_unit.parent else "",
+            "New org unit type": change_request.org_unit.org_unit_type.name,
+            "New groups": ",".join(group.name for group in change_request.org_unit.groups.all()),
+            "New status": str(change_request.get_status_display()),
+            "Current parent 1": "Boucle du Mouhon",
+            "Current parent 2": "Burkina Faso",
+            "Current parent 3": "",
+            "Current parent 4": "",
+            "Ref ext current parent 1": "22222",
+            "Ref ext current parent 2": "11111",
+            "Ref ext current parent 3": "",
+            "Ref ext current parent 4": "",
+            "Created": datetime.datetime.strftime(change_request.created_at, "%Y-%m-%d"),
+            "Created by": get_creator_name(change_request.created_by) if change_request.created_by else "",
+            "Updated": datetime.datetime.strftime(change_request.updated_at, "%Y-%m-%d"),
+            "Updated by": get_creator_name(change_request.updated_by) if change_request.updated_by else "",
+        }
+        self.assertEqual(first_data_row, list(expected_first_data_row.values()))
