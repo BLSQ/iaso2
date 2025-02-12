@@ -1,9 +1,9 @@
+import React, { FunctionComponent, useState } from 'react';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ContactSupportIcon from '@mui/icons-material/ContactSupport';
 import ExitIcon from '@mui/icons-material/ExitToApp';
 import { Box, Button, Paper, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import React, { FunctionComponent, useState } from 'react';
 
 import { useSafeIntl } from 'bluesquare-components';
 import { useFormik } from 'formik';
@@ -16,7 +16,6 @@ import {
 } from '../../libs/validation';
 import { commaSeparatedIdsToStringArray } from '../../utils/forms';
 import getDisplayName, { useCurrentUser } from '../../utils/usersUtils';
-import { LangSwitch } from '../home/components/LangSwitch';
 import { useGetModulesDropDown } from './hooks/useGetModulesDropDown';
 import { useSaveAccount } from './hooks/useSaveAccount';
 import { MESSAGES } from './messages';
@@ -120,10 +119,6 @@ export const SetupAccount: FunctionComponent = () => {
                 title={formatMessage(MESSAGES.welcome)}
             />
             <Paper className={classes.paper}>
-                <Box display="flex" justifyContent="flex-end">
-                    <LangSwitch />
-                </Box>
-
                 {isAdmin && (
                     <>
                         {isSaved && (
