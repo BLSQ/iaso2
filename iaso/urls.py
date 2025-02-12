@@ -62,6 +62,7 @@ from .api.instances import InstancesViewSet
 from .api.links import LinkViewSet
 from .api.logs import LogsViewSet
 from .api.mapping_versions import MappingVersionsViewSet
+from .api.metrics.views import MetricTypeViewSet, MetricValueViewSet
 from .api.microplanning import AssignmentViewSet, MobilePlanningViewSet, PlanningViewSet, TeamViewSet
 from .api.mobile.bulk_uploads import MobileBulkUploadsViewSet
 from .api.mobile.entity import MobileEntityViewSet, MobileEntityDeletedViewSet
@@ -210,6 +211,8 @@ router.register(r"modules", ModulesViewSet, basename="modules")
 router.register(r"configs", ConfigViewSet, basename="jsonconfigs")
 router.register(r"mobile/bulkupload", MobileBulkUploadsViewSet, basename="mobilebulkupload")
 router.register(r"superset/token", SupersetTokenViewSet, basename="supersettoken")
+router.register(r"metrictypes", MetricTypeViewSet, basename="metrictypes")
+router.register(r"metricvalues", MetricValueViewSet, basename="metricvalues")
 router.registry.extend(plugins_router.registry)
 
 urlpatterns: URLList = [
