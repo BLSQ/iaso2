@@ -15,7 +15,10 @@
         "skipLibCheck": true, // don't typecheck dependencies
         "noEmit": true, // don't emit files as babel will do it
         "lib": ["ES2021", "DOM"], // prevent some linter errors
-        "resolveJsonModule": true // enable import from json
+        "resolveJsonModule": true, // enable import from json
+        "paths": {
+            "Iaso/*": ["hat/assets/js/apps/Iaso/*"]
+        }
     },
     "exclude": ["node_modules"],
     "include": [

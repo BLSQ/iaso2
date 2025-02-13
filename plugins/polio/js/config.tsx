@@ -1,4 +1,4 @@
-import { Plugin } from '../../../hat/assets/js/apps/Iaso/domains/app/types';
+import { Plugin } from 'Iaso/plugins/types';
 import { Disclaimer } from './src/components/Disclaimer';
 import { menu } from './src/constants/menu';
 import { redirections } from './src/constants/redirections';
