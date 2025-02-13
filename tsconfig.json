@@ -1,23 +1,28 @@
 {
     "compilerOptions": {
         "baseUrl": ".",
-        "moduleResolution": "node",               // enable import syntax
-        "outDir": "./hat/assets/ts",              // path to output directory (tsc compiler)
-        "sourceMap": true,                        // enable sourcemap support
-        "strictNullChecks": true,                 // enable strict null checks as a best practice
-        "module": "commonJS",                     // specify module code generation
-        "jsx": "react",                           // use typescript to transpile jsx to js
-        "target": "es2020",                       // specify ECMAScript target version
-        "allowJs": true,                          // allow a mixed TypeScript and JavaScript codebase
-        "checkJs": false,                         // don't use ts-lint on js files
-        "allowSyntheticDefaultImports": true,     // allow import syntax with default exports (1/2)
-        "esModuleInterop": true,                  // allow import syntax with default exports (2/2)
-        "skipLibCheck": true,                     // don't typecheck dependencies
-        "noEmit": true,                           // don't emit files as babel will do it
-        "lib":["ES2021", "DOM"],                  // prevent some linter errors
-        "resolveJsonModule": true,                // enable import from json
-
+        "moduleResolution": "node", // enable import syntax
+        "outDir": "./hat/assets/ts", // path to output directory (tsc compiler)
+        "sourceMap": true, // enable sourcemap support
+        "strictNullChecks": true, // enable strict null checks as a best practice
+        "module": "commonJS", // specify module code generation
+        "jsx": "react", // use typescript to transpile jsx to js
+        "target": "es2020", // specify ECMAScript target version
+        "allowJs": true, // allow a mixed TypeScript and JavaScript codebase
+        "checkJs": false, // don't use ts-lint on js files
+        "allowSyntheticDefaultImports": true, // allow import syntax with default exports (1/2)
+        "esModuleInterop": true, // allow import syntax with default exports (2/2)
+        "skipLibCheck": true, // don't typecheck dependencies
+        "noEmit": true, // don't emit files as babel will do it
+        "lib": ["ES2021", "DOM"], // prevent some linter errors
+        "resolveJsonModule": true // enable import from json
     },
-    "exclude":["node_modules"],
-    "include":["assets/js/apps/Iaso/**/*","assets/js/apps/Iaso/*","hat/assets/js/apps/Iaso/**/*","hat/assets/js/apps/Iaso/*","plugins/polio/js/**/*"],
+    "exclude": ["node_modules"],
+    "include": [
+        "assets/js/apps/Iaso/**/*",
+        "assets/js/apps/Iaso/*",
+        "hat/assets/js/apps/Iaso/**/*",
+        "hat/assets/js/apps/Iaso/*",
+        "plugins/**/js/**/*"
+    ]
 }
