@@ -1,7 +1,4 @@
-import { createContext } from 'react';
 import { textPlaceholder } from 'bluesquare-components';
-import pluginsConfigs from '../../../../../../plugins';
-import { Plugin } from '../domains/app/types';
 import {
     Beneficiary,
     FileContent,
@@ -51,24 +48,6 @@ export const userHasPermission = (
     }
     return hasPermission;
 };
-
-export const getPlugins = (pluginsKeys: string[]): any[] => {
-    const plugins: Plugin[] = [];
-    pluginsKeys.forEach(pluginsKey => {
-        const pluginConfig: Plugin = pluginsConfigs[pluginsKey];
-        if (pluginConfig) {
-            plugins.push({
-                ...pluginConfig,
-                key: pluginsKey,
-            });
-        }
-    });
-    return plugins;
-};
-
-export const PluginsContext = createContext<{ plugins: Plugin[] }>({
-    plugins: [],
-});
 
 // create timeout to simulate async call
 // credit https://stackoverflow.com/questions/51200626/using-a-settimeout-in-a-async-function

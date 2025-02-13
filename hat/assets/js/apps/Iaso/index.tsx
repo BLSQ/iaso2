@@ -1,14 +1,14 @@
+import React from 'react';
+import { GlobalStyles } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import { theme } from 'bluesquare-components';
-import React from 'react';
+import { SnackbarProvider } from 'notistack';
 import ReactDOM from 'react-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 import './libs/polyfills';
 
-import { GlobalStyles } from '@mui/material';
-import { SnackbarProvider } from 'notistack';
 import LocalizedAppComponent from './domains/app/components/LocalizedAppComponent';
 import { LocaleProvider } from './domains/app/contexts/LocaleContext';
 import { SentryConfig } from './domains/app/contexts/SentryProvider';
@@ -18,9 +18,9 @@ import {
     ThemeConfigContext,
 } from './domains/app/contexts/ThemeConfigContext';
 import App from './domains/app/index';
-import { Plugin } from './domains/app/types';
+import { PluginsContext } from './plugins/context';
+import { usePlugins } from './plugins/hooks/usePlugins';
 import { getGlobalOverrides, getOverriddenTheme } from './styles';
-import { PluginsContext, getPlugins } from './utils';
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -43,17 +43,20 @@ declare global {
     }
 }
 
-const iasoApp = (element, enabledPluginsName, themeConfig, userHomePage) => {
-    const plugins: Plugin[] = getPlugins(enabledPluginsName);
-    // Arbitrarily take the home page of the first plugin in the list
-    const pluginHomePage = plugins.map(plugin => plugin.homeUrl)[0];
-    ReactDOM.render(
+const IasoApp: React.FC<{
+    element: HTMLElement;
+    enabledPluginsName: string[];
+    themeConfig: ThemeConfig;
+    userHomePage: string;
+}> = ({ element, enabledPluginsName, themeConfig, userHomePage }) => {
+    const { plugins, pluginHomePage, pluginTheme } =
+        usePlugins(enabledPluginsName);
+    const usedTheme = pluginTheme || getOverriddenTheme(theme, themeConfig);
+    return ReactDOM.createPortal(
         <QueryClientProvider client={queryClient}>
             <PluginsContext.Provider value={{ plugins }}>
                 <ThemeConfigContext.Provider value={themeConfig}>
-                    <ThemeProvider
-                        theme={getOverriddenTheme(theme, themeConfig)}
-                    >
+                    <ThemeProvider theme={usedTheme}>
                         <CssBaseline />
                         <GlobalStyles styles={getGlobalOverrides(theme)} />
                         <SidebarProvider>
@@ -84,8 +87,14 @@ const iasoApp = (element, enabledPluginsName, themeConfig, userHomePage) => {
     );
 };
 
-// Before we were exporting the function and using the iaso as a proper lib
-// but it was proken by webbpack-dev-server injecting his code so this a replacement
-// solution
-
-window.iasoApp = iasoApp;
+window.iasoApp = (element, enabledPluginsName, themeConfig, userHomePage) => {
+    ReactDOM.render(
+        <IasoApp
+            element={element}
+            enabledPluginsName={enabledPluginsName}
+            themeConfig={themeConfig}
+            userHomePage={userHomePage}
+        />,
+        element,
+    );
+};

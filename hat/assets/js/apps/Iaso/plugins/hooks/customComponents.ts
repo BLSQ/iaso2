@@ -1,6 +1,6 @@
 import { ElementType, useContext, useMemo } from 'react';
-import { Plugins } from '../domains/app/types';
-import { PluginsContext } from '.';
+import { PluginsContext } from '../context';
+import { Plugins } from '../types';
 
 type CustomComponent = {
     key: string;

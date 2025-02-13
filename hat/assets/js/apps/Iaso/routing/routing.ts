@@ -1,9 +1,9 @@
-import { convertObjectToUrlParams } from 'bluesquare-components';
 import { useCallback, useContext, useMemo } from 'react';
+import { convertObjectToUrlParams } from 'bluesquare-components';
 import { useLocation } from 'react-router-dom';
 import { baseUrls, paramsConfig } from '../constants/urls';
-import { Plugin } from '../domains/app/types';
-import { PluginsContext } from '../utils';
+import { PluginsContext } from '../plugins/context';
+import { Plugin } from '../plugins/types';
 import { useParamsObject } from './hooks/useParamsObject';
 
 export const useCurrentLocationWithParams = (

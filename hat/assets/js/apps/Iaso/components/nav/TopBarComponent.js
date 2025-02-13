@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 
 import { useSidebar } from '../../domains/app/contexts/SideBarContext.tsx';
 import { ThemeConfigContext } from '../../domains/app/contexts/ThemeConfigContext.tsx';
-import { useFindCustomComponent } from '../../utils/CustomComponents.tsx';
+import { useFindCustomComponent } from '../../plugins/hooks/customComponents';
 import { useCurrentUser } from '../../utils/usersUtils.ts';
 
 import { CurrentUserInfos } from './CurrentUser/index.tsx';
