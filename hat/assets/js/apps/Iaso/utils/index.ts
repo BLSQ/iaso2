@@ -1,5 +1,5 @@
-import { textPlaceholder } from 'bluesquare-components';
 import { createContext } from 'react';
+import { textPlaceholder } from 'bluesquare-components';
 import pluginsConfigs from '../../../../../../plugins';
 import { Plugin } from '../domains/app/types';
 import {
