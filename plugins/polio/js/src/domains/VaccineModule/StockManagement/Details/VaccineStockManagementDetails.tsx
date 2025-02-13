@@ -1,30 +1,31 @@
-import React, { FunctionComponent, useCallback } from 'react';
+import { Box, Button, Grid, Paper, Tab, Tabs, Typography } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import {
     commonStyles,
     textPlaceholder,
-    useSafeIntl,
     useGoBack,
     useRedirectTo,
+    useSafeIntl,
 } from 'bluesquare-components';
-import { Box, Button, Grid, Paper, Tab, Tabs, Typography } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import { baseUrls } from '../../../../constants/urls';
-import { useParamsObject } from '../../../../../../../../hat/assets/js/apps/Iaso/routing/hooks/useParamsObject';
-import { useTabs } from '../../../../../../../../hat/assets/js/apps/Iaso/hooks/useTabs';
-import { UNUSABLE_VIALS, USABLE_VIALS } from '../constants';
-import { StockManagementDetailsParams, TabValue } from '../types';
+import React, { FunctionComponent, useCallback } from 'react';
 import TopBar from '../../../../../../../../hat/assets/js/apps/Iaso/components/nav/TopBarComponent';
-import MESSAGES from '../messages';
+import { useTabs } from '../../../../../../../../hat/assets/js/apps/Iaso/hooks/useTabs';
+import { useParamsObject } from '../../../../../../../../hat/assets/js/apps/Iaso/routing/hooks/useParamsObject';
+import { baseUrls } from '../../../../constants/urls';
+import { EARMARKED, UNUSABLE_VIALS, USABLE_VIALS } from '../constants';
 import {
-    VaccineStockManagementDetailsTableUnusable,
-    VaccineStockManagementDetailsTableUsable,
-} from './Table/VaccineStockManagementDetailsTable';
-import {
+    useGetEarmarked,
     useGetStockManagementSummary,
     useGetUnusableVials,
     useGetUsableVials,
 } from '../hooks/api';
+import MESSAGES from '../messages';
+import { StockManagementDetailsParams, TabValue } from '../types';
 import { VaccineStockManagementSummary } from './Summary/VaccineStockManagementSummary';
+import {
+    VaccineStockManagementDetailsTableUnusable,
+    VaccineStockManagementDetailsTableUsable,
+} from './Table/VaccineStockManagementDetailsTable';
 
 const useStyles = makeStyles(theme => {
     return {
@@ -53,12 +54,15 @@ export const VaccineStockManagementDetails: FunctionComponent = () => {
         baseUrl,
     });
 
-    // Make 1 API call with both usable and not usable + vountry and campaign
+    // Make 1 API call with both usable and not usable + country and campaign
     const { data: usableVials, isFetching: isFetchingUsable } =
         useGetUsableVials(params, tab === USABLE_VIALS);
 
     const { data: unusableVials, isFetching: isFetchingUnusable } =
         useGetUnusableVials(params, tab === UNUSABLE_VIALS);
+
+    const { data: earmarked, isFetching: isFetchingEarmarked } =
+        useGetEarmarked(params, tab === EARMARKED);
 
     const { data: summary, isLoading: isLoadingSummary } =
         useGetStockManagementSummary(params.id);
@@ -127,6 +131,11 @@ export const VaccineStockManagementDetails: FunctionComponent = () => {
                             label={formatMessage(MESSAGES.unusable)}
                         />
                     )}
+                    <Tab
+                        key={EARMARKED}
+                        value={EARMARKED}
+                        label={formatMessage(MESSAGES.earmarked)}
+                    />
                 </Tabs>
                 <Paper elevation={2} className={classes.marginTop}>
                     <Box pt={2} px={2}>
@@ -149,6 +158,14 @@ export const VaccineStockManagementDetails: FunctionComponent = () => {
                                 paramsPrefix={tab}
                                 data={unusableVials}
                                 isFetching={isFetchingUnusable}
+                            />
+                        )}
+                        {tab === EARMARKED && (
+                            <VaccineStockManagementDetailsTableUnusable
+                                params={params}
+                                paramsPrefix={tab}
+                                data={earmarked}
+                                isFetching={isFetchingEarmarked}
                             />
                         )}
                     </Box>

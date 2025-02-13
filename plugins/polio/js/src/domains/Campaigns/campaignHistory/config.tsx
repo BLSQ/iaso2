@@ -1,8 +1,8 @@
+import React, { ReactElement } from 'react';
 import { Box } from '@mui/material';
 import { IntlFormatMessage, useSafeIntl } from 'bluesquare-components';
 import { upperCase } from 'lodash';
 import moment from 'moment';
-import React, { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 import { GeoJsonMap } from '../../../../../../../hat/assets/js/apps/Iaso/components/maps/GeoJsonMapComponent';
 import { LinkToOrgUnit } from '../../../../../../../hat/assets/js/apps/Iaso/domains/orgUnits/components/LinkToOrgUnit';

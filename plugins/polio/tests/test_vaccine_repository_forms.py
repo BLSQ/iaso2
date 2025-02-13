@@ -3,7 +3,6 @@ import datetime
 from django.contrib.auth.models import AnonymousUser
 from django.utils.timezone import now
 
-import hat.menupermissions.models as permissions
 from iaso import models as m
 from iaso.test import APITestCase
 from plugins.polio import models as pm
@@ -31,7 +30,7 @@ class VaccineRepositoryFormsAPITestCase(APITestCase, PolioTestCaseMixin):
             country_name="Testland",
             district_ou_type=cls.org_unit_type_district,
         )
-        cls.campaign_round_1.started_at = datetime.datetime(2021, 1, 4)
+        cls.campaign_round_1.started_at = datetime.date(2021, 1, 4)
         cls.campaign_round_1.save()
 
         cls.campaign_no_vrf, cls.campaign_no_vrf_round_1, _, _, _, _ = cls.create_campaign(
@@ -168,14 +167,6 @@ class VaccineRepositoryFormsAPITestCase(APITestCase, PolioTestCaseMixin):
         self.assertIn("vrf_data", result)
         self.assertIn("pre_alert_data", result)
         self.assertIn("form_a_data", result)
-
-    # def test_search_filter(self):
-    #     """Test search functionality"""
-    #     self.client.force_authenticate(user=self.user)
-    #     response = self.client.get(f"{BASE_URL}?search=Test Campaign")
-    #     data = response.json()
-    #     self.assertEqual(len(data["results"]), 3)
-    #     self.assertEqual(data["results"][0]["campaign_obr_name"], "Test Campaign")
 
     def test_rounds_are_split_by_vaccine(self):
         campaign2, campaign2_rnd_1, campaign2_rnd_2, campaign2_rnd_3, _, district = self.create_campaign(
@@ -338,8 +329,8 @@ class VaccineRepositoryFormsAPITestCase(APITestCase, PolioTestCaseMixin):
 
         campaign2_round = pm.Round.objects.create(
             campaign=campaign2,
-            started_at=datetime.datetime(2021, 2, 1),
-            ended_at=datetime.datetime(2025, 1, 1),
+            started_at=datetime.date(2021, 2, 1),
+            ended_at=datetime.date(2025, 1, 1),
             number=1,
         )
 
@@ -379,8 +370,8 @@ class VaccineRepositoryFormsAPITestCase(APITestCase, PolioTestCaseMixin):
 
         preparing_campaign_round = pm.Round.objects.create(
             campaign=preparing_campaign,
-            started_at=datetime.datetime(2025, 2, 1),
-            ended_at=datetime.datetime(2025, 2, 28),
+            started_at=datetime.date(2025, 2, 1),
+            ended_at=datetime.date(2025, 2, 28),
             number=1,
         )
 

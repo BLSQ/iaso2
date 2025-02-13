@@ -1,5 +1,5 @@
-import { isEqual } from 'lodash';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { isEqual } from 'lodash';
 
 const emptyArray = [];
 
@@ -27,7 +27,6 @@ const useListenToKeyboard = (): [
 export const useListenToInput = (combination: string[]): boolean => {
     const [hasCompleted, setHasCompleted] = useState<boolean>(false);
     const [keyList, setKeyList] = useListenToKeyboard();
-    // console.log('CONTROL', keyList);
 
     useEffect(() => {
         const controlArray = combination.slice(0, keyList.length);
@@ -38,7 +37,6 @@ export const useListenToInput = (combination: string[]): boolean => {
 
     useEffect(() => {
         if (keyList.length === combination.length) {
-            // console.log('LENGTH OK', keyList, combination);
             if (isEqual(keyList, combination)) {
                 setHasCompleted(true);
             }

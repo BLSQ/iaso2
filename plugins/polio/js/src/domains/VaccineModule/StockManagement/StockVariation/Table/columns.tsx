@@ -6,7 +6,7 @@ import { NumberCell } from '../../../../../../../../../hat/assets/js/apps/Iaso/c
 import DeleteDialog from '../../../../../../../../../hat/assets/js/apps/Iaso/components/dialogs/DeleteDialogComponent';
 import { PdfPreview } from '../../../../../../../../../hat/assets/js/apps/Iaso/components/files/pdf/PdfPreview';
 import { STOCK_MANAGEMENT_WRITE } from '../../../../../constants/permissions';
-import { Vaccine } from '../../../../../constants/types';
+import { VaccineForStock } from '../../../../../constants/types';
 import MESSAGES from '../../messages';
 import { EditDestruction } from '../Modals/CreateEditDestruction';
 import { EditFormA } from '../Modals/CreateEditFormA';
@@ -14,15 +14,18 @@ import { EditIncident } from '../Modals/CreateEditIncident';
 
 import { BreakWordCell } from '../../../../../../../../../hat/assets/js/apps/Iaso/components/Cells/BreakWordCell';
 import { DisplayIfUserHasPerm } from '../../../../../../../../../hat/assets/js/apps/Iaso/components/DisplayIfUserHasPerm';
+import { USED } from '../../constants';
 import {
     useDeleteDestruction,
+    useDeleteEarmarked,
     useDeleteFormA,
     useDeleteIncident,
 } from '../../hooks/api';
+import { EditEarmarked } from '../Modals/CreateEditEarmarked';
 
 export const useFormATableColumns = (
     countryName: string,
-    vaccine: Vaccine,
+    vaccine: VaccineForStock,
 ): Column[] => {
     const { formatMessage } = useSafeIntl();
     const { mutateAsync: deleteFormA } = useDeleteFormA();
@@ -59,15 +62,6 @@ export const useFormATableColumns = (
                 sortable: true,
                 Cell: DateCell,
             },
-            // {
-            //     Header: formatMessage(MESSAGES.forma_unusable_vials),
-            //     accessor: 'unusable_vials',
-            //     id: 'unusable_vials',
-            //     sortable: true,
-            //     Cell: settings => (
-            //         <NumberCell value={settings.row.original.unusable_vials} />
-            //     ),
-            // },
             {
                 Header: formatMessage(MESSAGES.forma_vials_used),
                 accessor: 'usable_vials_used',
@@ -141,7 +135,7 @@ export const useFormATableColumns = (
 };
 export const useDestructionTableColumns = (
     countryName: string,
-    vaccine: Vaccine,
+    vaccine: VaccineForStock,
 ): Column[] => {
     const { formatMessage } = useSafeIntl();
     const { mutateAsync: deleteDestruction } = useDeleteDestruction();
@@ -231,7 +225,7 @@ export const useDestructionTableColumns = (
 };
 export const useIncidentTableColumns = (
     countryName: string,
-    vaccine: Vaccine,
+    vaccine: VaccineForStock,
 ): Column[] => {
     const { formatMessage } = useSafeIntl();
     const { mutateAsync: deleteIncident } = useDeleteIncident();
@@ -332,4 +326,116 @@ export const useIncidentTableColumns = (
         ];
         return columns;
     }, [countryName, formatMessage, vaccine, deleteIncident]);
+};
+export const useEarmarkedTableColumns = (
+    countryName: string,
+    vaccine: VaccineForStock,
+): Column[] => {
+    const { formatMessage } = useSafeIntl();
+    const { mutateAsync: deleteEarmarked } = useDeleteEarmarked();
+    return useMemo(() => {
+        const columns = [
+            {
+                Header: formatMessage(MESSAGES.movement),
+                accessor: 'earmarked_stock_type',
+                id: 'earmarked_stock_type',
+                sortable: true,
+                Cell: settings => {
+                    if (settings.row.original.earmarked_stock_type) {
+                        if (
+                            MESSAGES[settings.row.original.earmarked_stock_type]
+                        ) {
+                            return formatMessage(
+                                MESSAGES[
+                                    settings.row.original.earmarked_stock_type
+                                ],
+                            );
+                        }
+                        return settings.row.original.earmarked_stock_type;
+                    }
+                    return textPlaceholder;
+                },
+            },
+            {
+                Header: formatMessage(MESSAGES.campaign),
+                accessor: 'campaign',
+                id: 'campaign',
+                sortable: true,
+                Cell: BreakWordCell,
+            },
+            {
+                Header: formatMessage(MESSAGES.round),
+                accessor: 'round_number',
+                id: 'round_number',
+                sortable: true,
+                Cell: settings => (
+                    <NumberCell value={settings.row.original.round_number} />
+                ),
+            },
+            {
+                Header: formatMessage(MESSAGES.created),
+                accessor: 'created_at',
+                id: 'created_at',
+                sortable: true,
+                Cell: DateCell,
+            },
+            {
+                Header: formatMessage(MESSAGES.earmarked_vials),
+                accessor: 'vials_earmarked',
+                id: 'vials_earmarked',
+                sortable: true,
+                Cell: settings => (
+                    <NumberCell value={settings.row.original.vials_earmarked} />
+                ),
+            },
+            {
+                Header: formatMessage(MESSAGES.earmarked_doses),
+                accessor: 'doses_earmarked',
+                id: 'doses_earmarked',
+                sortable: true,
+                Cell: settings => (
+                    <NumberCell value={settings.row.original.doses_earmarked} />
+                ),
+            },
+            {
+                Header: formatMessage(MESSAGES.actions),
+                accessor: 'account',
+                id: 'account',
+                sortable: false,
+                Cell: settings => {
+                    if (settings.row.original.earmarked_stock_type === USED) {
+                        return null;
+                    }
+                    return (
+                        <DisplayIfUserHasPerm
+                            permissions={[STOCK_MANAGEMENT_WRITE]}
+                        >
+                            <>
+                                <EditEarmarked
+                                    id={settings.row.original.id}
+                                    earmark={settings.row.original}
+                                    iconProps={{ overrideIcon: EditIcon }}
+                                    countryName={countryName}
+                                    vaccine={vaccine}
+                                    vaccineStockId={
+                                        settings.row.original.vaccine_stock
+                                    }
+                                />
+                                <DeleteDialog
+                                    titleMessage={MESSAGES.deleteEarmarked}
+                                    message={MESSAGES.deleteEarmarkedWarning}
+                                    onConfirm={() =>
+                                        deleteEarmarked(
+                                            settings.row.original.id,
+                                        )
+                                    }
+                                />
+                            </>
+                        </DisplayIfUserHasPerm>
+                    );
+                },
+            },
+        ];
+        return columns;
+    }, [formatMessage, countryName, vaccine, deleteEarmarked]);
 };

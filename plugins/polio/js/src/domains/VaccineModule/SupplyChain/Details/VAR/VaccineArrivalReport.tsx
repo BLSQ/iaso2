@@ -23,7 +23,7 @@ export const VaccineArrivalReport: FunctionComponent<Props> = ({
 }) => {
     const classes: Record<string, string> = usePaperStyles();
     const { formatMessage } = useSafeIntl();
-    const { values, setFieldValue, setFieldTouched } =
+    const { values, setFieldValue, setFieldTouched, setValues } =
         useFormikContext<SupplyChainFormData>();
     const { arrival_reports } = values as SupplyChainFormData;
     const markedForDeletion = arrival_reports?.[index].to_delete ?? false;
@@ -99,6 +99,22 @@ export const VaccineArrivalReport: FunctionComponent<Props> = ({
         ],
     );
 
+    const handleSetValues = useCallback(
+        newValues => {
+            setValues(prevValues => ({
+                ...prevValues,
+                arrival_reports: prevValues.arrival_reports?.map((report, i) =>
+                    i === index
+                        ? {
+                              ...report,
+                              ...newValues,
+                          }
+                        : report,
+                ),
+            }));
+        },
+        [index, setValues],
+    );
     const handleDosesShippedUpdate = useCallback(
         (value: number) => {
             if (dosesShippedRef.current) {
@@ -107,15 +123,15 @@ export const VaccineArrivalReport: FunctionComponent<Props> = ({
                           ((value as Optional<number>) ?? 0) / doses_per_vial,
                       )
                     : 0;
-                setFieldValue(`arrival_reports[${index}].doses_shipped`, value);
-                setFieldValue(
-                    `arrival_reports[${index}].vials_shipped`,
-                    vialsShipped,
-                );
+                handleSetValues({
+                    doses_shipped: value,
+                    vials_shipped: vialsShipped,
+                });
             }
         },
-        [doses_per_vial, index, setFieldValue],
+        [doses_per_vial, handleSetValues],
     );
+
     const handleDosesReceivedUpdate = useCallback(
         (value: number) => {
             if (dosesReceivedRef.current) {
@@ -124,48 +140,41 @@ export const VaccineArrivalReport: FunctionComponent<Props> = ({
                           ((value as Optional<number>) ?? 0) / doses_per_vial,
                       )
                     : 0;
-                setFieldValue(
-                    `arrival_reports[${index}].doses_received`,
-                    value,
-                );
-                setFieldValue(
-                    `arrival_reports[${index}].vials_received`,
-                    vialsReceived,
-                );
+                handleSetValues({
+                    doses_received: value,
+                    vials_received: vialsReceived,
+                });
             }
         },
-        [doses_per_vial, index, setFieldValue],
+        [doses_per_vial, handleSetValues],
     );
 
     const handleVialsShippededUpdate = useCallback(
         (value: number) => {
             if (vialsShippedRef.current) {
                 const dosesShipped = value * (doses_per_vial ?? 0);
-                setFieldValue(`arrival_reports[${index}].vials_shipped`, value);
-                setFieldValue(
-                    `arrival_reports[${index}].doses_shipped`,
-                    dosesShipped,
-                );
+                handleSetValues({
+                    vials_shipped: value,
+                    doses_shipped: dosesShipped,
+                });
             }
         },
-        [doses_per_vial, index, setFieldValue],
+        [doses_per_vial, handleSetValues],
     );
+
     const handleVialsReceivedUpdate = useCallback(
         (value: number) => {
             if (vialsReceivedRef.current) {
                 const dosesReceived = value * (doses_per_vial ?? 0);
-                setFieldValue(
-                    `arrival_reports[${index}].vials_received`,
-                    value,
-                );
-                setFieldValue(
-                    `arrival_reports[${index}].doses_received`,
-                    dosesReceived,
-                );
+                handleSetValues({
+                    vials_received: value,
+                    doses_received: dosesReceived,
+                });
             }
         },
-        [doses_per_vial, index, setFieldValue],
+        [doses_per_vial, handleSetValues],
     );
+
     const onDosesShippedFocused = () => {
         dosesShippedRef.current = true;
     };

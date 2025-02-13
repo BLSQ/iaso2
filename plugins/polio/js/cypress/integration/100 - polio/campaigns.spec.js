@@ -6,7 +6,6 @@ const { assert } = require('chai');
 testPlugin('polio', () => {
     describe('conditional polio test', () => {
         it('test polio', () => {
-            console.log('passed');
             assert(true);
         });
     });

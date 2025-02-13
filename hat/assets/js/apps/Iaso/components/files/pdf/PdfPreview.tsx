@@ -1,3 +1,9 @@
+import React, {
+    ComponentType,
+    FunctionComponent,
+    useCallback,
+    useState,
+} from 'react';
 import { NavigateBefore, NavigateNext } from '@mui/icons-material';
 import {
     Box,
@@ -8,12 +14,6 @@ import {
     IconButton,
 } from '@mui/material';
 import { LoadingSpinner, useSafeIntl } from 'bluesquare-components';
-import React, {
-    ComponentType,
-    FunctionComponent,
-    useCallback,
-    useState,
-} from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { SxStyles } from '../../../types/general';
 import PdfSvgComponent from '../../svg/PdfSvgComponent';
@@ -96,7 +96,6 @@ export const PdfPreview: FunctionComponent<PdfPreviewProps> = ({
 
     const { formatMessage } = useSafeIntl();
     const handleOpen = () => {
-        console.log('handleOpen');
         setOpen(true);
     };
 

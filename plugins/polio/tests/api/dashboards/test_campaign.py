@@ -2,8 +2,7 @@ from rest_framework import status
 
 from iaso.models.org_unit import OrgUnitType
 from iaso.test import APITestCase
-from plugins.polio.budget.models import BudgetProcess, BudgetStep
-from plugins.polio.models import CampaignType, Round
+from plugins.polio.models import CampaignType
 from plugins.polio.tests.api.test import PolioTestCaseMixin
 
 BASE_URL = "/api/polio/dashboards/campaigns/"

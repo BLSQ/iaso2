@@ -1,5 +1,5 @@
-import { TableBody } from '@mui/material';
 import React, { FunctionComponent } from 'react';
+import { TableBody } from '@mui/material';
 import { HighlightFields } from '../../Components/HighlightFieldsChanges';
 import { NewOrgUnitField } from '../../hooks/useNewFields';
 import { OrgUnitChangeRequestDetails } from '../../types';
@@ -29,7 +29,6 @@ export const ReviewOrgUnitChangesDetailsTableBody: FunctionComponent<Props> = ({
                     changeRequest && changeRequest[`new_${field.key}`];
                 const changedFieldWithOldValues =
                     changeRequest && changeRequest[`old_${field.key}`];
-
                 return (
                     <HighlightFields
                         key={key}

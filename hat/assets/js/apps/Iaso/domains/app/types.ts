@@ -38,6 +38,10 @@ export type Plugin = {
     paramsConfig: Record<string, string[]>;
     redirections?: RoutingRedirection[];
     theme?: Theme;
+    customComponents?: {
+        key: string;
+        component: ElementType;
+    }[];
 };
 
 export type Plugins = {

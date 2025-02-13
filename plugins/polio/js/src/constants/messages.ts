@@ -2442,6 +2442,11 @@ const MESSAGES = defineMessages({
         id: 'iaso.polio.label.testRound',
         defaultMessage: 'Test round / On hold',
     },
+    disclaimer: {
+        id: 'iaso.polio.disclaimer',
+        defaultMessage:
+            'This data is confidential. Please do not share externally without RRT team approval.',
+    },
 });
 
 export default MESSAGES;

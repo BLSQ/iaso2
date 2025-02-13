@@ -1,14 +1,10 @@
 import datetime
 
-from django.contrib.auth.models import AnonymousUser
-from django.utils.timezone import now
-
 from iaso.models.base import Group
 from iaso.models.org_unit import OrgUnitType
 from iaso.test import APITestCase
 from plugins.polio.models import SubActivity, SubActivityScope
 from plugins.polio.tests.api.test import PolioTestCaseMixin
-from plugins.polio.tests.test_api import PolioAPITestCase
 
 BASE_URL = "/api/polio/dashboards/subactivities"
 

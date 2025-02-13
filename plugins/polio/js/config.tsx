@@ -1,4 +1,5 @@
 import { Plugin } from '../../../hat/assets/js/apps/Iaso/domains/app/types';
+import { Disclaimer } from './src/components/Disclaimer';
 import { menu } from './src/constants/menu';
 import { redirections } from './src/constants/redirections';
 import { routes } from './src/constants/routes';
@@ -23,6 +24,12 @@ const config: Plugin = {
     menu,
     translations,
     homeUrl: `/${DASHBOARD_BASE_URL}/campaignCategory/all`,
+    customComponents: [
+        {
+            key: 'topbar.disclaimer',
+            component: Disclaimer,
+        },
+    ],
     // homeOffline: () => <div>OFFLINE</div>,
     // homeOnline: () => <div>CONNECTED HOME POLIO</div>,
 };

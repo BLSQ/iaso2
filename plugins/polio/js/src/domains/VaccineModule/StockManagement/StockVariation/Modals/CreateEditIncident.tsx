@@ -2,6 +2,7 @@ import {
     Box,
     FormControl,
     FormControlLabel,
+    FormLabel,
     Radio,
     RadioGroup,
     Typography,
@@ -28,7 +29,7 @@ import { Vaccine } from '../../../../../constants/types';
 import { useSaveIncident } from '../../hooks/api';
 import { useGetMovementDescription } from '../../hooks/useGetMovementDescription';
 import MESSAGES from '../../messages';
-import { useIncidentOptions } from './useIncidentOptions';
+import { useIncidentOptions } from './dropdownOptions';
 import { useIncidentValidation } from './validation';
 
 type Props = {
@@ -93,7 +94,8 @@ export type IncidentReportFieldType =
     | 'plainMovement'
     | 'missingMovement'
     | 'inOutMovement'
-    | 'inventory';
+    | 'inventoryAdd'
+    | 'inventoryRemove';
 type IncidentReportConfig = {
     [key: string]: IncidentReportFieldType;
 };
@@ -108,14 +110,9 @@ const makeIncidentReportConfig = (
     vaccine_expired: 'plainMovement',
     unreadable_label: 'plainMovement',
     vvm_reached_discard_point: 'plainMovement',
-    physical_inventory: 'inventory',
+    physical_inventory_add: 'inventoryAdd',
+    physical_inventory_remove: 'inventoryRemove',
 });
-
-// const getInitialMovement = incident => {
-//     if (!incident) return 0;
-//     const movementType = incidentReportConfig[incident.stock_correction];
-//     return movementType === 'inventory' ? 0 : incident.usable_vials;
-// };
 
 const getMovementLabel = (movementType: IncidentReportFieldType) => {
     switch (movementType) {
@@ -153,7 +150,7 @@ export const CreateEditIncident: FunctionComponent<Props> = ({
         i => {
             if (!i) return 0;
             const movementType = incidentConfig[i.stock_correction];
-            return movementType === 'inventory' ? 0 : i.usable_vials;
+            return movementType === 'inventoryAdd' ? 0 : i.usable_vials;
         },
         [incidentConfig],
     );
@@ -188,7 +185,8 @@ export const CreateEditIncident: FunctionComponent<Props> = ({
                     usableVials = values.usable_vials;
                     unusableVials = values.unusable_vials;
                     break;
-                case 'inventory':
+                case 'inventoryRemove':
+                case 'inventoryAdd':
                     usableVials =
                         inventoryType === 'usable' ? values.usable_vials : 0;
                     unusableVials =
@@ -249,8 +247,8 @@ export const CreateEditIncident: FunctionComponent<Props> = ({
                 allowConfirm={allowConfirm}
                 open={isOpen}
                 closeDialog={closeDialog}
-                id="formA-modal"
-                dataTestId="formA-modal"
+                id="incident-modal"
+                dataTestId="incident-modal"
                 onCancel={() => null}
                 onClose={() => {
                     closeDialog();
@@ -295,7 +293,8 @@ export const CreateEditIncident: FunctionComponent<Props> = ({
                 />
 
                 {currentMovementType &&
-                    currentMovementType !== 'inventory' &&
+                    currentMovementType !== 'inventoryAdd' &&
+                    currentMovementType !== 'inventoryRemove' &&
                     currentMovementType !== 'inOutMovement' && (
                         <Box mb={2}>
                             <Field
@@ -346,10 +345,14 @@ export const CreateEditIncident: FunctionComponent<Props> = ({
                         </Box>
                     </>
                 )}
-                {currentMovementType === 'inventory' && (
+                {(currentMovementType === 'inventoryAdd' ||
+                    currentMovementType === 'inventoryRemove') && (
                     <>
                         <Box mb={2}>
                             <FormControl component="fieldset">
+                                <FormLabel id="stock-type-choice-label">
+                                    {formatMessage(MESSAGES.stockToModify)}
+                                </FormLabel>
                                 <RadioGroup
                                     aria-label="inventory type"
                                     name="inventoryType"
@@ -360,14 +363,14 @@ export const CreateEditIncident: FunctionComponent<Props> = ({
                                         value="usable"
                                         control={<Radio />}
                                         label={formatMessage(
-                                            MESSAGES.usableVialsIn,
+                                            MESSAGES.usableVials,
                                         )}
                                     />
                                     <FormControlLabel
                                         value="unusable"
                                         control={<Radio />}
                                         label={formatMessage(
-                                            MESSAGES.unusableVialsIn,
+                                            MESSAGES.unusableVials,
                                         )}
                                     />
                                 </RadioGroup>
@@ -377,8 +380,8 @@ export const CreateEditIncident: FunctionComponent<Props> = ({
                             <Field
                                 label={formatMessage(
                                     inventoryType === 'usable'
-                                        ? MESSAGES.usableVialsIn
-                                        : MESSAGES.unusableVialsIn,
+                                        ? MESSAGES.usableVials
+                                        : MESSAGES.unusableVials,
                                 )}
                                 name={
                                     inventoryType === 'usable'

@@ -346,7 +346,14 @@ export const baseRouteConfigs: Record<string, RouteConfig> = {
     },
     groups: {
         url: 'orgunits/configuration/groups',
-        params: ['accountId', 'search', ...paginationPathParams],
+        params: [
+            'accountId',
+            'search',
+            'project_ids',
+            'dataSource',
+            'version',
+            ...paginationPathParams,
+        ],
     },
     groupSets: {
         url: 'orgunits/configuration/groupSets',

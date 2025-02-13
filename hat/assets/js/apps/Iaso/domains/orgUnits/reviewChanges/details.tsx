@@ -1,10 +1,10 @@
+import React, { FunctionComponent, useMemo } from 'react';
 import { Box } from '@mui/material';
 import {
     IconButton as IconButtonBlsq,
     useGoBack,
     useSafeIntl,
 } from 'bluesquare-components';
-import React, { FunctionComponent, useMemo } from 'react';
 import TopBar from '../../../components/nav/TopBarComponent';
 import { baseUrls } from '../../../constants/urls';
 import { useParamsObject } from '../../../routing/hooks/useParamsObject';

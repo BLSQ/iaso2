@@ -107,7 +107,7 @@ const getUnusableVials = async (id: string, queryString: string) => {
     return getRequest(`${apiUrl}${id}/get_unusable_vials/?${queryString}`);
 };
 // Need to pass id to apiUrl
-// Splitting both hooks to be able to store both payloads in the cache and avoid refteching with each tab change
+// Splitting hooks to be able to store payloads in the cache and avoid refetching with each tab change
 export const useGetUnusableVials = (
     params: StockManagementDetailsParams,
     enabled: boolean,
@@ -128,6 +128,35 @@ export const useGetUnusableVials = (
     return useSnackQuery({
         queryKey: ['unusable-vials', queryString, id],
         queryFn: () => getUnusableVials(id, queryString),
+        options: { ...options, enabled },
+    });
+};
+
+const getEarmarked = async (id: string, queryString: string) => {
+    return getRequest(`${apiUrl}${id}/get_earmarked_stock/?${queryString}`);
+};
+// Need to pass id to apiUrl
+// Splitting hooks to be able to store both payloads in the cache and avoid refetching with each tab change
+export const useGetEarmarked = (
+    params: StockManagementDetailsParams,
+    enabled: boolean,
+): UseQueryResult<any, any> => {
+    const {
+        earmarkedOrder: order,
+        earmarkedPage: page,
+        earmarkedPageSize: pageSize,
+    } = params;
+    const safeParams = useUrlParams({
+        order,
+        page,
+        pageSize,
+    } as Partial<UrlParams>);
+    const { id } = params;
+    const apiParams = useApiParams(safeParams);
+    const queryString = new URLSearchParams(apiParams).toString();
+    return useSnackQuery({
+        queryKey: ['earmarked', queryString, id],
+        queryFn: () => getEarmarked(id, queryString),
         options: { ...options, enabled },
     });
 };
@@ -252,9 +281,45 @@ export const useGetIncidentList = (
     });
 };
 
+const getEarmarkedList = async (queryString: string) => {
+    return getRequest(`${modalUrl}earmarked_stock/?${queryString}`);
+};
+
+export const useGetEarmarkedList = (
+    params: StockVariationParams,
+    enabled: boolean,
+): UseQueryResult<any, any> => {
+    const {
+        earmarkedOrder: order,
+        earmarkedPage: page,
+        earmarkedPageSize: pageSize,
+        id: vaccine_stock,
+    } = params;
+    const safeParams = useUrlParams(
+        {
+            order,
+            page,
+            pageSize,
+            vaccine_stock,
+        } as Partial<UrlParams>,
+        {
+            order: '-created_at',
+            pageSize: 20,
+        },
+    );
+    const apiParams = useApiParams(safeParams);
+    const queryString = new URLSearchParams(apiParams).toString();
+    return useSnackQuery({
+        queryKey: ['earmarked-list', queryString, vaccine_stock],
+        queryFn: () => getEarmarkedList(queryString),
+        options: { ...options, enabled },
+    });
+};
+
 type UseCampaignOptionsResult = {
     roundOptions: DropdownOptions<string>[];
     campaignOptions: DropdownOptions<string>[];
+    roundNumberOptions: DropdownOptions<string>[];
     isFetching: boolean;
 };
 // TODO get list of campaigns filtered by active vaccine
@@ -293,6 +358,20 @@ export const useCampaignOptions = (
             : [];
     }, [campaignName, data, formatMessage]);
 
+    const roundNumberOptions = useMemo(() => {
+        const selectedCampaign = (data ?? []).find(
+            campaign => campaign.obr_name === campaignName,
+        );
+        return selectedCampaign
+            ? selectedCampaign.rounds.map(round => {
+                  return {
+                      label: `${formatMessage(MESSAGES.round)} ${round.number}`,
+                      value: round.number,
+                  };
+              })
+            : [];
+    }, [campaignName, data, formatMessage]);
+
     const campaignOptions = useMemo(() => {
         const campaignsList = (data ?? []).map(c => {
             return {
@@ -311,8 +390,13 @@ export const useCampaignOptions = (
     }, [campaignName, data]);
 
     return useMemo(() => {
-        return { isFetching, campaignOptions, roundOptions };
-    }, [campaignOptions, isFetching, roundOptions]);
+        return {
+            isFetching,
+            campaignOptions,
+            roundOptions,
+            roundNumberOptions,
+        };
+    }, [campaignOptions, isFetching, roundOptions, roundNumberOptions]);
 };
 
 const createEditFormA = async (body: any) => {
@@ -364,6 +448,8 @@ export const useSaveFormA = () => {
             'stock-management-summary',
             'unusable-vials',
             'document',
+            'earmarked',
+            'earmarked-list',
         ],
     });
 };
@@ -437,7 +523,6 @@ const createEditIncident = async (body: any) => {
               ),
           )
         : {};
-
     const requestBody: any = {
         url: `${modalUrl}incident_report/`,
         data: filteredParams,
@@ -468,6 +553,44 @@ export const useSaveIncident = () => {
             'stock-management-summary',
             'unusable-vials',
             'document',
+            'earmarked',
+            'earmarked-list',
+        ],
+    });
+};
+const createEditEarmarked = (body: any) => {
+    const copy = { ...body };
+
+    const filteredParams = copy
+        ? Object.fromEntries(
+              Object.entries(copy).filter(
+                  ([_key, value]) => value !== undefined && value !== null,
+              ),
+          )
+        : {};
+
+    const requestBody: any = {
+        url: `${modalUrl}earmarked_stock/`,
+        data: filteredParams,
+    };
+
+    if (body.id) {
+        requestBody.url = `${modalUrl}earmarked_stock/${body.id}/`;
+        return patchRequest2(requestBody);
+    }
+    return postRequest2(requestBody);
+};
+
+export const useSaveEarmarked = () => {
+    return useSnackMutation({
+        mutationFn: body => createEditEarmarked(body),
+        invalidateQueryKey: [
+            'vaccine-stock-list',
+            'usable-vials',
+            'stock-management-summary',
+            'unusable-vials',
+            'earmarked',
+            'earmarked-list',
         ],
     });
 };
@@ -496,6 +619,8 @@ export const useDeleteIncident = (): UseMutationResult => {
             'usable-vials',
             'stock-management-summary',
             'unusable-vials',
+            'earmarked',
+            'earmarked-list',
         ],
     });
 };
@@ -530,6 +655,25 @@ export const useDeleteFormA = (): UseMutationResult => {
             'usable-vials',
             'stock-management-summary',
             'unusable-vials',
+            'earmarked',
+            'earmarked-list',
+        ],
+    });
+};
+const deleteEarmarked = (id: string) => {
+    return deleteRequest(`${modalUrl}earmarked_stock/${id}`);
+};
+
+export const useDeleteEarmarked = (): UseMutationResult => {
+    return useSnackMutation({
+        mutationFn: deleteEarmarked,
+        invalidateQueryKey: [
+            'vaccine-stock-list',
+            'usable-vials',
+            'stock-management-summary',
+            'unusable-vials',
+            'earmarked',
+            'earmarked-list',
         ],
     });
 };

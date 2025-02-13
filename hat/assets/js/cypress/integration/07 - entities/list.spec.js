@@ -43,7 +43,6 @@ const mockPage = (
         ...defaultQuery,
         ...formQuery,
     };
-    console.log('query', query);
     cy.intercept({ ...options, query }, req => {
         req.continue(res => {
             interceptFlag = true;

@@ -243,6 +243,10 @@ class CampaignTestCase(TestCase, PolioTestCaseMixin):
         polio_campaign = Campaign.polio_objects.first()
         self.assertEqual(polio_campaign.campaign_types.first().name, CampaignType.POLIO)
 
+    def test_has_polio_type(self):
+        self.assertTrue(Campaign.polio_objects.first().has_polio_type)
+        self.assertFalse(self.measles_campaign.has_polio_type)
+
     def test_vaccine_properties_with_separate_scopes_per_round(self):
         # strings
         self.assertEqual(self.polio_campaign2.vaccines, f"{self.mopv2}, {self.nopv2_bopv}")

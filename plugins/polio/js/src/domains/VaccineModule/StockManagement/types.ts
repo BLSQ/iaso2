@@ -10,7 +10,7 @@ export type StockManagementListParams = {
     vaccine_type?: string;
 };
 
-export type TabValue = 'usableVials' | 'unusableVials';
+export type TabValue = 'usableVials' | 'unusableVials' | 'earmarked';
 
 export type StockManagementDetailsParams = Partial<UrlParams> & {
     id: string; // number as string
@@ -21,9 +21,16 @@ export type StockManagementDetailsParams = Partial<UrlParams> & {
     usableVialsPageSize?: string; // number as string
     usableVialsPage?: string; // number as string
     usableVialsOrder?: string;
+    earmarkedPageSize?: string; // number as string
+    earmarkedPage?: string; // number as string
+    earmarkedOrder?: string;
 };
 
-export type StockVariationTab = 'forma' | 'destruction' | 'incident';
+export type StockVariationTab =
+    | 'forma'
+    | 'destruction'
+    | 'incident'
+    | 'earmarked';
 
 export type StockVariationParams = {
     id: string; // number as string
@@ -41,4 +48,7 @@ export type StockVariationParams = {
     usableVialsPageSize: string; // number as string
     usableVialsPage: string; // number as string
     usableVialsOrder: string; // number as string
+    earmarkedPageSize?: string; // number as string
+    earmarkedPage?: string; // number as string
+    earmarkedOrder?: string;
 };

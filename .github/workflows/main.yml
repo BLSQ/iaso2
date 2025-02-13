@@ -108,7 +108,7 @@ jobs:
                   python-version: 3.9
             - name: Install GDAL and gettext
               run: sudo apt-get update && sudo apt install gdal-bin gettext
-            - uses: actions/cache@v2
+            - uses: actions/cache@v4
               id: cache-venv
               with:
                   path: ./venv/

@@ -100,22 +100,22 @@ class VaccineSupplyChainAPITestCase(APITestCase):
 
         cls.campaign_rdc_1_round_1 = pm.Round.objects.create(
             campaign=cls.campaign_rdc_1,
-            started_at=datetime.datetime(2021, 1, 1),
-            ended_at=datetime.datetime(2021, 1, 31),
+            started_at=datetime.date(2021, 1, 1),
+            ended_at=datetime.date(2021, 1, 31),
             number=1,
         )
 
         cls.campaign_rdc_1_round_2 = pm.Round.objects.create(
             campaign=cls.campaign_rdc_1,
-            started_at=datetime.datetime(2021, 2, 1),
-            ended_at=datetime.datetime(2021, 2, 28),
+            started_at=datetime.date(2021, 2, 1),
+            ended_at=datetime.date(2021, 2, 28),
             number=2,
         )
 
         cls.campaign_rdc_1_round_3 = pm.Round.objects.create(
             campaign=cls.campaign_rdc_1,
-            started_at=datetime.datetime(2021, 3, 1),
-            ended_at=datetime.datetime(2021, 3, 31),
+            started_at=datetime.date(2021, 3, 1),
+            ended_at=datetime.date(2021, 3, 31),
             number=3,
         )
 
@@ -147,20 +147,20 @@ class VaccineSupplyChainAPITestCase(APITestCase):
 
         cls.campaign_chad_1_round_1 = pm.Round.objects.create(
             campaign=cls.campaign_chad_1,
-            started_at=datetime.datetime(2021, 1, 1),
-            ended_at=datetime.datetime(2021, 1, 31),
+            started_at=datetime.date(2021, 1, 1),
+            ended_at=datetime.date(2021, 1, 31),
         )
 
         cls.campaign_chad_1_round_2 = pm.Round.objects.create(
             campaign=cls.campaign_chad_1,
-            started_at=datetime.datetime(2021, 2, 1),
-            ended_at=datetime.datetime(2021, 2, 28),
+            started_at=datetime.date(2021, 2, 1),
+            ended_at=datetime.date(2021, 2, 28),
         )
 
         cls.campaign_chad_1_round_3 = pm.Round.objects.create(
             campaign=cls.campaign_chad_1,
-            started_at=datetime.datetime(2021, 3, 1),
-            ended_at=datetime.datetime(2021, 3, 31),
+            started_at=datetime.date(2021, 3, 1),
+            ended_at=datetime.date(2021, 3, 31),
         )
 
         cls.vaccine_request_form_chad_1 = pm.VaccineRequestForm.objects.create(
@@ -187,14 +187,14 @@ class VaccineSupplyChainAPITestCase(APITestCase):
 
         cls.campaign_be_1_round_1 = pm.Round.objects.create(
             campaign=cls.campaign_be_1,
-            started_at=datetime.datetime(2021, 1, 1),
-            ended_at=datetime.datetime(2021, 1, 31),
+            started_at=datetime.date(2021, 1, 1),
+            ended_at=datetime.date(2021, 1, 31),
         )
 
         cls.campaign_be_1_round_2 = pm.Round.objects.create(
             campaign=cls.campaign_be_1,
-            started_at=datetime.datetime(2021, 2, 1),
-            ended_at=datetime.datetime(2021, 2, 28),
+            started_at=datetime.date(2021, 2, 1),
+            ended_at=datetime.date(2021, 2, 28),
         )
 
         cls.vaccine_request_form_be_1 = pm.VaccineRequestForm.objects.create(
@@ -315,8 +315,8 @@ class VaccineSupplyChainAPITestCase(APITestCase):
 
         campaign_test_round_1 = pm.Round.objects.create(
             campaign=campaign_test,
-            started_at=datetime.datetime(2021, 1, 1),
-            ended_at=datetime.datetime(2021, 1, 31),
+            started_at=datetime.date(2021, 1, 1),
+            ended_at=datetime.date(2021, 1, 31),
             number=1,
         )
 

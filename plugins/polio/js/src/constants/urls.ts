@@ -8,6 +8,7 @@ import {
 import { paginationPathParams } from '../../../../../hat/assets/js/apps/Iaso/routing/common';
 import {
     DESTRUCTION,
+    EARMARKED,
     FORM_A,
     INCIDENT,
     UNUSABLE_VIALS,
@@ -239,6 +240,9 @@ export const polioRouteConfigs: Record<string, RouteConfig> = {
             `${UNUSABLE_VIALS}Order`,
             `${UNUSABLE_VIALS}PageSize`,
             `${UNUSABLE_VIALS}Page`,
+            `${EARMARKED}Order`,
+            `${EARMARKED}PageSize`,
+            `${EARMARKED}Page`,
         ],
     },
     stockVariation: {
@@ -256,6 +260,9 @@ export const polioRouteConfigs: Record<string, RouteConfig> = {
             `${INCIDENT}Order`,
             `${INCIDENT}PageSize`,
             `${INCIDENT}Page`,
+            `${EARMARKED}Order`,
+            `${EARMARKED}PageSize`,
+            `${EARMARKED}Page`,
         ],
     },
     countryConfig: {

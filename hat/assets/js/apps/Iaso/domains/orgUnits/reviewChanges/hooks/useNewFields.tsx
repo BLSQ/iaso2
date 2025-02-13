@@ -1,7 +1,3 @@
-import { Box } from '@mui/material';
-import { textPlaceholder, useSafeIntl } from 'bluesquare-components';
-import orderBy from 'lodash/orderBy';
-import moment from 'moment';
 import React, {
     FunctionComponent,
     ReactElement,
@@ -10,6 +6,10 @@ import React, {
     useMemo,
     useState,
 } from 'react';
+import { Box } from '@mui/material';
+import { textPlaceholder, useSafeIntl } from 'bluesquare-components';
+import orderBy from 'lodash/orderBy';
+import moment from 'moment';
 import { MarkerMap } from '../../../../components/maps/MarkerMapComponent';
 import { BooleanValue, PlaceholderValue } from '../../../../libs/utils';
 import { Nullable, Optional } from '../../../../types/utils';

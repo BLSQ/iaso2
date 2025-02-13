@@ -49,6 +49,7 @@ class RoundSerializer(serializers.ModelSerializer):
         if datelogs:
             raise serializers.ValidationError({"datelogs": "Cannot have modification history for new round"})
         round = Round.objects.create(**validated_data)
+        round.add_chronogram()
         if started_at is not None or ended_at is not None:
             reason_for_delay = ReasonForDelay.objects.filter(key_name="INITIAL_DATA").first()
             datelog = RoundDateHistoryEntry.objects.create(

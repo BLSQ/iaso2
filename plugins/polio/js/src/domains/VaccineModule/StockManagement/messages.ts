@@ -189,9 +189,13 @@ const MESSAGES = defineMessages({
         id: 'iaso.polio.label.lot_numbers',
         defaultMessage: 'Lot numbers',
     },
-    physical_inventory: {
-        id: 'iaso.polio.label.physical_inventory',
-        defaultMessage: 'Physical inventory',
+    physical_inventory_add: {
+        id: 'iaso.polio.label.physical_inventory_add',
+        defaultMessage: 'Add to Physical inventory',
+    },
+    physical_inventory_remove: {
+        id: 'iaso.polio.label.physical_inventory_remove',
+        defaultMessage: 'Remove from Physical inventory',
     },
     stealing: {
         id: 'iaso.polio.label.stealing',
@@ -303,6 +307,15 @@ const MESSAGES = defineMessages({
         defaultMessage:
             'Are you sure you want to delete this incident report ?',
     },
+    deleteEarmarked: {
+        id: 'iaso.polio.label.deleteEarmarked',
+        defaultMessage: 'Delete Earmarked Stock',
+    },
+    deleteEarmarkedWarning: {
+        id: 'iaso.polio.label.deleteEarmarkedWarning',
+        defaultMessage:
+            'Are you sure you want to delete this earmarked stock ?',
+    },
     title: {
         id: 'iaso.polio.label.title',
         defaultMessage: 'Title',
@@ -351,6 +364,34 @@ const MESSAGES = defineMessages({
     round: {
         id: 'iaso.polio.label.round',
         defaultMessage: 'Round',
+    },
+    stockToModify: {
+        id: 'iaso.polio.label.stockToModify',
+        defaultMessage: 'Stock to modify',
+    },
+    earmarked: {
+        id: 'iaso.polio.label.earmarked',
+        defaultMessage: 'Earmarked',
+    },
+    earmarked_doses: {
+        id: 'iaso.polio.label.earmarked_doses',
+        defaultMessage: 'Earmarked doses',
+    },
+    earmarked_vials: {
+        id: 'iaso.polio.label.earmarked_vials',
+        defaultMessage: 'Earmarked vials',
+    },
+    created: {
+        id: 'iaso.label.created_at',
+        defaultMessage: 'Created',
+    },
+    used: {
+        id: 'iaso.label.used',
+        defaultMessage: 'Used',
+    },
+    returned: {
+        id: 'iaso.label.returned',
+        defaultMessage: 'Returned',
     },
 });
 

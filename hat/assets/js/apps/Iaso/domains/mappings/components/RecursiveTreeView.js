@@ -1,8 +1,8 @@
 import React from 'react';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { makeStyles } from '@mui/styles';
 import { TreeItem, TreeView } from '@mui/x-tree-view';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import _ from 'lodash';
 import Descriptor from '../descriptor';
 
@@ -31,7 +31,6 @@ const RecursiveTreeView = props => {
 
     const onNodeSelected = (event, value) => {
         const val = indexedQuestions[value];
-        console.log('node selected ', value, val);
         if (val && val.type !== 'group') {
             onQuestionSelected(val);
         }

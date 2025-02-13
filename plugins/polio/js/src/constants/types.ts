@@ -167,6 +167,7 @@ export type CampaignFieldType =
     | 'xml-external';
 
 export type Vaccine = 'nOPV2' | 'bOPV' | 'mOPV2' | 'nOPV2 & bOPV';
+export type VaccineForStock = 'nOPV2' | 'bOPV' | 'mOPV2';
 
 export type Virus = 'PV1' | 'PV2' | 'PV3' | 'cVDPV2' | 'WPV1';
 

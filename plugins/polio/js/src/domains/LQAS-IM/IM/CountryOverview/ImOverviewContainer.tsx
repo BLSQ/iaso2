@@ -1,14 +1,14 @@
-import { Box, Divider, Paper } from '@mui/material';
 import React, { FunctionComponent, useMemo } from 'react';
+import { Box, Divider, Paper } from '@mui/material';
 import { DropdownOptions } from '../../../../../../../../hat/assets/js/apps/Iaso/types/utils';
 import { ConvertedLqasImData, IMType, Side } from '../../../../constants/types';
 import { baseUrls } from '../../../../constants/urls';
-import { LqasImMapHeader } from '../../shared/Map/LqasImMapHeader';
-import { LqasImTabs } from '../../shared/Tabs/LqasImTabs';
-import { useLqasImTabState } from '../../shared/Tabs/useLqasImTabState';
 import { LIST, MAP } from '../../shared/constants';
 import { useMapShapes } from '../../shared/hooks/api/useMapShapes';
 import { useLqasImMapHeaderData } from '../../shared/hooks/useLqasImMapHeaderData';
+import { LqasImMapHeader } from '../../shared/Map/LqasImMapHeader';
+import { LqasImTabs } from '../../shared/Tabs/LqasImTabs';
+import { useLqasImTabState } from '../../shared/Tabs/useLqasImTabState';
 import { getLqasImMapLayer } from '../utils';
 import { ImCountryListOverview } from './ImCountryListOverview';
 import { ImCountryMap } from './ImCountryMap';
@@ -45,9 +45,7 @@ export const ImOverviewContainer: FunctionComponent<Props> = ({
     side,
     params,
 }) => {
-    console.log('type', type);
     const baseUrl = baseUrls[type];
-    console.log('baseUrl', baseUrl);
     const { tab, handleChangeTab } = useLqasImTabState({
         baseUrl,
         params,

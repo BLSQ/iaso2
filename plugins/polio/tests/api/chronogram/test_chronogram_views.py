@@ -47,6 +47,7 @@ class ChronogramTaskViewSetTestCase(APITestCase):
         cls.campaign.campaign_types.add(cls.polio_type)
 
         cls.round = Round.objects.create(number=1, campaign=cls.campaign, started_at=TODAY.date())
+
         cls.chronogram = Chronogram.objects.create(round=cls.round, created_by=cls.user)
         cls.chronogram_task = ChronogramTask.objects.create(
             period=Period.BEFORE,

@@ -39,6 +39,7 @@ from .models import (
     VaccinePreAlert,
     VaccineRequestForm,
     VaccineStock,
+    EarmarkedStock,
     create_polio_notifications_async,
 )
 
@@ -209,6 +210,11 @@ class DestructionReport(admin.ModelAdmin):
 @admin.register(IncidentReport)
 class IncidentReport(admin.ModelAdmin):
     model = IncidentReport
+
+
+@admin.register(EarmarkedStock)
+class EarmarkedStockAdmin(admin.ModelAdmin):
+    model = EarmarkedStock
 
 
 @admin.register(Round)

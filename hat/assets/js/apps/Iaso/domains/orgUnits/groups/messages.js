@@ -21,6 +21,14 @@ const MESSAGES = defineMessages({
         defaultMessage: 'Groups',
         id: 'iaso.label.groups',
     },
+    projects: {
+        id: 'iaso.label.projects',
+        defaultMessage: 'Projects',
+    },
+    dataSource: {
+        id: 'iaso.label.dataSources',
+        defaultMessage: 'Data source',
+    },
     create: {
         id: 'iaso.groups.create',
         defaultMessage: 'Create group',
