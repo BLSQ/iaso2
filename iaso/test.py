@@ -1,21 +1,22 @@
 import importlib
 import typing
+from importlib import import_module
 from unittest import mock
 
-from rest_framework.test import APITestCase as BaseAPITestCase, APIClient
-from django.contrib.auth.models import AnonymousUser
-
+from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import AnonymousUser, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.files import File
-from django.http import StreamingHttpResponse, HttpResponse
+from django.http import HttpResponse, StreamingHttpResponse
 from django.test import TestCase as BaseTestCase
 from django.urls import clear_url_caches
 from django.utils import timezone
+from rest_framework.test import APIClient
+from rest_framework.test import APITestCase as BaseAPITestCase
 
-from hat.menupermissions.models import CustomPermissionSupport
 from hat.api_import.models import APIImport
+from hat.menupermissions.models import CustomPermissionSupport
 from iaso import models as m
 
 
@@ -38,8 +39,18 @@ class IasoTestCaseMixin:
         m.Profile.objects.create(user=user, account=account)
 
         if permissions is not None:
-            content_type = ContentType.objects.get_for_model(CustomPermissionSupport)
-            user.user_permissions.set(Permission.objects.filter(codename__in=permissions, content_type=content_type))
+            content_types = [ContentType.objects.get_for_model(CustomPermissionSupport)]
+
+            for plugin in settings.PLUGINS:
+                try:
+                    permission_model = import_module(f"plugins.{plugin}.permissions").permission_model
+                    content_types.append(ContentType.objects.get_for_model(permission_model))
+                except ImportError:
+                    pass
+
+            user.user_permissions.set(
+                Permission.objects.filter(codename__in=permissions, content_type__in=content_types)
+            )
 
         if org_units is not None:
             user.iaso_profile.org_units.set(org_units)
