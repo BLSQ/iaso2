@@ -36,7 +36,7 @@ jobs:
               run: |
                   npm ci
                   npm test
-            - name: Check that no JS translation are missing
+            - name: Check Frontend (JS/React) translations
               run: |
                   python scripts/update_trads.py
             - name: Slack notification
@@ -117,7 +117,8 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-venv-
                   # Build a virtualenv, but only if it doesn't already exist
-            - run: python -v && python -m venv ./venv && . ./venv/bin/activate && pip install -U pip &&
+            - run:
+                  python -v && python -m venv ./venv && . ./venv/bin/activate && pip install -U pip &&
                   pip install -r requirements-dev.txt
               if: steps.cache-venv.outputs.cache-hit != 'true'
             - name: Environment info
@@ -126,9 +127,25 @@ jobs:
             - name: Check formatting with Black
               run: |
                   . ./venv/bin/activate && black --check .
+            - name: Check Backend (Django) translations
+              run: |
+                  . ./venv/bin/activate
+                  python manage.py make_translations
+                  python manage.py compile_translations
+              env:
+                  RDS_DB_NAME: github_actions
+                  SECRET_KEY: secret
+                  DEBUG: true
+                  DJANGO_SETTINGS_MODULE: hat.settings
+                  RDS_PASSWORD: postgres
+                  RDS_HOSTNAME: localhost
+                  RDS_PORT: 5432
+                  RDS_USERNAME: postgres
+                  CACHE: false
+                  DEV_SERVER: true
+                  PLUGINS: polio,wfp
             - name: Django tests
               run: |
-                  . ./venv/bin/activate &&  python manage.py compilemessages
                   . ./venv/bin/activate &&  python manage.py migrate
                   . ./venv/bin/activate &&  python manage.py createcachetable
                   . ./venv/bin/activate &&  python -W "ignore" manage.py test

@@ -77,6 +77,8 @@ ENVIRONMENT = os.environ.get("SENTRY_ENVIRONMENT", "development").lower()
 SENTRY_URL = os.environ.get("SENTRY_URL", "")
 SENTRY_FRONT_ENABLED = os.environ.get("SENTRY_FRONT_ENABLED", "false").lower() == "true"
 
+LEARN_MORE_URL = os.environ.get("LEARN_MORE_URL", None)
+
 # There exists plugins using celery for the backend task (but it's not the default task mechanism of Iaso)
 # If you have such plugin, you can activate the use of celery by setting this env variable to "true"
 USE_CELERY = os.environ.get("USE_CELERY", "")
@@ -260,6 +262,7 @@ TEMPLATES = [
                 "hat.common.context_processors.logo_path",
                 "hat.common.context_processors.theme",
                 "hat.common.context_processors.sentry_config",
+                "hat.common.context_processors.learn_more_url",
             ]
         },
     }
@@ -276,10 +279,6 @@ DB_HOST = os.environ.get("RDS_HOSTNAME", "db")
 DB_PORT = os.environ.get("RDS_PORT", 5432)
 SNS_NOTIFICATION_TOPIC = os.environ.get("SNS_NOTIFICATION_TOPIC", None)
 
-print(
-    "DB_NAME",
-    DB_NAME,
-)
 DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
@@ -358,12 +357,20 @@ LANGUAGES = (
 )
 
 LOCALE_PATHS = [
-    "/var/app/current/hat/locale/",
-    "/opt/app/hat/locale/",
-    "hat/locale/",
-    "/opt/app/iaso/locale/",
-    "iaso/locale/",
+    os.path.join(BASE_DIR, "hat/locale/"),
+    os.path.join(BASE_DIR, "iaso/locale/"),
 ]
+
+if os.path.exists("/var/app"):
+    LOCALE_PATHS = [
+        "/var/app/current/hat/locale/",
+        "/opt/app/hat/locale/",
+    ] + LOCALE_PATHS
+
+if os.path.exists("/opt/app"):
+    LOCALE_PATHS = [
+        "/opt/app/iaso/locale/",
+    ] + LOCALE_PATHS
 
 TIME_ZONE = "UTC"
 

@@ -25,24 +25,39 @@ For the Python backend, we use the Django builtin test framework. Tests can be e
 docker compose exec iaso ./manage.py test
 ```
 
-### Translations
+Translations
+------------
 
-The few translation for the Django side (login and reset password email etc..)
-are separated from the test. We only translate the template for now
-not the python code (string on model or admin).
+We have automated the translation process using custom management commands. This process involves generating translation files, checking for missing translations, and compiling them for use in the application. The process also includes fetching translations from other Django apps, including those located in plugin folders.
 
-When modifying or adding new strings to translate, use the following command to
-regenerate the translations:
+### Steps for Managing Translations
 
-```manage.py makemessages --locale=fr --extension txt --extension html```
+1. **Generate and Check Translations:**
 
-This will update `hat/locale/fr/LC_MESSAGES/django.po` with the new strings to
-translate.
+   Use the `make_translations` management command to generate translation files and check for any missing translations. This command will process `.txt`, `.py`, and `.html` files across the entire project, including any plugins, ensuring that all user-facing text is captured.
 
-After updating it with the translation you need to following command to have
-them reflected in the interface:
+   ```bash
+   python manage.py make_translations
+   ```
 
-```manage.py compilemessages```
+   This command will update the `.po` files in the `hat/locale/`, `iaso/locale/`, and any other relevant directories. It will also report any missing translations that need to be addressed.
+
+2. **Compile Translations:**
+
+   After ensuring all translations are complete, use the `compile_translations` command to compile the translation files. This step is necessary to reflect the translations in the application interface.
+
+   ```bash
+   python manage.py compile_translations
+   ```
+
+
+### Important Notes
+
+- The scripts are configured to ignore certain directories and include `.py` files, as translations are used in API error handling and choice lists.
+- You do not need to add translations for English, as it is the default language. Currently, only French translations are required.
+- If you encounter issues with locale paths, ensure that the `LOCALE_PATHS` setting in `settings.py` is correctly configured to include the necessary directories.
+
+By following these steps, you can efficiently manage translations within the Iaso platform, including those from additional Django apps and plugins.
 
 
 ### Code reloading

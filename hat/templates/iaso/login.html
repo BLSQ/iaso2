@@ -6,7 +6,15 @@
 <div class="auth__container iasologin">
   <div class="auth__content">
     <header class="auth__header">
-      <h1 class="auth__heading"> <img alt="logo" src="{% static logo_path %}" /></h1>
+      <h1 class="auth__heading">
+        {% if LEARN_MORE_URL %}
+          <a href="{{ LEARN_MORE_URL }}" target="_blank">
+            <img alt="logo" src="{% static logo_path %}" />
+          </a>
+        {% else %}
+          <img alt="logo" src="{% static logo_path %}" />
+        {% endif %}
+      </h1>
     </header>
     <div>
       {% get_providers as socialaccount_providers %}
@@ -41,7 +49,12 @@
           {% include "./icons/eye.html" %}
           {% include "./icons/eye-slash.html" %}
         </button>
-        <p class="login-link"><a href="{% url 'forgot_password' %}">{% trans 'Forgot password' %}</a></p>
+        <p class="bottom-links">
+          {% if LEARN_MORE_URL %}
+            <a href="{{ LEARN_MORE_URL }}" target="_blank">{% trans 'Learn more' %}</a>
+          {% endif %}
+          <a class="forgot-link" href="{% url 'forgot_password' %}">{% trans 'Forgot password' %}</a>
+        </p>
       </form>
       {% include "./language_picker.html" %}
     </div>

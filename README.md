@@ -704,46 +704,6 @@ For the Python backend, we use the Django builtin test framework. Tests can be e
 docker compose exec iaso ./manage.py test
 ```
 
-Translations
-------------
-
-There are a some user facing text in the Django side, and they require translations. For examples the login and reset password email and their page.
-These are handled separately and differently from the JS frontend translations, and are storer in the folder `hat/locale/`
-
-We only require translations for the html and e-mail template.
-not the python code (e.g. strings on model or the admin), stuff that the end users are going to see directly.
-
-When modifying or adding new strings that require translation, use the following command to
-regenerate the translations file:
-
-```manage.py makemessages --locale=fr --extension txt --extension html```
-
-This will update `hat/locale/fr/LC_MESSAGES/django.po` with the new strings to
-translate.
-
-If you get an error about `/opt/app` or cannot accessing docker:
-Change in settings.py LOCALE_PATHS to
-``` python
-LOCALE_PATHS = [ "hat/locale/"]
-```
-
-And specify --ignore
-```bash
-makemessages --locale=fr --extension txt --extension html --ignore /opt/app --ignore docker --ignore node_modules
-```
-
-
-After updating it with the translation you need to following command to have
-them reflected in the interface:
-
-```manage.py compilemessages```
-
-This is done automatically when you launch the docker image so if new translations
-you just pulled in git don't appear, relaunch the iaso docker.
-
-
-You do not need to add translation for English as it is the default language, so for now only the French correspondance is needed.
-
 
 Code reloading
 --------------
@@ -834,7 +794,6 @@ Please also check the `# Email configuration` section in settings.py and check
 everything is set correctly. Notably the sending address. See the
 [sending email](https://docs.djangoproject.com/en/4.1/topics/email/) section
 in the Django documentation for the possible backends and tweak. 
-`
 
 Deployment on AWS Elastic Beanstalk
 ====================================

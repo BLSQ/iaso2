@@ -32,6 +32,10 @@ def sentry_config(request: HttpRequest) -> Dict[str, Any]:
     return {"sentry_config": json.dumps(config["sentry_config"])}
 
 
+def learn_more_url(request: HttpRequest) -> Dict[str, Any]:
+    return {"LEARN_MORE_URL": settings.LEARN_MORE_URL}
+
+
 def theme(request: HttpRequest) -> Dict[str, Any]:
     return {
         # TODO: Duplicated data: refactor?

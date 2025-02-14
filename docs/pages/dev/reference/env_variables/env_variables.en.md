@@ -101,3 +101,13 @@ If you don't provide a SENTRY_URL, sentry won't be configured
 If you need to set up IASO in maintenance mode, meaning that it will display at / a page indicating that the 
 server is under maintenance, and give a 404 answer to all requests except for /health or /_health (wich we encourage to use 
 for status monitoring), you can set the environment variable `MAINTENANCE_MODE` to the value `"true"`
+
+## Learn More URL
+
+The `LEARN_MORE_URL` environment variable is used to specify a URL that will be displayed on the login page. If set, users can click on a "Know More" link or the logo to visit this URL. If `LEARN_MORE_URL` is not set, the logo will not be clickable, and the link will not be displayed.
+
+```
+LEARN_MORE_URL
+```
+
+In our environments, this will be linked to `https://www.openiaso.com/`. For customer environments, this can be removed or customized as needed.

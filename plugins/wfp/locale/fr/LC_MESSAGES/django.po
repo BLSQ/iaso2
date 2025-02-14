@@ -1,0 +1,143 @@
+# Trad iaso.
+# Copyright (C) 2021
+# This file is distributed under the same license as the PACKAGE package.
+# Olivier Le Thanh Duong <olivier@lethanh.be>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-05 16:28+0000\n"
+"PO-Revision-Date: 2025-02-05 14:41+0100\n"
+"Last-Translator: Olivier Le Thanh Duong <olivier@lethanh.be>\n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 3.5\n"
+
+#: plugins/wfp/models.py:6
+msgid "Male"
+msgstr "Homme"
+
+#: plugins/wfp/models.py:6
+msgid "Female"
+msgstr "Femme"
+
+#: plugins/wfp/models.py:9
+msgid "Death"
+msgstr "Décès"
+
+#: plugins/wfp/models.py:10
+msgid "Cured"
+msgstr "Guéri"
+
+#: plugins/wfp/models.py:11
+msgid "Dismissal"
+msgstr "Renvoi"
+
+#: plugins/wfp/models.py:12
+msgid "Voluntary Withdrawal"
+msgstr "Retrait volontaire"
+
+#: plugins/wfp/models.py:13
+msgid "Transfer To OTP"
+msgstr "Transfert vers OTP"
+
+#: plugins/wfp/models.py:14
+msgid "Transfer To TSFP"
+msgstr "Transfert vers TSFP"
+
+#: plugins/wfp/models.py:15
+msgid "Non respondent"
+msgstr "Non répondant"
+
+#: plugins/wfp/models.py:16
+msgid "Transferred out"
+msgstr "Transféré"
+
+#: plugins/wfp/models.py:17
+msgid "Defaulter"
+msgstr "Défaillant"
+
+#: plugins/wfp/models.py:18
+msgid "Other"
+msgstr "Autre"
+
+#: plugins/wfp/models.py:22
+msgid "TSFP"
+msgstr "TSFP"
+
+#: plugins/wfp/models.py:23
+msgid "OTP"
+msgstr "OTP"
+
+#: plugins/wfp/models.py:24
+msgid "Breastfeeding"
+msgstr "Allaitement"
+
+#: plugins/wfp/models.py:25
+msgid "Pregnant"
+msgstr "Enceinte"
+
+#: plugins/wfp/models.py:28
+msgid "PLW"
+msgstr "FAP"
+
+#: plugins/wfp/models.py:28
+msgid "U5"
+msgstr "M5"
+
+#: plugins/wfp/models.py:31
+msgid "MUAC"
+msgstr "PB"
+
+#: plugins/wfp/models.py:32
+msgid "WHZ"
+msgstr "PTZ"
+
+#: plugins/wfp/models.py:33
+msgid "OEDEMA"
+msgstr "ŒDÈME"
+
+#: plugins/wfp/models.py:34
+msgid "By wasted child"
+msgstr "Par enfant émacié"
+
+#: plugins/wfp/models.py:38
+msgid "New case"
+msgstr "Nouveau cas"
+
+#: plugins/wfp/models.py:39
+msgid "Readmission as non-respondent"
+msgstr "Réadmission comme non-répondant"
+
+#: plugins/wfp/models.py:40
+msgid "Referred from OTP (SAM)"
+msgstr "Référé de l'OTP (MAS)"
+
+#: plugins/wfp/models.py:41
+msgid "Referred from SC"
+msgstr "Référé du SC"
+
+#: plugins/wfp/models.py:42
+msgid "Referred from TSFP (MAM)"
+msgstr "Référé du TSFP (MAM)"
+
+#: plugins/wfp/models.py:43
+msgid "Relapse"
+msgstr "Rechute"
+
+#: plugins/wfp/models.py:44
+msgid "Returned defaulter"
+msgstr "Défaillant de retour"
+
+#: plugins/wfp/models.py:45
+msgid "Returned referral"
+msgstr "Référence retournée"
+
+#: plugins/wfp/models.py:46
+msgid "Transfer from other TSFP"
+msgstr "Transfert d'un autre TSFP"

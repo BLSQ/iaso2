@@ -13,15 +13,11 @@ const selectLanguage = lang => {
     });
 
     // Wait for the selector to be ready
-    cy.get('.language-picker')
-        .should('exist')
-        .should('be.visible')
-        .wait(1000) // Add small delay to ensure stability
-        .then($select => {
-            cy.wrap($select)
-                .select(lang, { force: true })
-                .should('have.value', lang);
-        });
+    cy.get('.language-picker').should('exist').should('be.visible');
+
+    cy.get('.language-picker').select(lang, { force: true });
+
+    cy.get('.language-picker').should('have.value', lang);
 
     // Wait for page reload
     cy.window().should('not.have.prop', 'beforeReload');
@@ -41,7 +37,7 @@ describe('Log in page', () => {
         cy.url().should('include', signInUrl); // using include to account for redirection with next=
     });
     it('click on forgot password should redirect to sign up page', () => {
-        cy.get('.login-link a').click();
+        cy.get('.forgot-link').click();
         cy.url().should('eq', `${siteBaseUrl}/forgot-password/`);
     });
     it('click display password should toggle input password type', () => {
@@ -58,53 +54,36 @@ describe('Log in page', () => {
     describe('Unhappy flow', () => {
         beforeEach(() => {
             cy.visit(signInUrl);
-            // Add longer wait for page load
-            cy.wait(2000);
+            cy.get('#id_username').should('be.visible');
         });
         it('missing unsername should not submit login', () => {
-            cy.get('#id_password')
-                .should('be.visible')
-                .and('not.be.disabled')
-                .clear()
-                .type('Link', { force: true });
+            cy.get('#id_password').should('be.visible');
+            cy.get('#id_password').should('not.be.disabled');
+            cy.get('#id_password').clear();
+            cy.get('#id_password').type('Link', { force: true });
             cy.get('#submit').click();
             cy.url().should('eq', signInUrl);
         });
         it('missing password should not submit login', () => {
-            cy.get('#id_username')
-                .should('exist')
-                .should('be.visible')
-                .wait(1000)
-                .then($input => {
-                    cy.wrap($input)
-                        .clear({ force: true })
-                        .type('Link', { force: true });
-                });
+            cy.get('#id_username').should('exist');
+            cy.get('#id_username').should('be.visible');
+            cy.get('#id_username').clear({ force: true });
+            cy.get('#id_username').type('Link', { force: true });
             cy.get('#submit').click();
             cy.url().should('eq', signInUrl);
         });
         it('wrong credentials should display error message', () => {
             // Handle username input
-            cy.get('#id_username')
-                .should('exist')
-                .should('be.visible')
-                .wait(1000)
-                .then($input => {
-                    cy.wrap($input)
-                        .clear({ force: true })
-                        .type('Link', { force: true });
-                });
+            cy.get('#id_username').should('exist');
+            cy.get('#id_username').should('be.visible');
+            cy.get('#id_username').clear({ force: true });
+            cy.get('#id_username').type('Link', { force: true });
 
             // Handle password input
-            cy.get('#id_password')
-                .should('exist')
-                .should('be.visible')
-                .wait(1000)
-                .then($input => {
-                    cy.wrap($input)
-                        .clear({ force: true })
-                        .type('ZELDA', { force: true });
-                });
+            cy.get('#id_password').should('exist');
+            cy.get('#id_password').should('be.visible');
+            cy.get('#id_password').clear({ force: true });
+            cy.get('#id_password').type('ZELDA', { force: true });
 
             cy.get('.auth__text--error').should('not.exist');
             cy.get('#submit').click();
