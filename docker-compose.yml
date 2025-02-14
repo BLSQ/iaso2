@@ -1,4 +1,3 @@
-version: '3'
 services:
     iaso:
         stdin_open: true
@@ -34,62 +33,56 @@ services:
         links: &hat_links
             - db
         environment: &hat_environment
-            PREPAREDNESS_TEMPLATE_ID:
-            PREPAREDNESS_TEMPLATE_FR_ID:
-            PLUGINS:
-            GOOGLE_API_KEY_BASE64:
-            SENTRY_ENVIRONMENT:
-            SENTRY_URL:
-            SENTRY_FRONT_ENABLED:
-            RDS_HOSTNAME: db
-            RDS_DB_NAME:
-            THEME_PRIMARY_COLOR:
-            THEME_SECONDARY_COLOR:
-            THEME_PRIMARY_BACKGROUND_COLOR: #OpenHexa API token
-
-            OPENHEXA_TOKEN: #OpenHexa API url
-
-            OPENHEXA_URL: #OpenHexa pipeline ID
-
-            LQAS_PIPELINE: #Optional: the version of the pipeline to run
-
-            LQAS_PIPELINE_VERSION: # "prod", "staging" or "custom". Use "custom" for local testing
-
-            OH_PIPELINE_TARGET:
-
-            FAVICON_PATH:
-            LOGO_PATH:
             APP_TITLE:
-            SHOW_NAME_WITH_LOGO:
-            RDS_USERNAME: postgres
-            RDS_PASSWORD: postgres
-            DB_READONLY_USERNAME: postgres
-            DB_READONLY_PASSWORD: postgres
-            DEBUG: 'true'
-            DEBUG_SQL:
-            DNS_DOMAIN:
-            TEST_PROD:
-            SECRET_KEY: secret
-            AWS_STORAGE_BUCKET_NAME:
             AWS_ACCESS_KEY_ID:
             AWS_SECRET_ACCESS_KEY:
-            PYTHONUNBUFFERED: 'true'
-            ENKETO_DEV: 'true'
-            ENKETO_API_TOKEN: AZE78974654azeAZE
-            ENKETO_URL: http://enketo:8005/
-            EMAIL_BACKEND: 'django.core.mail.backends.console.EmailBackend'
-            LIVE_COMPONENTS:
-            WFP_AUTH_CLIENT_ID:
-            WFP_AUTH_ACCOUNT:
-            WFP_EMAIL_RECIPIENTS_NEW_ACCOUNT:
-            DISABLE_PASSWORD_LOGINS:
-            MAINTENANCE_MODE:
-            SERVER_URL:
-            SUPERSET_URL:
-            SUPERSET_ADMIN_USERNAME:
-            SUPERSET_ADMIN_PASSWORD:
+            AWS_STORAGE_BUCKET_NAME:
             CLAMAV_ACTIVE:
             CLAMAV_FQDN:
+            DB_READONLY_PASSWORD: postgres
+            DB_READONLY_USERNAME: postgres
+            DEBUG: 'true'
+            DEBUG_SQL:
+            DISABLE_PASSWORD_LOGINS:
+            DNS_DOMAIN:
+            EMAIL_BACKEND: 'django.core.mail.backends.console.EmailBackend'
+            ENKETO_API_TOKEN: AZE78974654azeAZE
+            ENKETO_DEV: 'true'
+            ENKETO_URL: http://enketo:8005/
+            FAVICON_PATH:
+            GOOGLE_API_KEY_BASE64:
+            LIVE_COMPONENTS:
+            LOGO_PATH:
+            LQAS_PIPELINE: #Optional: the version of the pipeline to run
+            LQAS_PIPELINE_VERSION: # "prod", "staging" or "custom". Use "custom" for local testing
+            MAINTENANCE_MODE:
+            OH_PIPELINE_TARGET:
+            OPENHEXA_TOKEN: #OpenHexa API url
+            OPENHEXA_URL: #OpenHexa pipeline ID
+            PLUGINS:
+            PREPAREDNESS_TEMPLATE_FR_ID:
+            PREPAREDNESS_TEMPLATE_ID:
+            PYTHONUNBUFFERED: 'true'
+            RDS_DB_NAME:
+            RDS_HOSTNAME: db
+            RDS_PASSWORD: postgres
+            RDS_USERNAME: postgres
+            SECRET_KEY: secret
+            SENTRY_ENVIRONMENT:
+            SENTRY_FRONT_ENABLED:
+            SENTRY_URL:
+            SERVER_URL:
+            SHOW_NAME_WITH_LOGO:
+            SUPERSET_ADMIN_PASSWORD:
+            SUPERSET_ADMIN_USERNAME:
+            SUPERSET_URL:
+            TEST_PROD:
+            THEME_PRIMARY_BACKGROUND_COLOR: #OpenHexa API token
+            THEME_PRIMARY_COLOR:
+            THEME_SECONDARY_COLOR:
+            WFP_AUTH_ACCOUNT:
+            WFP_AUTH_CLIENT_ID:
+            WFP_EMAIL_RECIPIENTS_NEW_ACCOUNT:
         logging: &iaso_logging
             driver: 'json-file'
             options:
@@ -97,18 +90,20 @@ services:
         command: start_dev
 
     db:
-        image: iaso/postgis
-        # Workaround until there is a stable Postgis image for Apple Silicon
-        build: docker/db
+        # https://registry.hub.docker.com/r/postgis/postgis
+        # Pinning specific minor versions of PostgreSQL and PostGIS is not easy.
+        # https://github.com/postgis/docker-postgis/issues/396
+        image: postgis/postgis:16-3.5
         logging: *iaso_logging
         ports:
             - '5433:5432'
         volumes:
-            - ../pgdata-iaso:/var/lib/postgresql/data
+            - ../pgdata-iaso-16:/var/lib/postgresql/data
         environment:
             POSTGRES_DB: ${RDS_DB_NAME}
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: postgres
+
     # the webpack dev server
     webpack:
         image: iaso-webpack
