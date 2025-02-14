@@ -771,6 +771,7 @@ class InstancesViewSet(viewsets.ViewSet):
 
 def import_data(instances, user, app_id):
     project = Project.objects.get_for_user_and_app_id(user, app_id)
+    default_version = project.account.default_version
 
     for instance_data in instances:
         uuid = instance_data.get("id", None)
@@ -794,7 +795,7 @@ def import_data(instances, user, app_id):
         if str(tentative_org_unit_id).isdigit():
             instance.org_unit_id = tentative_org_unit_id
         else:
-            org_unit = OrgUnit.objects.get(uuid=tentative_org_unit_id)
+            org_unit = OrgUnit.objects.filter(version=default_version).get(uuid=tentative_org_unit_id)
             instance.org_unit = org_unit
 
         instance.form_id = instance_data.get("formId")
