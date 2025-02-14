@@ -403,6 +403,41 @@ class OrgUnitChangeRequestReviewSerializer(serializers.ModelSerializer):
         return validated_data
 
 
+class OrgUnitChangeRequestBulkReviewSerializer(serializers.Serializer):
+    """
+    Bulk-approve or bulk-reject `OrgUnitChangeRequest`s.
+    """
+
+    # Selection.
+    select_all = serializers.BooleanField(default=False)
+    selected_ids = serializers.ListField(child=serializers.IntegerField(min_value=1))
+    unselected_ids = serializers.ListField(child=serializers.IntegerField(min_value=1))
+    # Review data.
+    status = serializers.ChoiceField(choices=OrgUnitChangeRequest.Statuses, default=None)
+    approved_fields = serializers.MultipleChoiceField(choices=OrgUnitChangeRequest.get_new_fields(), default=None)
+    rejection_comment = serializers.CharField(required=False, default="")
+
+    def validate_status(self, value):
+        approved = OrgUnitChangeRequest.Statuses.APPROVED
+        rejected = OrgUnitChangeRequest.Statuses.REJECTED
+        if value not in [approved, rejected]:
+            raise serializers.ValidationError(f"Must be `{approved}` or `{rejected}`.")
+        return value
+
+    def validate(self, validated_data):
+        status = validated_data["status"]
+        rejection_comment = validated_data["rejection_comment"]
+        approved_fields = validated_data["approved_fields"]
+
+        if status == OrgUnitChangeRequest.Statuses.REJECTED and not rejection_comment:
+            raise serializers.ValidationError("A `rejection_comment` must be provided.")
+
+        if status == OrgUnitChangeRequest.Statuses.APPROVED and not approved_fields:
+            raise serializers.ValidationError("At least one `approved_fields` must be provided.")
+
+        return validated_data
+
+
 class AuditOrgUnitChangeRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrgUnitChangeRequest

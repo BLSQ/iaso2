@@ -22,9 +22,15 @@ from iaso.api.org_unit_change_requests.serializers import (
     OrgUnitChangeRequestRetrieveSerializer,
     OrgUnitChangeRequestReviewSerializer,
     OrgUnitChangeRequestWriteSerializer,
+    OrgUnitChangeRequestBulkReviewSerializer,
 )
 from iaso.api.serializers import AppIdSerializer
+from iaso.api.tasks.serializers import TaskSerializer
 from iaso.models import OrgUnit, OrgUnitChangeRequest, Instance
+from iaso.tasks.org_unit_change_requests_bulk_review import (
+    org_unit_change_requests_bulk_approve,
+    org_unit_change_requests_bulk_reject,
+)
 from iaso.utils.models.common import get_creator_name
 
 
@@ -47,7 +53,7 @@ class OrgUnitChangeRequestViewSet(viewsets.ModelViewSet):
     pagination_class = OrgUnitChangeRequestPagination
 
     def get_permissions(self):
-        if self.action == "partial_update":
+        if self.action in ["partial_update", "bulk_review"]:
             permission_classes = [HasOrgUnitsChangeRequestReviewPermission]
         else:
             permission_classes = [HasOrgUnitsChangeRequestPermission]
@@ -102,6 +108,14 @@ class OrgUnitChangeRequestViewSet(viewsets.ModelViewSet):
         if not org_units_for_user.filter(id=org_unit_to_change.pk).exists():
             raise PermissionDenied("The user is trying to create a change request for an unauthorized OrgUnit.")
 
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+        # Allow the front-end to know the total number of change requests with the status "new" that can be used in bulk review.
+        response.data["select_all_count"] = (
+            self.filter_queryset(self.get_queryset()).filter(status=OrgUnitChangeRequest.Statuses.NEW).count()
+        )
+        return response
+
     def perform_create(self, serializer):
         """
         POST to create an `OrgUnitChangeRequest`.
@@ -144,6 +158,38 @@ class OrgUnitChangeRequestViewSet(viewsets.ModelViewSet):
 
         response_serializer = OrgUnitChangeRequestRetrieveSerializer(change_request)
         return Response(response_serializer.data)
+
+    @action(detail=False, methods=["patch"])
+    def bulk_review(self, request):
+        serializer = OrgUnitChangeRequestBulkReviewSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        selected_ids = serializer.validated_data["selected_ids"]
+        unselected_ids = serializer.validated_data["unselected_ids"]
+        status = serializer.validated_data["status"]
+        approved_fields = serializer.validated_data["approved_fields"]
+        rejection_comment = serializer.validated_data["rejection_comment"]
+
+        queryset = self.filter_queryset(self.get_queryset()).filter(status=OrgUnitChangeRequest.Statuses.NEW)
+
+        if selected_ids:
+            queryset = queryset.filter(pk__in=selected_ids)
+
+        if unselected_ids:
+            queryset = queryset.exclude(pk__in=unselected_ids)
+
+        ids = list(queryset.values_list("pk", flat=True))
+
+        if status == OrgUnitChangeRequest.Statuses.APPROVED:
+            task = org_unit_change_requests_bulk_approve(
+                change_requests_ids=ids, approved_fields=list(approved_fields), user=self.request.user
+            )
+        else:
+            task = org_unit_change_requests_bulk_reject(
+                change_requests_ids=ids, rejection_comment=rejection_comment, user=self.request.user
+            )
+
+        return Response({"task": TaskSerializer(instance=task).data})
 
     @staticmethod
     def org_unit_change_request_csv_columns():
