@@ -33,6 +33,7 @@ class InstanceBase(IasoTestCaseMixin):
         cls.project = m.Project.objects.create(
             name="Hydroponic gardens", app_id="stars.empire.agriculture.hydroponics", account=cls.star_wars
         )
+        cls.project_2 = m.Project.objects.create(name="Project 2", app_id="p2", account=cls.star_wars)
 
         cls.form_1 = m.Form.objects.create(name="Hydroponics study", period_type="MONTH", single_per_period=True)
         cls.form_1.org_unit_types.add(cls.jedi_council)
@@ -527,6 +528,41 @@ class InstanceModelTestCase(TestCase, InstanceBase):
         self.assertFalse(instance.deleted)
         instance.soft_delete()
         self.assertTrue(instance.deleted)
+
+    def test_filter_on_user_projects(self):
+        # Users.
+        jane = self.create_user_with_profile(username="jane", account=self.star_wars)
+        jane.iaso_profile.projects.set([self.project, self.project_2])
+        john = self.create_user_with_profile(username="john", account=self.star_wars)
+        john.iaso_profile.projects.set([self.project])
+        jim = self.create_user_with_profile(username="jim", account=self.star_wars)
+        user_without_profile = m.User.objects.create(username="foo")
+
+        # Instances.
+        form_instance_1 = self.create_form_instance(form=self.form_1, project=self.project)
+        form_instance_2 = self.create_form_instance(form=self.form_1, project=self.project)
+        form_instance_3 = self.create_form_instance(form=self.form_2, project=self.project_2)
+        form_instance_4 = self.create_form_instance(form=self.form_2, project=self.project_2)
+
+        total_form_instances = m.Instance.objects.count()
+
+        jane_form_instances = m.Instance.objects.filter_on_user_projects(user=jane)
+        self.assertEqual(jane_form_instances.count(), 4)
+        self.assertIn(form_instance_1, jane_form_instances)
+        self.assertIn(form_instance_2, jane_form_instances)
+        self.assertIn(form_instance_3, jane_form_instances)
+        self.assertIn(form_instance_4, jane_form_instances)
+
+        john_form_instances = m.Instance.objects.filter_on_user_projects(user=john)
+        self.assertEqual(john_form_instances.count(), 2)
+        self.assertIn(form_instance_1, john_form_instances)
+        self.assertIn(form_instance_2, john_form_instances)
+
+        jim_form_instances = m.Instance.objects.filter_on_user_projects(user=jim)
+        self.assertEqual(jim_form_instances.count(), total_form_instances)
+
+        user_without_profile_form_instances = m.Instance.objects.filter_on_user_projects(user=user_without_profile)
+        self.assertEqual(user_without_profile_form_instances.count(), total_form_instances)
 
 
 class InstanceAPITestCase(APITestCase, InstanceBase):

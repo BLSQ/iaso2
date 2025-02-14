@@ -29,7 +29,9 @@ class ProjectsViewSet(ModelViewSet):
     def get_queryset(self):
         """Always filter the base queryset by account"""
 
-        return Project.objects.filter(account=self.request.user.iaso_profile.account)
+        return Project.objects.filter(account=self.request.user.iaso_profile.account).filter_on_user_projects(
+            self.request.user
+        )
 
     @action(detail=True, methods=["get"])
     def qr_code(self, request, *args, **kwargs):
