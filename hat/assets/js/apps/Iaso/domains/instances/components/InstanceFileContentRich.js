@@ -1,13 +1,13 @@
 /* eslint-disable react/jsx-indent */
+import React, { useMemo, useState } from 'react';
 import CommentIcon from '@mui/icons-material/Comment';
 import FunctionsIcon from '@mui/icons-material/Functions';
 import { Table, TableBody, TableCell, TableRow, Tooltip } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import { textPlaceholder } from 'bluesquare-components';
 import isPlainObject from 'lodash/isPlainObject';
 import PropTypes from 'prop-types';
-import React, { useMemo, useState } from 'react';
 
-import { textPlaceholder } from 'bluesquare-components';
 import ImageGallery from '../../../components/dialogs/ImageGalleryComponent.tsx';
 import { useLocale } from '../../app/contexts/LocaleContext.tsx';
 

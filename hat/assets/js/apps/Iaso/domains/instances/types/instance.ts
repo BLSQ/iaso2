@@ -1,8 +1,8 @@
 import { Pagination } from 'bluesquare-components';
 import { User } from '../../../utils/usersUtils';
 import { Beneficiary } from '../../entities/types/beneficiary';
-import { OrgUnit } from '../../orgUnits/types/orgUnit';
 import { OrgUnitChangeRequest } from '../../orgUnits/reviewChanges/types';
+import { OrgUnit } from '../../orgUnits/types/orgUnit';
 
 type Lock = {
     id: number;
@@ -86,6 +86,7 @@ export type InstanceLogData = {
     source: string;
     user: User;
     possible_fields: Record<string, any>[];
+    files: string[];
 };
 
 type FormVersions = {
@@ -98,6 +99,8 @@ export type FormDescriptor = {
 export type FileContent = {
     logA: Record<string, any>;
     logB: Record<string, any>;
+    logAFiles: string[];
+    logBFiles: string[];
     fields: Record<string, any>[];
 };
 export interface PaginatedInstances extends Pagination {

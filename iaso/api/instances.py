@@ -756,7 +756,15 @@ class InstancesViewSet(viewsets.ViewSet):
         """
         GET /api/instances/<pk>/instance_logs/<logId>/
         """
-        instance = get_object_or_404(Instance, pk=pk)
+        instance = get_object_or_404(
+            Instance.objects.filter(pk=pk).prefetch_related(
+                Prefetch(
+                    "instancefile_set",
+                    queryset=InstanceFile.objects.filter(deleted=False).only("file"),
+                    to_attr="filtered_files",
+                )
+            )
+        )
         log = get_object_or_404(Modification, pk=logId)
         log_dict = log.as_dict()
         possible_fields = (
@@ -764,7 +772,7 @@ class InstancesViewSet(viewsets.ViewSet):
             if instance.form_version and instance.form_version.possible_fields
             else []
         )
-
+        log_dict["files"] = [f.file.url if f.file else None for f in instance.filtered_files]
         log_dict["possible_fields"] = possible_fields
         return Response(log_dict)
 

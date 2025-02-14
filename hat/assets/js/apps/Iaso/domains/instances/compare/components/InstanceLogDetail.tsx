@@ -1,18 +1,17 @@
 import React, { FunctionComponent } from 'react';
+import { Box, Paper } from '@mui/material';
 import {
     useSafeIntl,
     LoadingSpinner,
     IntlFormatMessage,
 } from 'bluesquare-components';
 
-import { Box, Paper } from '@mui/material';
 import ErrorPaperComponent from '../../../../components/papers/ErrorPaperComponent';
 
 import { useGetFormDescriptor } from '../hooks/useGetInstanceLogs';
 
-import { InstanceLogContentBasic } from './InstanceLogContentBasic';
-
 import MESSAGES from '../messages';
+import { InstanceLogContentBasic } from './InstanceLogContentBasic';
 
 type Props = {
     instanceLogContent: any;
@@ -30,7 +29,6 @@ export const InstanceLogDetail: FunctionComponent<Props> = ({
         isLoading: isLogDescriptorLoading,
         isError: isLogDescriptorError,
     } = useGetFormDescriptor(instanceLogContent?.logA?.form);
-
     const { formatMessage }: { formatMessage: IntlFormatMessage } =
         useSafeIntl();
     const hasError = isLogDetailError || isLogDescriptorError;

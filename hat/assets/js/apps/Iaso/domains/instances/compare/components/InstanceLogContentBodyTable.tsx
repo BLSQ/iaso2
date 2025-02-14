@@ -1,9 +1,9 @@
 import React, { memo } from 'react';
 import { TableBody, TableRow, TableCell } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import classNames from 'classnames';
-import { formatLabel } from '../../utils';
 import { FileContent } from '../../types/instance';
+import { formatLabel } from '../../utils';
+import InstanceLogImagePreview from './InstanceLogImagePreview';
 
 type TableBodyProps = {
     fileContent: FileContent;
@@ -34,7 +34,28 @@ const useStyles = makeStyles(theme => ({
 const InstanceLogContentBodyTable = memo(
     ({ fileContent, fileDescriptor }: TableBodyProps) => {
         const classes = useStyles();
+        const getImageUrl = (value, logFiles) => {
+            if (value && logFiles.length > 0) {
+                const slugifiedValue = value.replace(/\s/g, '_'); // Replace spaces with underscores
+                return logFiles.find(f => f.includes(slugifiedValue));
+            }
+            return null;
+        };
 
+        const renderLogContent = (isImg, question: any, log, logFiles) => {
+            if (isImg) {
+                return (
+                    <InstanceLogImagePreview
+                        imageUrl={getImageUrl(
+                            log.json[question.name],
+                            logFiles,
+                        )}
+                        altText={question.name}
+                    />
+                );
+            }
+            return log.json[question.name];
+        };
         return (
             <TableBody>
                 {fileContent.logA &&
@@ -53,7 +74,7 @@ const InstanceLogContentBodyTable = memo(
                         const isValuesDifferent =
                             fileContent.logA.json[question.name] !==
                             fileContent.logB.json[question.name];
-
+                        const isImg = ['img', 'photo'].includes(question.type);
                         if (isRelevantQuestion && hasLogContent) {
                             return (
                                 <TableRow
@@ -81,25 +102,28 @@ const InstanceLogContentBodyTable = memo(
                                             {question.name}
                                         </span>
                                     </TableCell>
+
                                     <TableCell
-                                        className={classNames(
-                                            classes.tableCell,
-                                            fileContent?.logA?.deleted &&
-                                                classes.deletedInfos,
-                                        )}
+                                        className={classes.tableCell}
                                         align="left"
                                     >
-                                        {fileContent?.logA.json[question.name]}
+                                        {renderLogContent(
+                                            isImg,
+                                            question,
+                                            fileContent.logA,
+                                            fileContent.logAFiles,
+                                        )}
                                     </TableCell>
                                     <TableCell
-                                        className={classNames(
-                                            classes.tableCell,
-                                            fileContent?.logB?.deleted &&
-                                                classes.deletedInfos,
-                                        )}
+                                        className={classes.tableCell}
                                         align="left"
                                     >
-                                        {fileContent?.logB.json[question.name]}
+                                        {renderLogContent(
+                                            isImg,
+                                            question,
+                                            fileContent.logB,
+                                            fileContent.logBFiles,
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             );

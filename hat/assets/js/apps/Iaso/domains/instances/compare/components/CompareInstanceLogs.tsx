@@ -9,17 +9,17 @@ import {
     useGoBack,
 } from 'bluesquare-components';
 
+import TopBar from '../../../../components/nav/TopBarComponent';
+import ErrorPaperComponent from '../../../../components/papers/ErrorPaperComponent';
+import { baseUrls } from '../../../../constants/urls';
+import { useParamsObject } from '../../../../routing/hooks/useParamsObject';
 import {
     useGetInstanceLogs,
     useGetInstanceLogDetail,
 } from '../hooks/useGetInstanceLogs';
-import TopBar from '../../../../components/nav/TopBarComponent';
-import ErrorPaperComponent from '../../../../components/papers/ErrorPaperComponent';
+import MESSAGES from '../messages';
 import { InstanceLogDetail } from './InstanceLogDetail';
 import { InstanceLogInfos } from './InstanceLogInfos';
-import MESSAGES from '../messages';
-import { baseUrls } from '../../../../constants/urls';
-import { useParamsObject } from '../../../../routing/hooks/useParamsObject';
 
 type Params = {
     instanceIds: string;
@@ -62,6 +62,8 @@ export const CompareInstanceLogs: FunctionComponent = () => {
         () => ({
             logA: instanceLogA?.new_value[0]?.fields,
             logB: instanceLogB?.new_value[0]?.fields,
+            logAFiles: instanceLogA?.files,
+            logBFiles: instanceLogB?.files,
             fields: instanceLogA?.possible_fields,
         }),
         [instanceLogA, instanceLogB],
