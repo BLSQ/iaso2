@@ -46,6 +46,9 @@ yup.addMethod(
         return this.test('validateLqasImStartDate', '', (value, context) => {
             const keys = dateKeys.round;
             const { path, createError, parent } = context;
+            if (!value) {
+                return true;
+            }
             const newStartDate = moment(value);
             const roundEndDate =
                 parent[keys.end] && moment(parent[keys.end], dateFormat);
@@ -54,6 +57,34 @@ yup.addMethod(
 
             if (roundEndDate?.isAfter(newStartDate)) {
                 errorMessage = formatMessage(MESSAGES.mustBeAfterRoundEndDate);
+            }
+
+            if (errorMessage) {
+                return createError({
+                    path,
+                    message: errorMessage,
+                });
+            }
+            return true;
+        });
+    },
+);
+
+yup.addMethod(
+    yup.date,
+    'validateLqasImEndDate',
+    function validateLqasImEndDate(formatMessage) {
+        return this.test('validateLqasImEndDate', '', (value, context) => {
+            const keys = dateKeys.round;
+            const { path, createError, parent } = context;
+            const newEndDate = moment(value);
+            const roundStartDate =
+                parent[keys.start] && moment(parent[keys.start], dateFormat);
+
+            let errorMessage;
+
+            if (roundStartDate?.isAfter(newEndDate)) {
+                errorMessage = formatMessage(MESSAGES.endDateBeforeStartDate);
             }
 
             if (errorMessage) {
@@ -139,6 +170,7 @@ export const useSubActivityValidation = (): yup.ObjectSchema<any> => {
                     // end should be after start
                     // end should not be after round end
                     // @ts-ignore
+                    .validateLqasImEndDate(formatMessage)
                     .validateEndDate(formatMessage, 'lqas'),
                 im_started_at: yup
                     .date()
@@ -157,6 +189,7 @@ export const useSubActivityValidation = (): yup.ObjectSchema<any> => {
                     // end should be after start
                     // end should not be after round end
                     // @ts-ignore
+                    .validateLqasImEndDate(formatMessage)
                     .validateEndDate(formatMessage, 'im'),
                 age_unit: yup.string().nullable(),
                 age_min: yup.number().nullable(),

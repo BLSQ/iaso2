@@ -9,6 +9,7 @@ export type Tab = {
     hasTabError: boolean;
     key: string;
     disabled?: boolean;
+    disabledMessage?: string;
 };
 
 type Props = {
@@ -35,7 +36,13 @@ export const PolioDialogTabs: FunctionComponent<Props> = ({
         >
             {tabs.map(
                 (
-                    { title, disabled = false, hasTabError = false, key },
+                    {
+                        title,
+                        disabled = false,
+                        hasTabError = false,
+                        key,
+                        disabledMessage,
+                    },
                     index,
                 ) => (
                     <PolioDialogTab
@@ -45,6 +52,7 @@ export const PolioDialogTabs: FunctionComponent<Props> = ({
                         hasTabError={hasTabError}
                         handleChange={handleChange}
                         value={index}
+                        disabledMessage={disabledMessage}
                     />
                 ),
             )}

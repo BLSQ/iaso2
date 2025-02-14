@@ -59,6 +59,7 @@ from plugins.polio.preparedness.calculator import get_preparedness_score
 from plugins.polio.preparedness.parser import InvalidFormatError, get_preparedness
 from plugins.polio.preparedness.spreadsheet_manager import Campaign, generate_spreadsheet_for_campaign
 from plugins.polio.preparedness.summary import preparedness_summary
+from plugins.polio.services.campaign import delete_old_scopes_after_scope_level_switch
 
 
 # Don't display the url for Anonymous users
@@ -296,8 +297,11 @@ class CampaignSerializer(serializers.ModelSerializer):
         keep_scope_per_round = separate_scopes_per_round and instance.separate_scopes_per_round
         keep_scope_per_campaign = not separate_scopes_per_round and not instance.separate_scopes_per_round
 
-        if switch_to_scope_per_round and instance.scopes.exists():
-            instance.scopes.all().delete()
+        delete_old_scopes_after_scope_level_switch(
+            switch_to_campaign=switch_to_scope_per_campaign,
+            switch_to_round=switch_to_scope_per_round,
+            campaign=instance,
+        )
 
         if switch_to_scope_per_campaign or keep_scope_per_campaign:
             for scope in campaign_scopes:
@@ -360,9 +364,7 @@ class CampaignSerializer(serializers.ModelSerializer):
             round_serializer.is_valid(raise_exception=True)
             round_instance = round_serializer.save()
             round_instances.append(round_instance)
-            round_datelogs = []
-            if switch_to_scope_per_campaign and round.scopes.exists():
-                round.scopes.all().delete()
+
             if switch_to_scope_per_round or keep_scope_per_round:
                 for scope in scopes:
                     vaccine = scope.get("vaccine", "")
@@ -1420,10 +1422,12 @@ Timeline tracker Automated message
 
     # We need to authorize PATCH request to enable restore_deleted_campaign endpoint
     # But Patching the campign directly is very much error prone, so we disable it indirectly
+    # Updates are done in the CampaignSerializer
     def partial_update(self):
         """Don't PATCH this way, it won't do anything
         We need to authorize PATCH request to enable restore_deleted_campaign endpoint
         But Patching the campign directly is very much error prone, so we disable it indirectly
+        # Updates are done in the CampaignSerializer
         """
         pass
 

@@ -7,7 +7,7 @@ from rest_framework.test import APIClient
 from iaso import models as m
 from iaso.models import Account
 from iaso.test import APITestCase
-from plugins.polio.models import CampaignType, Round
+from plugins.polio.models import CampaignType, Round, SubActivity, SubActivityScope
 from plugins.polio.preparedness.spreadsheet_manager import *
 from plugins.polio.tests.api.test import PolioTestCaseMixin
 
@@ -496,13 +496,27 @@ class PolioAPITestCase(APITestCase, PolioTestCaseMixin):
         )
 
     def test_changing_scope_type_deletes_old_scopes(self):
-        # Create a new campaign with scope per campaign
-        test_campaign, _, _, _, _, _ = self.create_campaign(
+        # Switching to a campaign-level scope deletes all round-level scopes + subactivity scopes
+        # Switching to a round-level scope deletes all campaign-level scopes + subactivity scopes
+
+        # Create a new campaign with scope per campaign + subactivity scope
+        test_campaign, round_1, round_2, _, _, district = self.create_campaign(
             obr_name="TEST_CAMPAIGN",
             account=self.account,
             source_version=self.source_version_1,
             country_ou_type=self.country_type,
             district_ou_type=self.district_type,
+        )
+        subactivity_1 = SubActivity.objects.create(
+            name="Test SubActivity",
+            round=round_1,
+            start_date=datetime.date(2022, 1, 1),
+            end_date=datetime.date(2022, 1, 31),
+        )
+        group = m.Group.objects.create(name="Test group", source_version=self.source_version_1)
+        group.org_units.add(district)
+        subactivity_scope_with_campaign_level_scope = SubActivityScope.objects.create(
+            subactivity=subactivity_1, group=group, vaccine="mOPV2"
         )
 
         # Test that separate_scopes_per_round is False and campaign has scope
@@ -535,6 +549,21 @@ class PolioAPITestCase(APITestCase, PolioTestCaseMixin):
             if index > 0:
                 self.assertEqual(len(r["scopes"]), 0)
 
+        # Check that the subactivity scope was also deleted
+        with self.assertRaises(SubActivityScope.DoesNotExist):
+            subactivity_scope_with_campaign_level_scope.refresh_from_db()
+
+        # Let's create another subactivity scope for the second round
+        subactivity_2 = SubActivity.objects.create(
+            name="Test SubActivity 2",
+            round=round_2,
+            start_date=datetime.date(2022, 1, 1),
+            end_date=datetime.date(2022, 1, 31),
+        )
+        subactivity_scope_with_round_level_scope = SubActivityScope.objects.create(
+            subactivity=subactivity_2, group=group, vaccine="mOPV2"
+        )
+
         # Switch scope back to campaign level
         response = self.client.put(f"/api/polio/campaigns/{test_campaign.id}/", old_payload, format="json")
         data = self.assertJSONResponse(response, 200)
@@ -543,6 +572,10 @@ class PolioAPITestCase(APITestCase, PolioTestCaseMixin):
         self.assertEqual(len(data["scopes"][0]["group"]["org_units"]), 1)
         for r in data["rounds"]:
             self.assertEqual(len(r["scopes"]), 0)
+
+        # Check that the new subactivity scope was again deleted
+        with self.assertRaises(SubActivityScope.DoesNotExist):
+            subactivity_scope_with_round_level_scope.refresh_from_db()
 
     def test_remove_round_deletes_round_in_DB(self):
         # Create a new campaign with scope per campaign

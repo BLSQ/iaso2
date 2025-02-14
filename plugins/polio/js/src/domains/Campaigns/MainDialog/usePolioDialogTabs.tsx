@@ -20,6 +20,20 @@ import { SubActivitiesForm } from '../SubActivities/SubActivitiesForm';
 import { useIsPolioCampaign } from '../hooks/useIsPolioCampaignCheck';
 import { Tab } from './PolioDialogTabs';
 
+function determineSubActivityTabTooltip(
+    formik: FormikProps<CampaignFormValues>,
+    formatMessage: any,
+) {
+    if (
+        formik.values.id &&
+        formik.values.separate_scopes_per_round !==
+            formik.initialValues.separate_scopes_per_round
+    ) {
+        return formatMessage(MESSAGES.subActivitiesLockedScopeChange);
+    }
+    return formatMessage(MESSAGES.subActivitiesUnlockConditions);
+}
+
 export const usePolioDialogTabs = (
     formik: FormikProps<CampaignFormValues>,
     selectedCampaign: Campaign,
@@ -54,6 +68,7 @@ export const usePolioDialogTabs = (
                 disabled:
                     !formik.values.initial_org_unit ||
                     formik.values.rounds?.length === 0,
+                disabledMessage: formatMessage(MESSAGES.scopeUnlockConditions),
                 hasTabError: compareArraysValues(
                     scopeFormFields,
                     formik.errors,
@@ -66,7 +81,14 @@ export const usePolioDialogTabs = (
                 key: 'subActivities',
                 disabled:
                     !formik.values.initial_org_unit ||
-                    formik.values.rounds.length === 0,
+                    formik.values.rounds.length === 0 ||
+                    (formik.values.id &&
+                        formik.values.separate_scopes_per_round !==
+                            formik.initialValues.separate_scopes_per_round),
+                disabledMessage: determineSubActivityTabTooltip(
+                    formik,
+                    formatMessage,
+                ),
                 hasTabError: false,
             },
         ];
@@ -91,6 +113,7 @@ export const usePolioDialogTabs = (
                     formik.errors,
                 ),
                 key: 'evaluation',
+
             },
             {
                 title: formatMessage(MESSAGES.preparedness),
