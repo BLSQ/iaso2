@@ -1,5 +1,6 @@
 import typing
 import uuid
+from typing import Optional
 
 from django.contrib.auth.models import User, AnonymousUser
 from django.db import models
@@ -75,6 +76,14 @@ class WorkflowVersionQuerySet(models.QuerySet):
 
         if user and user.is_authenticated:
             queryset = queryset.filter(workflow__entity_type__account=user.iaso_profile.account)
+
+        return queryset
+
+    def filter_for_user_and_app_id(self, user: typing.Union[User, AnonymousUser, None], app_id: Optional[str]):
+        queryset = self.filter_for_user(user)
+
+        if app_id is not None:
+            queryset = queryset.filter(workflow__entity_type__reference_form__projects__app_id=app_id)
 
         return queryset
 

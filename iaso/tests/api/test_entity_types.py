@@ -6,7 +6,6 @@ from django.core.files import File
 from iaso import models as m
 from iaso.models import Entity, EntityType, FormVersion, Instance, Project
 from iaso.test import APITestCase
-from iaso.tests.api.workflows.base import var_dump
 
 
 class EntityTypeAPITestCase(APITestCase):

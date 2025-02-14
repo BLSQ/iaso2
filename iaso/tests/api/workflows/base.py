@@ -9,7 +9,6 @@ from iaso import models as m
 from iaso.models import Workflow, WorkflowVersion
 from iaso.models.workflow import WorkflowVersionsStatus, WorkflowChange, WorkflowFollowup
 from iaso.test import APITestCase
-from iaso.tests.utils.test_utils import var_dump
 
 
 class BaseWorkflowsAPITestCase(APITestCase):
@@ -41,6 +40,12 @@ class BaseWorkflowsAPITestCase(APITestCase):
             account=blue_adults,
         )
 
+        cls.project_blue_adults_2 = m.Project.objects.create(
+            name="Blue Adults Project_2",
+            app_id="blue.adults.project_2",
+            account=blue_adults,
+        )
+
         cls.project_blue_childrens = m.Project.objects.create(
             name="Blue Childrens Project",
             app_id="blue.childrens.project",
@@ -53,6 +58,14 @@ class BaseWorkflowsAPITestCase(APITestCase):
 
         cls.form_adults_blue_2 = m.Form.objects.create(
             name="Blue Adults Form 2", form_id="adults_form_blue_2", created_at=cls.now
+        )
+
+        cls.form_adults_blue_3 = m.Form.objects.create(
+            name="Blue Adults Form 3", form_id="adults_form_blue_3", created_at=cls.now
+        )
+
+        cls.form_adults_blue_4 = m.Form.objects.create(
+            name="Blue Adults Form 4", form_id="adults_form_blue_4", created_at=cls.now
         )
 
         form_adults_blue_mock = mock.MagicMock(spec=File)
@@ -85,6 +98,10 @@ class BaseWorkflowsAPITestCase(APITestCase):
         cls.project_blue_adults.forms.add(cls.form_adults_blue_2)
         cls.project_blue_adults.save()
 
+        cls.project_blue_adults_2.forms.add(cls.form_adults_blue_3)
+        cls.project_blue_adults_2.forms.add(cls.form_adults_blue_4)
+        cls.project_blue_adults_2.save()
+
         cls.et_children_blue = m.EntityType.objects.create(
             name="Children of Blue",
             created_at=cls.now,
@@ -113,12 +130,20 @@ class BaseWorkflowsAPITestCase(APITestCase):
             account=blue_adults,
             reference_form=cls.form_adults_blue,
         )
-        # This is added to check if the error on get returning more than one entitytype accure again(WC2-500)
-        differen_account = m.Account.objects.create(name="Different Account")
+
+        cls.et_adults_blue_3 = m.EntityType.objects.create(
+            name="Adults of Blue 3",
+            created_at=cls.now,
+            account=blue_adults,
+            reference_form=cls.form_adults_blue_3,
+        )
+
+        # This is added to check if the error on get returning more than one EntityType occurs again(WC2-500)
+        different_account = m.Account.objects.create(name="Different Account")
         cls.et_adults_blue_2_same_name_different_account = m.EntityType.objects.create(
             name="Adults of Blue 2",
             created_at=cls.now,
-            account=differen_account,
+            account=different_account,
             reference_form=cls.form_adults_blue,
         )
 
@@ -184,3 +209,24 @@ class BaseWorkflowsAPITestCase(APITestCase):
         )
 
         followup2.forms.add(cls.form_adults_blue_2)
+
+        cls.workflow_et_adults_blue_2 = Workflow.objects.create(entity_type=cls.et_adults_blue_3)
+
+        cls.workflow_version_et_adults_blue_2 = WorkflowVersion.objects.create(
+            workflow=cls.workflow_et_adults_blue_2,
+            name="workflow_et_adults_blue_2 V1",
+            status=WorkflowVersionsStatus.PUBLISHED,
+        )
+
+        WorkflowChange.objects.create(
+            form=cls.form_adults_blue_4,
+            workflow_version=cls.workflow_version_et_adults_blue_2,
+            mapping={"mon_champ": "mon_champ"},
+        )
+
+        followup_3 = WorkflowFollowup.objects.create(
+            order=1,
+            condition={"==": [1, 1]},
+            workflow_version=cls.workflow_version_et_adults_blue_2,
+        )
+        followup_3.forms.add(cls.form_adults_blue_4)

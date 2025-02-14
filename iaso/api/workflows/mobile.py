@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from iaso.api.common import TimestampField
+from iaso.api.serializers import AppIdSerializer
 from iaso.models import WorkflowVersion, Project, WorkflowFollowup
 from iaso.models.workflow import WorkflowVersionsStatus, WorkflowChange
 
@@ -79,7 +80,7 @@ class MobileWorkflowViewSet(GenericViewSet):
 
     @swagger_auto_schema(manual_parameters=[app_id_param])
     def list(self, request, *args, **kwargs):
-        app_id = request.GET.get("app_id", None)
+        app_id = AppIdSerializer(data=request.query_params).get_app_id(raise_exception=False)
 
         if app_id is None:
             return Response(status=404, data="No app_id provided")
@@ -93,8 +94,9 @@ class MobileWorkflowViewSet(GenericViewSet):
         return Response({"workflows": serializer.data})
 
     def get_queryset(self, **kwargs):
+        app_id = AppIdSerializer(data=self.request.query_params).get_app_id(raise_exception=False)
         return (
-            WorkflowVersion.objects.filter_for_user(self.request.user)
+            WorkflowVersion.objects.filter_for_user_and_app_id(user=self.request.user, app_id=app_id)
             .filter(status=WorkflowVersionsStatus.PUBLISHED)
             .order_by("workflow__pk", "-created_at")
             .distinct("workflow__pk")

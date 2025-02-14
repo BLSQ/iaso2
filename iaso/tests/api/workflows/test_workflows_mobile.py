@@ -68,4 +68,4 @@ class WorkflowsMobileAPITestCase(BaseWorkflowsAPITestCase):
         except jsonschema.exceptions.ValidationError as ex:
             self.fail(msg=str(ex))
 
-        assert len(response.data["workflows"]) == 2
+        self.assertEqual(len(response.data["workflows"]), 2)
